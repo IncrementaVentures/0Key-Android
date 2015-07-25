@@ -16,6 +16,5 @@ public class OkeyApplication extends Application {
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "EAAYulhYX56NsqKAkxRGZjRz8DIDLndXENykO59I", "Mw37xHHNFlcwGsY1akSEbQRH7YZQGrL7xhA9jhwf");
-
     }
 }

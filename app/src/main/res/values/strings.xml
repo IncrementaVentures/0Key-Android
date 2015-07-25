@@ -3,4 +3,36 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_create_account">CreateAccountActivity</string>
+    <string name="auth_error">Cant authenticate, try again</string>
+    <string name="door_opened">Door opened</string>
+    <string name="door_closed">Door closed</string>
+
+    <string name="not_implemented_code_on_result">Not implemented code onResult()</string>
+    <string name="ble_not_supported">Bluetooth LE not supported</string>
+    <string name="device_found">Device found</string>
+    <string name="service_discovered">Service discovered</string>
+    <string name="door_cant_open">Cant open</string>
+    <string name="door_cant_close">Cant close</string>
+
+    <string name="door_already_opened"> Already opened</string>
+    <string name="door_already_closed"> Already closed</string>
+
+    <string name="protect_with_key"> Protect app with key</string>
+    <string name="pin"> PIN </string>
+
+    <string name="title_activity_preferences">PreferencesActivity</string>
+    <string name="enter_pin">Insert pin</string>
+    <string name="okey">Ok</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="pin_incorrect">Pin incorrect</string>
+
+    <string name="gonna_be_admin">I will be the house administrator</string>
+    <string name="title_activity_first_admin_config">FirstAdminConfigActivity</string>
+    <string name="insert_default_key">Insert the default key please.</string>
+    <string name="admin_already_assigned">First admin already assigned</string>
+    <string name="admin_assigned">First admin assigned</string>
+
 </resources>

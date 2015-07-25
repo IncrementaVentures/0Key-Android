@@ -1,15 +1,20 @@
 package com.incrementaventures.okey.Models;
 
 
+import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.util.SparseArray;
+
+import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
+import com.parse.SignUpCallback;
 
 import java.util.ArrayList;
 
-public class User {
+public class User implements BluetoothClient.OnBluetoothToUserResponse {
 
     private final String NAME = "name";
     private final String PHONE = "phone";
@@ -17,7 +22,12 @@ public class User {
     private ParseUser mParseUser;
     private BluetoothClient mBluetoothClient;
 
-    private OnBluetoothUserResponse mBluetoothListener;
+    private OnUserBluetoothToActivityResponse mBluetoothListener;
+    private OnUserActionsResponse mActionListener;
+    private Context mContext;
+
+    private SparseArray<Permission> mPermissions;
+
 
     public interface OnParseUserResponse{
         void userSignedUp();
@@ -25,10 +35,44 @@ public class User {
         void authError(ParseException e);
     }
 
-    public interface OnBluetoothUserResponse{
+    public interface OnUserBluetoothToActivityResponse {
         void enableBluetooth();
         void bluetoothNotSupported();
+        void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord);
     }
+
+    public interface OnUserActionsResponse{
+        void doorOpened(int state);
+        void doorClosed(int state);
+        void adminAssigned(int state);
+        void error(int mode);
+    }
+
+    @Override
+    public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
+        mBluetoothListener.deviceFound(device, rssi, scanRecord);
+    }
+
+    @Override
+    public void doorOpened(int state) {
+        mActionListener.doorOpened(state);
+    }
+
+    @Override
+    public void doorClosed(int state) {
+        mActionListener.doorClosed(state);
+    }
+
+    @Override
+    public void adminAssigned(int state) {
+        mActionListener.adminAssigned(state);
+    }
+
+    @Override
+    public void error(int mode) {
+        mActionListener.error(mode);
+    }
+
 
     private User(String name, String password, String email, String phone){
 
@@ -38,16 +82,17 @@ public class User {
         mParseUser.setUsername(email);
         mParseUser.setEmail(email);
         mParseUser.setPassword(password);
-
+        mPermissions = new SparseArray<>();
     }
 
     private User(ParseUser parseUser){
         mParseUser = parseUser;
+        mPermissions = new SparseArray<>();
     }
 
     /**
      * SignUp the user. OnParseUserResponse#userSignedUp(User) is called if it succeeds and
-     * OnParseUserResponse#authError(ParseEcepction) is called if there was an error.
+     * OnParseUserResponse#authError(ParseException) is called if there was an error.
      * @param listener Listener to alert the subscribed classes that the user is signed up
      * @param name User name
      * @param pass User password
@@ -59,7 +104,7 @@ public class User {
         final User user = new User(name, pass, email, phone);
 
         // Try yo save
-        user.mParseUser.saveInBackground(new SaveCallback() {
+        user.mParseUser.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {
 
@@ -73,7 +118,7 @@ public class User {
                 }
             }
         });
-    };
+    }
 
     /**
      * Log in the user. OnParseUserResponse#userLoggedIn(User) is called if it succeeds.
@@ -88,8 +133,6 @@ public class User {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null) {
-                    User user = new User(parseUser);
-
                     // IMPORTANT: use getLoggedUser() to obtain the user in the activity
                     listener.userLoggedIn();
                 } else {
@@ -102,9 +145,17 @@ public class User {
     /**
      * @return the user logged in the device, or null if there is no user logged.
      */
-    public static User getLoggedUser(OnBluetoothUserResponse listener){
-        User user = new User(ParseUser.getCurrentUser());
-        user.mBluetoothListener = listener;
+    public static User getLoggedUser(Context context){
+        ParseUser current = ParseUser.getCurrentUser();
+        if (current == null){
+            return null;
+        }
+
+        User user = new User(current);
+
+        user.mBluetoothListener = (MainActivity) context;
+        user.mActionListener = (MainActivity) context;
+        user.mContext = context;
         return user;
     }
 
@@ -129,8 +180,10 @@ public class User {
         return mParseUser.getEmail();
     }
 
-    public void addPermission(){
-        // TODO: create permission, and then add it to the user
+    public void addPermission(Permission permission){
+        String doorName = permission.getDoor().getName();
+        // TODO: mPermissions.put(door.MACADRESS, permission);
+        mPermissions.put(doorName.hashCode(), permission);
     }
 
     /**
@@ -141,14 +194,14 @@ public class User {
         // check if hasPermission.
         // if bluetooth is supported and enabled. If not enabled, send callback to activity to activate it.
         // get paired devices.
-        // check if there is one starting with 'Okey'.
+        // filter devices
         // and try to open.
 
         if (!hasPermission(door)){
             return;
         }
 
-        if (mBluetoothClient == null) mBluetoothClient = new BluetoothClient();
+        mBluetoothClient = new BluetoothClient(mContext, this, BluetoothClient.OPEN_MODE);
 
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
@@ -159,11 +212,55 @@ public class User {
             return;
         }
 
-
+        mBluetoothClient.startScan();
     }
+
+    public void closeDoor(Door door){
+        // TODO:
+        // check if hasPermission.
+        // if bluetooth is supported and enabled. If not enabled, send callback to activity to activate it.
+        // get paired devices.
+        // filter devices
+        // and try to close.
+
+        if (!hasPermission(door)){
+            return;
+        }
+
+        mBluetoothClient = new BluetoothClient(mContext, this, BluetoothClient.CLOSE_MODE);
+
+        if (!mBluetoothClient.isSupported()){
+            mBluetoothListener.bluetoothNotSupported();
+            return;
+        }
+        else if (!mBluetoothClient.isEnabled()){
+            mBluetoothListener.enableBluetooth();
+            return;
+        }
+
+        mBluetoothClient.startScan();
+    }
+
+    public void makeFirstAdminConnection(String defaultKey){
+        mBluetoothClient = new BluetoothClient(mContext, this, BluetoothClient.FIRST_ADMIN_CONNECTION_MODE);
+
+
+        if (!mBluetoothClient.isSupported()){
+            mBluetoothListener.bluetoothNotSupported();
+            return;
+        }
+        else if (!mBluetoothClient.isEnabled()){
+            mBluetoothListener.enableBluetooth();
+            return;
+        }
+        mBluetoothClient.setUserPhone(getPhone());
+        mBluetoothClient.startScan();
+    }
+
 
     public boolean hasPermission(Door door){
         //TODO: check if there is a permission with the same objectId as the door
+        Permission p = mPermissions.get(door.getName().hashCode());
         return true;
     }
 

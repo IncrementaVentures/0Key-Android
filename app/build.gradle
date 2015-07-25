@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.incrementaventures.okey"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -24,4 +24,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.parse.bolts:bolts-android:1.+'
     compile fileTree(dir: 'libs', include: 'Parse-*.jar')
+    compile 'com.jakewharton:butterknife:7.0.1'
+
 }

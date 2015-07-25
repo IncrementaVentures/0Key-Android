@@ -13,7 +13,6 @@ public class Door {
         mParseDoor = ParseObject.create(DOOR_CLASS_NAME);
         mParseDoor.put(NAME, name);
         mParseDoor.put(DESCRIPTION, description);
-
     }
 
     private Door(ParseObject parseObject){
@@ -39,4 +38,7 @@ public class Door {
     public String getDescription(){
         return mParseDoor.getString(DESCRIPTION);
     }
+
+
+
 }
