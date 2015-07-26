@@ -12,9 +12,13 @@
     <string name="not_implemented_code_on_result">Not implemented code onResult()</string>
     <string name="ble_not_supported">Bluetooth LE not supported</string>
     <string name="device_found">Device found</string>
+    <string name="device_not_found">Device not found</string>
     <string name="service_discovered">Service discovered</string>
     <string name="door_cant_open">Cant open</string>
     <string name="door_cant_close">Cant close</string>
+
+    <string name="open_door">Open door</string>
+    <string name="close_door">Close door</string>
 
     <string name="door_already_opened"> Already opened</string>
     <string name="door_already_closed"> Already closed</string>
@@ -34,5 +38,8 @@
     <string name="insert_default_key">Insert the default key please.</string>
     <string name="admin_already_assigned">First admin already assigned</string>
     <string name="admin_assigned">First admin assigned</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

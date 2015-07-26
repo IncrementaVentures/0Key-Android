@@ -39,6 +39,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse {
         void enableBluetooth();
         void bluetoothNotSupported();
         void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord);
+        void deviceNotFound();
     }
 
     public interface OnUserActionsResponse{
@@ -51,6 +52,11 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse {
     @Override
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
         mBluetoothListener.deviceFound(device, rssi, scanRecord);
+    }
+
+    @Override
+    public void deviceNotFound() {
+        mBluetoothListener.deviceNotFound();
     }
 
     @Override

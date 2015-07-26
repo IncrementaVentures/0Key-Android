@@ -71,6 +71,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     public interface OnBluetoothToUserResponse{
         void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord);
+        void deviceNotFound();
         void doorOpened(int state);
         void doorClosed(int state);
         void adminAssigned(int state);
@@ -117,6 +118,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public void stopScan(){
         mScanning = false;
         mBluetoothAdapter.stopLeScan(this);
+        if (mDevices.size() == 0){
+            mListener.deviceNotFound();
+        }
     }
 
     /*
@@ -127,7 +131,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
         mDevices.put(device.hashCode(), device);
         mListener.deviceFound(device, rssi, scanRecord);
-        // TODO: filter devices. Week 3-4.
+        // TODO: filter devices.
         device.connectGatt(mContext, true, mGattCallback);
 
     }
@@ -234,7 +238,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     break;
 
                 case FIRST_ADMIN_CONNECTION_MODE:
-                    boolean mNeverConnected = BluetoothProtocol.wasNeverConnected(bytes);
+                    boolean mNeverConnected = BluetoothProtocol.hasNeverConnected(bytes);
                     if (mNeverConnected){
                         BluetoothProtocol.makeFirstAdminConnection(mUserPhone, gatt, characteristic);
                     } else{
@@ -244,7 +248,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         }
 
         /*
-            Called when the list of services offered by the peripheral are ready to be readed
+            Called when the list of services offered by the peripheral are ready to be read
          */
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
