@@ -2,16 +2,23 @@ package com.incrementaventures.okey.Fragments;
 
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
+import com.incrementaventures.okey.Activities.DoorActivity;
+import com.incrementaventures.okey.Activities.MainActivity;
+import com.incrementaventures.okey.Adapters.DoorsAdapter;
 import com.incrementaventures.okey.Models.Door;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -19,16 +26,15 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainFragment extends Fragment {
-    @Bind(R.id.button_open_door)
-    Button openDoorButton;
+public class MainFragment extends Fragment implements Door.OnDoorDataListener{
 
-    @Bind(R.id.button_close_door)
-    Button closeDoorButton;
+    @Bind(R.id.door_list_main)
+    ListView mDoorList;
+
+    ArrayList<Door> mDoors;
+    DoorsAdapter mAdapter;
 
     User mCurrentUser;
-    Door mTestDoor;
-
 
     public MainFragment() {
         // Required empty public constructor
@@ -44,7 +50,9 @@ public class MainFragment extends Fragment {
 
         authenticateUser();
         setListeners();
-        testSetUp();
+        setUp();
+        setDoorList();
+
 
         return v;
 
@@ -52,32 +60,66 @@ public class MainFragment extends Fragment {
 
 
     private void authenticateUser(){
-        mCurrentUser = User.getLoggedUser(getActivity());
+        mCurrentUser = User.getLoggedUser((MainActivity) getActivity());
     }
 
     private void setListeners(){
-
-        openDoorButton.setOnClickListener(new View.OnClickListener() {
+        mDoorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                mCurrentUser.openDoor(mTestDoor);
-            }
-        });
-
-        closeDoorButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCurrentUser.closeDoor(mTestDoor);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String doorId = mDoors.get(position).getId();
+                Intent intent = new Intent (getActivity(), DoorActivity.class);
+                intent.putExtra(Door.ID, doorId);
+                intent.putExtra(Door.NAME, mDoors.get(position).getName());
+                startActivity(intent);
             }
         });
     }
 
 
-    private void testSetUp(){
-        mTestDoor = Door.create("Door", "Test door");
-        Permission permission = Permission.create(mCurrentUser, mTestDoor, 0, "TEST");
-        mCurrentUser.addPermission(permission);
+    private void setUp(){
+        mDoors = new ArrayList<>();
+        if (mCurrentUser != null){
+            //Door.deleteAll();
+            Door.getDoors(this);
+        }
+
+    }
+
+    private void setDoorList(){
+        mAdapter = new DoorsAdapter(getActivity(), R.layout.door_list_item, mDoors);
+        mDoorList.setAdapter(mAdapter);
     }
 
 
+    @Override
+    public void doorFinded(Door door) {
+        if (door == null ){
+            createFakeData();
+        } else{
+            mDoors.add(door);
+            mAdapter = new DoorsAdapter(getActivity(), R.layout.door_list_item, mDoors);
+            mDoorList.setAdapter(mAdapter);
+        }
+    }
+
+    private void createFakeData(){
+        if (mDoors.size() == 0){
+            Door d1 = Door.create("Fake door 1", "This is a fake door.");
+            Door d2 = Door.create("Fake door 2", "This is a fake door too.");
+            d1.save();
+            d2.save();
+            mDoors.add(d1);
+            mDoors.add(d2);
+            Permission p1 = Permission.create(mCurrentUser, d1, 0, "TEST");
+            Permission p2 = Permission.create(mCurrentUser, d2, 0, "TEST");
+            p1.save();
+            p2.save();
+            mCurrentUser.addPermission(p1);
+            mCurrentUser.addPermission(p2);
+
+            mAdapter = new DoorsAdapter(getActivity(), R.layout.door_list_item, mDoors);
+            mDoorList.setAdapter(mAdapter);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.incrementaventures.okey.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -8,31 +9,42 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
-public class FirstAdminConfigActivity extends ActionBarActivity {
+public class DoorConfigurationActivity extends ActionBarActivity {
     @Bind(R.id.default_key)
     EditText mDefaultKeyEditText;
-    @Bind(R.id.insert_first_config_key_button)
-    Button mDefaultKeyButton;
+    @Bind(R.id.new_key)
+    EditText mNewKeyEditText;
+    @Bind(R.id.door_name_config)
+    EditText mDoorNameEditText;
 
-    private User mCurrentUser;
+    @Bind(R.id.insert_first_config_key_button)
+    Button mOkButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_admin_config);
+        ButterKnife.bind(this);
 
-        mCurrentUser = User.getLoggedUser(this);
-
-        mDefaultKeyButton.setOnClickListener(new View.OnClickListener() {
+        mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String defaultKey = mDefaultKeyButton.getText().toString();
-                mCurrentUser.makeFirstAdminConnection(defaultKey);
+                String defaultKey = mDefaultKeyEditText.getText().toString();
+                String newKey = mNewKeyEditText.getText().toString();
+                String doorName = mDoorNameEditText.getText().toString();
+
+                Intent results = new Intent();
+                results.putExtra(MainActivity.DEFAULT_KEY_EXTRA, defaultKey);
+                results.putExtra(MainActivity.NEW_KEY_EXTRA, newKey);
+                results.putExtra(MainActivity.DOOR_NAME_EXTRA, doorName);
+
+                setResult(RESULT_OK, results);
+                finish();
             }
         });
 

@@ -1,6 +1,7 @@
 package com.incrementaventures.okey.Activities;
 
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -21,8 +22,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
+import com.incrementaventures.okey.Fragments.DoorsFragment;
 import com.incrementaventures.okey.Fragments.InsertPinFragment;
 import com.incrementaventures.okey.Fragments.MainFragment;
+import com.incrementaventures.okey.Fragments.ScanDevicesFragment;
 import com.incrementaventures.okey.Models.Door;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
@@ -31,8 +34,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener, User.OnUserBluetoothToActivityResponse, User.OnUserActionsResponse {
+public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener, User.OnUserBluetoothToActivityResponse, User.OnOpenDoorActionsResponse {
     public static final int REQUEST_ENABLE_BT = 1;
+    public static final int FIRST_CONFIG = 2;
+    public static final String DEFAULT_KEY_EXTRA = "defaultkey";
+    public static final String NEW_KEY_EXTRA = "newkey";
+    public static final String DOOR_NAME_EXTRA = "doorname";
 
 
     @Bind(R.id.drawer_layout)
@@ -46,6 +53,10 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     private String[] mDrawerItems;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    private ProgressDialog mProgressDialog;
+
+    private ScanDevicesFragment mScanDevicesFragment;
+
 
 
     @Override
@@ -53,62 +64,15 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        authenticateUser();
 
         drawerSetup();
 
         checkPreferences();
-        authenticateUser();
 
         checkBluetoothLeSupport();
     }
 
-
-    public void drawerSetup(){
-        mDrawerItems = new String[] {"Main page", "Doors", "Permissions", "Log"};
-        // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, mDrawerItems));
-        // Set the list's click listener
-        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-        });
-
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.app_name, R.string.app_name){
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(R.string.app_name);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle(R.string.app_name);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-
-
-        MainFragment newFragment = new MainFragment();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack if needed
-        transaction.replace(R.id.content_frame, newFragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -158,20 +122,17 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, PreferencesActivity.class);
             startActivity(intent);
             return true;
         }
-
-        else if (id == R.id.open_door_action) {
-            mCurrentUser.openDoor(Door.create("Test", "TEST DOOR"));
-            return true;
-        }
-
-        else if (id == R.id.close_door_action) {
-            mCurrentUser.closeDoor(Door.create("Test", "TEST DOOR"));
+        else if (id == R.id.scan_devices_action){
+            mScanDevicesFragment = new ScanDevicesFragment();
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.content_frame, mScanDevicesFragment)
+                    .addToBackStack(null)
+                    .commit();
             return true;
         }
 
@@ -189,6 +150,80 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             startActivity(intent);
             finish();
         }
+    }
+
+
+    /*
+        Configure the side drawer navigation menu
+     */
+    public void drawerSetup(){
+        mDrawerItems = new String[] {"Main page", "Doors", "Permissions", "Log"};
+        // Set the adapter for the list view
+        mDrawerList.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, mDrawerItems));
+        // Set the list's click listener
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selected = mDrawerItems[position];
+                switch (selected){
+                    case "Doors":
+                        DoorsFragment doorsFragment = new DoorsFragment();
+                        getFragmentManager().beginTransaction()
+                                .replace(R.id.content_frame, doorsFragment)
+                                .addToBackStack(null)
+                                .commit();
+                        break;
+                    case "Main page":
+                        MainFragment mainFragment = new MainFragment();
+                        getFragmentManager().beginTransaction()
+                            .replace(R.id.content_frame, mainFragment)
+                            .addToBackStack(null)
+                            .commit();
+                        break;
+                    case "Permissions":
+                        break;
+                    case "Log":
+                        break;
+                    default:
+                        break;
+                }
+                mDrawerLayout.closeDrawers();
+            }
+        });
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.app_name, R.string.app_name){
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle(R.string.app_name);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle(R.string.app_name);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+
+
+        MainFragment newFragment = new MainFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack if needed
+        transaction.replace(R.id.content_frame, newFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
     }
 
     private void checkBluetoothLeSupport(){
@@ -215,11 +250,14 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
     @Override
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
+        // TODO: create the door. Send the door to the ScanDevicesFragment. Add door to listview.
+        mScanDevicesFragment.addDevice( Door.create(device.getName(), String.valueOf(rssi)));
         Toast.makeText(this, R.string.device_found, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void deviceNotFound() {
+        mProgressDialog.dismiss();
         Toast.makeText(this, R.string.device_not_found, Toast.LENGTH_SHORT).show();
     }
 
@@ -232,6 +270,8 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mProgressDialog.dismiss();
+
                 if (state == BluetoothClient.OPEN_MODE) {
                     Toast.makeText(MainActivity.this, R.string.door_opened, Toast.LENGTH_SHORT).show();
                 } else if (state == BluetoothClient.DOOR_ALREADY_OPENED) {
@@ -241,42 +281,30 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         });
     }
 
+
     @Override
-    public void doorClosed(final int state) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (state == BluetoothClient.CLOSE_MODE) {
-                    Toast.makeText(MainActivity.this, R.string.door_closed, Toast.LENGTH_SHORT).show();
-                } else if (state == BluetoothClient.DOOR_ALREADY_CLOSED) {
-                    Toast.makeText(MainActivity.this, R.string.door_already_closed, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+    public void doorOpening() {
+        mProgressDialog = ProgressDialog.show(this, null,
+              getResources().getString(R.string.opening_door), true);
     }
 
     @Override
-    public void adminAssigned(final int state) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (state == BluetoothClient.ADMIN_ALREADY_ASSIGNED){
-                    Toast.makeText(MainActivity.this , R.string.admin_already_assigned, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+    public void noPermission() {
+        Toast.makeText(this, R.string.no_permission, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void error(final int mode) {
+    public void error(final int code) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mode == BluetoothClient.OPEN_MODE){
-                    Toast.makeText(MainActivity.this , R.string.door_cant_open, Toast.LENGTH_SHORT).show();
-                } else{
-                    Toast.makeText(MainActivity.this , R.string.door_cant_close, Toast.LENGTH_SHORT).show();
-
+                mProgressDialog.dismiss();
+                switch (code){
+                    case BluetoothClient.TIMEOUT:
+                        Toast.makeText(MainActivity.this , R.string.door_cant_open_timeout, Toast.LENGTH_SHORT).show();
+                        break;
+                    case BluetoothClient.RESPONSE_INCORRECT:
+                        Toast.makeText(MainActivity.this , R.string.door_cant_open_bad_code, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -289,6 +317,16 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             case REQUEST_ENABLE_BT:
                 if(resultCode == RESULT_OK){
                     mCurrentUser.openDoor(Door.create("Test", "TEST"));
+                }
+                break;
+            case FIRST_CONFIG:
+                if (resultCode == RESULT_OK){
+                    Bundle extras = data.getExtras();
+
+                    mCurrentUser.makeFirstAdminConnection(extras.getString(DEFAULT_KEY_EXTRA),
+                                                          extras.getString(NEW_KEY_EXTRA),
+                                                          extras.getString(DOOR_NAME_EXTRA));
+                    mProgressDialog = ProgressDialog.show(this, null,  getResources().getString(R.string.configuring_door_dialog));
                 }
                 break;
             default:
