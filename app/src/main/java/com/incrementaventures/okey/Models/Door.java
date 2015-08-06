@@ -10,6 +10,7 @@ import java.util.List;
 public class Door implements com.incrementaventures.okey.Models.ParseObject{
     public static final String DOOR_CLASS_NAME = "Door";
     public static final String ID = "id";
+    public static final String UUID = "uuid";
     public static final String NAME = "name";
     private final String DESCRIPTION = "description";
 
@@ -24,6 +25,7 @@ public class Door implements com.incrementaventures.okey.Models.ParseObject{
 
     private Door(String name, String description){
         mParseDoor = ParseObject.create(DOOR_CLASS_NAME);
+        mParseDoor.put(UUID, java.util.UUID.randomUUID().toString());
         mParseDoor.put(NAME, name);
         mParseDoor.put(DESCRIPTION, description);
     }
@@ -40,7 +42,7 @@ public class Door implements com.incrementaventures.okey.Models.ParseObject{
         return new Door(parseObject);
     }
 
-    protected ParseObject getParseDoor(){
+    public ParseObject getParseDoor(){
         return mParseDoor;
     }
 
@@ -88,6 +90,13 @@ public class Door implements com.incrementaventures.okey.Models.ParseObject{
     @Override
     public void save(){
         mParseDoor.pinInBackground();
+        mParseDoor.saveEventually();
+    }
+
+    @Override
+    public String getUUID() {
+        if (mParseDoor == null) return null;
+        return mParseDoor.getString(UUID);
     }
 
     public static void deleteAll(){
@@ -109,6 +118,22 @@ public class Door implements com.incrementaventures.okey.Models.ParseObject{
 
             }
         });
+    }
+
+    public Permission getPermission(){
+        if (mParseDoor == null) return null;
+        ParseQuery query = new ParseQuery(Permission.PERMISSION_CLASS_NAME);
+        query.whereEqualTo(Permission.DOOR_UUID, getUUID());
+        query.fromLocalDatastore();
+        try {
+            ParseObject o = query.getFirst();
+            if (o != null){
+                return Permission.create(o);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

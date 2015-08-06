@@ -36,7 +36,6 @@
     <string name="pin_incorrect">Pin incorrect</string>
 
     <string name="gonna_be_admin">I will be the house administrator</string>
-    <string name="title_activity_first_admin_config">FirstAdminConfigActivity</string>
     <string name="insert_default_key">Insert the default key.</string>
     <string name="insert_new_key">Insert a custom new key.</string>
     <string name="insert_door_name">Insert the door name.</string>
@@ -46,17 +45,31 @@
     <string name="configuring_door_dialog">Configuring door</string>
     <string name="opening_door">Opening door</string>
     <string name="no_permission">You don\'t have permission</string>
+    <string name="no_permission_setted">No permission</string>
     <string name="new_door">Create door</string>
     <string name="due_date">End date</string>
+    <string name="due_hour">End hour</string>
     <string name="scan_devices">Scan devices</string>
+    <string name="share">Share</string>
+    <string name="creating_permission">Creating permission</string>
+    <string name="permission_not_created">Permission not created</string>
 
     <string name="permission_type"> Permission type</string>
+    <string name="permission_type_admin"> Administrator</string>
+    <string name="permission_type_temporal"> Temporal </string>
+    <string name="permission_type_permanent"> Permanent </string>
+    <string name="permission_type_unknown"> Unknown </string>
 
     <string name="door_cant_configure"> Can\'t configure</string>
+    <string name="set_key_permission"> Set permission key</string>
+    <string name="permission_key_setted"> Permission key setted</string>
 
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_door">DoorActivity</string>
+    <string name="title_activity_door">Door</string>
+    <string name="title_activity_new_permission">New permission</string>
+    <string name="title_activity_share_key">Share key</string>
+    <string name="title_activity_first_admin_config">Door configuration</string>
 
 </resources>

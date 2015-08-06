@@ -42,6 +42,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.incrementaventures.okey.Activities.MainActivity" />
         </activity>
+        <activity
+            android:name=".Activities.NewPermissionActivity"
+            android:label="@string/title_activity_new_permission"
+            android:parentActivityName=".Activities.DoorActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.incrementaventures.okey.Activities.DoorActivity" />
+        </activity>
+        <activity
+            android:name=".Activities.ShareKeyActivity"
+            android:label="@string/title_activity_share_key"
+            android:parentActivityName=".Activities.DoorActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.incrementaventures.okey.Activities.DoorActivity" />
+        </activity>
     </application>
 
 </manifest>

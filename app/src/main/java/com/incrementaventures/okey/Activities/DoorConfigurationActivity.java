@@ -30,6 +30,7 @@ public class DoorConfigurationActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_admin_config);
         ButterKnife.bind(this);
+        setTitle(R.string.title_activity_first_admin_config);
 
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override

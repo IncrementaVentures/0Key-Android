@@ -36,7 +36,9 @@ public class DoorsAdapter extends ArrayAdapter<Door> {
 
         TextView doorDescription = (TextView) view.findViewById(R.id.door_description_list_item);
         doorDescription.setText(door.getDescription());
-
+        if (door.getDescription() == null || door.getDescription().equals("")){
+            doorDescription.setText("No description");
+        }
         return view;
     }
 

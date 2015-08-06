@@ -2,6 +2,8 @@ package com.incrementaventures.okey.Models;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 
 public class Permission implements com.incrementaventures.okey.Models.ParseObject {
@@ -9,28 +11,43 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public static final int ADMIN_PERMISSION = 0;
     public static final int PERMANENT_PERMISSION = 1;
     public static final int TEMPORAL_PERMISSION = 2;
+    public static final int UNKNOWN_PERMISSION = 3;
+
+    public static final String PERMANENT_DATE = "Permanent";
+    public static final String UNKNOWN_DATE = "Unknown";
 
 
     public static final String PERMISSION_CLASS_NAME = "Permission";
-    public static final String USER = "user";
-    public static final String DOOR = "door";
+    public static final String USER_UUID = "user_uuid";
+    public static final String DOOR_UUID = "door_uuid";
+    public static final String UUID = "uuid";
     public static final String TYPE = "type";
     public static final String KEY = "key";
-
-    // TODO: CADA PERMISO TIENE UNA CLAVE, NO CADA USUARIO
+    public static final String END_DATE = "end_date";
 
     private ParseObject mParsePermission;
 
-    private Permission(User user, Door door, int type, String key) {
-        mParsePermission = ParseObject.create(PERMISSION_CLASS_NAME);
-        mParsePermission.put(USER, user.getParseUser());
-        mParsePermission.put(DOOR, door.getParseDoor());
-        mParsePermission.put(TYPE, type);
-        mParsePermission.put(KEY, key);
+    private Permission(ParseObject parsePermission){
+        mParsePermission = parsePermission;
     }
 
-    public static Permission create(User user, Door door, int type, String key){
-        return new Permission(user, door, type, key);
+    private Permission(User user, Door door, int type, String key, String end) {
+        mParsePermission = ParseObject.create(PERMISSION_CLASS_NAME);
+        mParsePermission.put(USER_UUID, user.getUUID());
+        mParsePermission.put(DOOR_UUID, door.getUUID());
+        mParsePermission.put(TYPE, type);
+        mParsePermission.put(KEY, key);
+        mParsePermission.put(END_DATE, end);
+        mParsePermission.put(UUID, java.util.UUID.randomUUID().toString());
+
+    }
+
+    public static Permission create(User user, Door door, int type, String key, String end){
+        return new Permission(user, door, type, key, end);
+    }
+
+    public static Permission create(ParseObject parsePermission){
+        return new Permission(parsePermission);
     }
 
     @Override
@@ -50,30 +67,61 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     @Override
     public void save(){
         mParsePermission.pinInBackground();
+        mParsePermission.saveEventually();
+    }
+
+    @Override
+    public String getUUID() {
+        return mParsePermission.getString(UUID);
     }
 
     public Door getDoor(){
-        return Door.create(mParsePermission.getParseObject(DOOR));
+        ParseQuery query = new ParseQuery(Door.DOOR_CLASS_NAME);
+        query.whereEqualTo(Door.UUID, mParsePermission.getString(DOOR_UUID));
+        try {
+            ParseObject o = query.getFirst();
+            return Door.create(o);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public User getUser(){
-        return User.create(mParsePermission.getParseUser(USER));
-    }
+        ParseQuery<ParseUser> query = new ParseQuery<>(User.USER_CLASS_NAME);
+        query.whereEqualTo(User.UUID, mParsePermission.getString(USER_UUID));
+        try {
+            ParseUser o = query.getFirst();
+            return User.create(o);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;    }
 
-    public int getType(){
-        return mParsePermission.getInt(TYPE);
+    public String getType(){
+        switch (mParsePermission.getInt(TYPE)){
+            case TEMPORAL_PERMISSION:
+                return "Temporal";
+            case PERMANENT_PERMISSION:
+                return "Permanent";
+            case ADMIN_PERMISSION:
+                return  "Administrator";
+            default:
+                return "Unknown";
+        }
     }
 
     public String getKey(){
         return mParsePermission.getString(KEY);
     }
 
-    protected static Permission getPermission(ParseObject parsePermission){
-        User user = User.create(parsePermission.getParseUser(Permission.USER));
-        Door door = Door.create(parsePermission.getParseObject(Permission.DOOR));
-        int type = parsePermission.getInt(Permission.TYPE);
-        String key = parsePermission.getString(Permission.KEY);
-        return new Permission(user, door, type, key);
+
+    public String getEndDate(){
+        return mParsePermission.getString(END_DATE);
+    }
+
+    public void setKey(String key){
+        mParsePermission.put(KEY, key);
     }
 
 }

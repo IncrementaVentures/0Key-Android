@@ -30,6 +30,10 @@ public class BluetoothProtocol {
     public static final int SUCCESS = 1;
     public static final int ERROR = 0;
 
+    public static final int CREATE_NEW_PERMISSION_CODE = 0;
+    public static final int MODIFY_PERMISSION_CODE = 1;
+    public static final int DELETE_PERMISSION_CODE = 2;
+
 
 
     public static final String DOOR_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
@@ -92,6 +96,48 @@ public class BluetoothProtocol {
         return builder.toString();
     }
 
+    public static String buildNewPermissionMessage(String permissionType, String endDate, String endHour, String adminKey) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(MODIFY_PERMISSIONS_MESSAGE_CODE);
+        builder.append(SEPARATOR);
+
+        Time time = new Time();
+        time.setToNow();
+        builder.append(formatDate(time));
+        builder.append(SEPARATOR);
+
+        builder.append(adminKey);
+        builder.append(SEPARATOR);
+
+        builder.append(getPermissionType(permissionType));
+        builder.append(SEPARATOR);
+
+        builder.append(CREATE_NEW_PERMISSION_CODE);
+        builder.append(SEPARATOR);
+
+        builder.append(endDate + "T" + endHour);
+        builder.append(SEPARATOR);
+
+        builder.append(MESSAGE_END);
+
+        return builder.toString();
+    }
+
+    public static int getPermissionType(String p){
+        switch (p){
+            case "Temporal":
+                return 2;
+            case "Permanent":
+                return 1;
+            case "Administrator":
+                return 0;
+            default:
+                return 3;
+        }
+    }
+
+
     private static String formatDate(Time now){
         String month = String.valueOf(now.month);
         String day = String.valueOf(now.month);
@@ -103,7 +149,7 @@ public class BluetoothProtocol {
         if (hour.length() == 1) hour = "0" + hour;
         if (minute.length() == 1) minute = "0" + minute;
 
-        return now.year + "-" + month + "-" + day + "-" + "T" + hour + ":" + minute;
+        return now.year + "-" + month + "-" + day + "T" + hour + ":" + minute;
 
     }
 

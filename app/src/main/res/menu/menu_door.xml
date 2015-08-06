@@ -17,6 +17,11 @@
         android:orderInCategory="99"
         app:showAsAction="never" />
 
+    <item android:id="@+id/set_permission_key"
+        android:title="@string/set_key_permission"
+        android:orderInCategory="98"
+        app:showAsAction="never" />
+
     <item android:id="@+id/action_new_permission"
         android:title="Add permission"
         android:orderInCategory="5"

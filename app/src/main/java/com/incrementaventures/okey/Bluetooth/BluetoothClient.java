@@ -23,18 +23,24 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     private final int SCAN_TIME = 4000;
     public static final int CLOSE_MODE = 0;
+
     public static final int OPEN_MODE = 1;
     public static final int SCAN_MODE = 2;
+    public static final int FIRST_ADMIN_CONNECTION_MODE = 4;
+    public static final int CREATE_NEW_PERMISSION_MODE = 7;
+
     public static final int DOOR_ALREADY_CLOSED = 2;
     public static final int DOOR_ALREADY_OPENED = 3;
     public static final int ADMIN_ALREADY_ASSIGNED = 5;
     public static final int ADMIN_ASSIGNED = 6;
-    public static final int FIRST_ADMIN_CONNECTION_MODE = 4;
+
 
     public static final int TIMEOUT = 101;
     public static final int RESPONSE_INCORRECT = 102;
     public static final int CANT_OPEN = 103;
     public static final int CANT_CONFIGURE = 104;
+    public static final int PERMISSION_NOT_CREATED = 105;
+    public static final int DONT_HAVE_PERMISSION = 106;
 
     private boolean mScanning;
     private boolean mConnected;
@@ -70,6 +76,10 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private String mFactoryKey;
     private String mDoorName;
 
+    private String mPermissionType;
+    private String mEndDate;
+    private String mEndHour;
+
 
 
     /**
@@ -93,6 +103,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         void deviceNotFound();
         void doorOpened(int state);
         void permissionCreated(String key, int type);
+        void stopScanning();
         void doorClosed(int state);
         void error(int mode);
     }
@@ -142,6 +153,16 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan();
     }
 
+    public void executeCreateNewPermission(String type, String date, String hour, String permissionKey, String doorName){
+        mMode = CREATE_NEW_PERMISSION_MODE;
+        mDoorName = doorName;
+        mPermissionType = type;
+        mPermissionKey = permissionKey;
+        mEndDate = date;
+        mEndHour = hour;
+        startScan();
+    }
+
 
     private void startScan(){
         mScanning = true;
@@ -163,6 +184,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private void stopScan(){
         mScanning = false;
         mBluetoothAdapter.stopLeScan(this);
+        mListener.stopScanning();
         if (mDevices.size() == 0 && mMode != SCAN_MODE){
             mListener.deviceNotFound();
         }
@@ -175,11 +197,12 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
         //TODO: filter by the real door name
         if ((mMode == OPEN_MODE && device.getName().equals(mDoorName))
+                || (mMode == CREATE_NEW_PERMISSION_MODE && device.getName().equals(mDoorName))
                 || (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(Door.FACTORY_NAME))){
             mDevices.put(device.hashCode(), device);
             device.connectGatt(mContext, true, mGattCallback);
         }
-        else if (mMode == SCAN_MODE){
+        else if (mMode == SCAN_MODE) {
             mListener.deviceFound(device, rssi, scanRecord);
         }
     }
@@ -218,19 +241,30 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
             gatt.setCharacteristicNotification(mNotifyCharacteristic, true);
 
-            if (mMode == OPEN_MODE){
-                // Separate the messsage in 20 bytes parts, then send each part
-                String openMessage = BluetoothProtocol.buildOpenMessage(mPermissionKey);
-                mMessageParts = BluetoothProtocol.separateMessage(openMessage);
-                mSending = true;
-                BluetoothProtocol.sendMessage(gatt, mWriteCharacteristic, mMessageParts.poll());
+            switch (mMode){
+                case OPEN_MODE:
+                    // Separate the messsage in 20 bytes parts, then send each part
+                    String openMessage = BluetoothProtocol.buildOpenMessage(mPermissionKey);
+                    mMessageParts = BluetoothProtocol.separateMessage(openMessage);
+                    mSending = true;
+                    BluetoothProtocol.sendMessage(gatt, mWriteCharacteristic, mMessageParts.poll());
+                    break;
+                case FIRST_ADMIN_CONNECTION_MODE:
+                    String configurationMessage = BluetoothProtocol.buildFirstConfigurationMessage(mPermissionKey, mFactoryKey, mDoorName);
+                    mMessageParts = BluetoothProtocol.separateMessage(configurationMessage);
+                    mSending = true;
+                    BluetoothProtocol.sendMessage(gatt, mWriteCharacteristic, mMessageParts.poll());
+                    break;
+                case CREATE_NEW_PERMISSION_MODE:
+                    String newPermissionMessage = BluetoothProtocol.buildNewPermissionMessage(mPermissionType, mEndDate, mEndHour, mPermissionKey);
+                    mMessageParts = BluetoothProtocol.separateMessage(newPermissionMessage);
+                    mSending = true;
+                    BluetoothProtocol.sendMessage(gatt, mWriteCharacteristic, mMessageParts.poll());
+                    break;
+                default:
+                    //nothing
             }
-            else if (mMode == FIRST_ADMIN_CONNECTION_MODE){
-                String configurationMessage = BluetoothProtocol.buildFirstConfigurationMessage(mPermissionKey, mFactoryKey, mDoorName);
-                mMessageParts = BluetoothProtocol.separateMessage(configurationMessage);
-                mSending = true;
-                BluetoothProtocol.sendMessage(gatt, mWriteCharacteristic, mMessageParts.poll());
-            }
+
         }
 
 
@@ -264,11 +298,27 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     String key = BluetoothProtocol.processPermissionCreationResponse(response);
 
                     if (key != null){
-                        if (mMode == FIRST_ADMIN_CONNECTION_MODE){
-                            mListener.permissionCreated(key, Permission.ADMIN_PERMISSION);
+                        switch (mMode){
+                            case FIRST_ADMIN_CONNECTION_MODE:
+                                mListener.permissionCreated(key, Permission.ADMIN_PERMISSION);
+                                break;
+                            case CREATE_NEW_PERMISSION_MODE:
+                                mListener.permissionCreated(key, BluetoothProtocol.getPermissionType(mPermissionType));
+                                break;
+                            default:
+                                mListener.error(RESPONSE_INCORRECT);
                         }
                     } else {
-                        mListener.error(CANT_CONFIGURE);
+                        switch (mMode){
+                            case FIRST_ADMIN_CONNECTION_MODE:
+                                mListener.error(CANT_CONFIGURE);
+                                break;
+                            case CREATE_NEW_PERMISSION_MODE:
+                                mListener.error(PERMISSION_NOT_CREATED);
+                                break;
+                            default:
+                                mListener.error(RESPONSE_INCORRECT);
+                        }
                     }
                     break;
                 default:

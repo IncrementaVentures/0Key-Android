@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class MainFragment extends Fragment implements Door.OnDoorDataListener{
 
     @Bind(R.id.door_list_main)
@@ -67,10 +65,11 @@ public class MainFragment extends Fragment implements Door.OnDoorDataListener{
         mDoorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String doorId = mDoors.get(position).getId();
+                String doorUuid = mDoors.get(position).getUUID();
                 Intent intent = new Intent (getActivity(), DoorActivity.class);
-                intent.putExtra(Door.ID, doorId);
-                intent.putExtra(Door.NAME, mDoors.get(position).getName());
+                intent.putExtra(Door.UUID, doorUuid);
+                intent.putExtra(MainActivity.DOOR_NAME_EXTRA, mDoors.get(position).getName());
+                intent.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
                 startActivity(intent);
             }
         });
@@ -111,12 +110,10 @@ public class MainFragment extends Fragment implements Door.OnDoorDataListener{
             d2.save();
             mDoors.add(d1);
             mDoors.add(d2);
-            Permission p1 = Permission.create(mCurrentUser, d1, 0, "TEST");
-            Permission p2 = Permission.create(mCurrentUser, d2, 0, "TEST");
+            Permission p1 = Permission.create(mCurrentUser, d1, 0, "1234", Permission.PERMANENT_DATE);
+            Permission p2 = Permission.create(mCurrentUser, d2, 0, "1234", Permission.PERMANENT_DATE);
             p1.save();
             p2.save();
-            mCurrentUser.addPermission(p1);
-            mCurrentUser.addPermission(p2);
 
             mAdapter = new DoorsAdapter(getActivity(), R.layout.door_list_item, mDoors);
             mDoorList.setAdapter(mAdapter);

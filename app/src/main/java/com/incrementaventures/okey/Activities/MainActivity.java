@@ -40,6 +40,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     public static final String DEFAULT_KEY_EXTRA = "defaultkey";
     public static final String NEW_KEY_EXTRA = "newkey";
     public static final String DOOR_NAME_EXTRA = "doorname";
+    public static final String SCANNED_DOOR_EXTRA = "scanneddoor";
 
 
     @Bind(R.id.drawer_layout)
@@ -64,6 +65,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
         authenticateUser();
 
         drawerSetup();
@@ -252,13 +254,17 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
         // TODO: create the door. Send the door to the ScanDevicesFragment. Add door to listview.
         mScanDevicesFragment.addDevice( Door.create(device.getName(), String.valueOf(rssi)));
-        Toast.makeText(this, R.string.device_found, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void deviceNotFound() {
         mProgressDialog.dismiss();
         Toast.makeText(this, R.string.device_not_found, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void stopScanning() {
+        mScanDevicesFragment.stopScanning();
     }
 
 
@@ -271,7 +277,6 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             @Override
             public void run() {
                 mProgressDialog.dismiss();
-
                 if (state == BluetoothClient.OPEN_MODE) {
                     Toast.makeText(MainActivity.this, R.string.door_opened, Toast.LENGTH_SHORT).show();
                 } else if (state == BluetoothClient.DOOR_ALREADY_OPENED) {

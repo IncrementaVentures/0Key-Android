@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
@@ -30,6 +31,9 @@ public class ScanDevicesFragment extends Fragment {
 
     @Bind(R.id.scanned_devices_list)
     ListView mDevicesList;
+
+    @Bind(R.id.scanning_top_bar)
+    TextView mScanningTopBar;
 
     ArrayList<Door> mDoors;
     DoorsAdapter mAdapter;
@@ -52,8 +56,8 @@ public class ScanDevicesFragment extends Fragment {
         setUp();
         setListeners();
 
-
         mCurrentUser.scanDevices();
+
         return v;
     }
 
@@ -72,10 +76,11 @@ public class ScanDevicesFragment extends Fragment {
         mDevicesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String doorId = mDoors.get(position).getId();
+                String doorUuid = mDoors.get(position).getUUID();
                 Intent intent = new Intent (getActivity(), DoorActivity.class);
-                intent.putExtra(Door.ID, doorId);
-                intent.putExtra(Door.NAME, mDoors.get(position).getName());
+                intent.putExtra(Door.UUID, doorUuid);
+                intent.putExtra(MainActivity.DOOR_NAME_EXTRA, mDoors.get(position).getName());
+                intent.putExtra(MainActivity.SCANNED_DOOR_EXTRA, true);
                 startActivity(intent);
             }
         });
@@ -85,6 +90,10 @@ public class ScanDevicesFragment extends Fragment {
         mDoors.add(door);
         ((BaseAdapter) mDevicesList.getAdapter()).notifyDataSetChanged();
 
+    }
+
+    public void stopScanning(){
+        mScanningTopBar.setVisibility(TextView.GONE);
     }
 
 
