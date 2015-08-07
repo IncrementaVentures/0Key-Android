@@ -1,7 +1,9 @@
 package com.incrementaventures.okey.Activities;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -36,8 +38,16 @@ public class NewPermissionActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if (id == android.R.id.home) {
+            // Handle "up" button behavior here.
+            Intent data = new Intent();
+            data.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
+            setResult(Activity.RESULT_CANCELED, data);
+            finish();
+            return true;
+        }
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        else if (id == R.id.action_settings) {
             return true;
         }
 

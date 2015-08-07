@@ -198,8 +198,9 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         }
 
         User user = new User(current);
-        user.mBluetoothListener = activity;
+        user.mBluetoothListener =  activity;
         user.mOpenListener = activity;
+        user.mPermissionsListener = activity;
         user.mContext = activity;
         return user;
     }

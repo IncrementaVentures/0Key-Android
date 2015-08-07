@@ -31,9 +31,10 @@ public class ScanDevicesFragment extends Fragment {
 
     @Bind(R.id.scanned_devices_list)
     ListView mDevicesList;
-
     @Bind(R.id.scanning_top_bar)
     TextView mScanningTopBar;
+    @Bind(R.id.no_devices_found_view)
+    TextView mNoDevicesFound;
 
     ArrayList<Door> mDoors;
     DoorsAdapter mAdapter;
@@ -87,6 +88,7 @@ public class ScanDevicesFragment extends Fragment {
     }
 
     public void addDevice(Door door){
+        mNoDevicesFound.setVisibility(TextView.GONE);
         mDoors.add(door);
         ((BaseAdapter) mDevicesList.getAdapter()).notifyDataSetChanged();
 

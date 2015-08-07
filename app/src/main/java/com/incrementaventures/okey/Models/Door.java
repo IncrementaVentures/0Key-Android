@@ -14,7 +14,7 @@ public class Door implements com.incrementaventures.okey.Models.ParseObject{
     public static final String NAME = "name";
     private final String DESCRIPTION = "description";
 
-    public static final String FACTORY_NAME = "PSN";
+    public static final String FACTORY_NAME = "UART";
 
     private ParseObject mParseDoor;
 

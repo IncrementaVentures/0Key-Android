@@ -22,7 +22,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
-import com.incrementaventures.okey.Fragments.DoorsFragment;
 import com.incrementaventures.okey.Fragments.InsertPinFragment;
 import com.incrementaventures.okey.Fragments.MainFragment;
 import com.incrementaventures.okey.Fragments.ScanDevicesFragment;
@@ -34,7 +33,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener, User.OnUserBluetoothToActivityResponse, User.OnOpenDoorActionsResponse {
+public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener, User.OnUserBluetoothToActivityResponse, User.OnOpenDoorActionsResponse, User.OnPermissionsResponse {
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
     public static final String DEFAULT_KEY_EXTRA = "defaultkey";
@@ -169,11 +168,11 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
                 String selected = mDrawerItems[position];
                 switch (selected){
                     case "Doors":
-                        DoorsFragment doorsFragment = new DoorsFragment();
+                        /*DoorsFragment doorsFragment = new DoorsFragment();
                         getFragmentManager().beginTransaction()
                                 .replace(R.id.content_frame, doorsFragment)
                                 .addToBackStack(null)
-                                .commit();
+                                .commit();*/
                         break;
                     case "Main page":
                         MainFragment mainFragment = new MainFragment();
@@ -258,7 +257,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
     @Override
     public void deviceNotFound() {
-        mProgressDialog.dismiss();
+        if (mProgressDialog != null) mProgressDialog.dismiss();
         Toast.makeText(this, R.string.device_not_found, Toast.LENGTH_SHORT).show();
     }
 
@@ -276,7 +275,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mProgressDialog.dismiss();
+                if (mProgressDialog != null) mProgressDialog.dismiss();
                 if (state == BluetoothClient.OPEN_MODE) {
                     Toast.makeText(MainActivity.this, R.string.door_opened, Toast.LENGTH_SHORT).show();
                 } else if (state == BluetoothClient.DOOR_ALREADY_OPENED) {
@@ -298,18 +297,39 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         Toast.makeText(this, R.string.no_permission, Toast.LENGTH_SHORT).show();
     }
 
+
+    @Override
+    public void permissionCreated(String key, int type) {
+
+    }
+
     @Override
     public void error(final int code) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mProgressDialog.dismiss();
-                switch (code){
+                if (mProgressDialog != null) mProgressDialog.dismiss();
+                switch (code) {
                     case BluetoothClient.TIMEOUT:
-                        Toast.makeText(MainActivity.this , R.string.door_cant_open_timeout, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, R.string.door_cant_open_timeout, Toast.LENGTH_SHORT).show();
                         break;
                     case BluetoothClient.RESPONSE_INCORRECT:
-                        Toast.makeText(MainActivity.this , R.string.door_cant_open_bad_code, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, R.string.door_cant_open_bad_code, Toast.LENGTH_SHORT).show();
+                        break;
+                    case BluetoothClient.CANT_OPEN:
+                        Toast.makeText(MainActivity.this, R.string.door_cant_open, Toast.LENGTH_SHORT).show();
+                        break;
+                    case BluetoothClient.CANT_CONFIGURE:
+                        Toast.makeText(MainActivity.this, R.string.door_cant_configure, Toast.LENGTH_SHORT).show();
+                        break;
+                    case BluetoothClient.PERMISSION_NOT_CREATED:
+                        Toast.makeText(MainActivity.this, R.string.permission_not_created, Toast.LENGTH_SHORT).show();
+                        break;
+                    case BluetoothClient.DONT_HAVE_PERMISSION:
+                        Toast.makeText(MainActivity.this, R.string.no_permission, Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        break;
                 }
             }
         });

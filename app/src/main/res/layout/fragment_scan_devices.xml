@@ -15,9 +15,19 @@
         android:gravity="center"
         android:id="@+id/scanning_top_bar" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/no_devices_found_yet"
+        android:id="@+id/no_devices_found_view"
+        android:layout_gravity="center_horizontal" />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scanned_devices_list"
         android:layout_weight="1" />
+
 </LinearLayout>
