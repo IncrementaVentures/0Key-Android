@@ -63,6 +63,7 @@
     <string name="door_cant_configure"> Can\'t configure</string>
     <string name="set_key_permission"> Set permission key</string>
     <string name="permission_key_setted"> Permission key setted</string>
+    <string name="no_devices_found_yet"> No devices found </string>
 
 
 <!-- TODO: Remove or change this placeholder text -->

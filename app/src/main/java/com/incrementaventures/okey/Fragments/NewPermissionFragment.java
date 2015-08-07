@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Activities.NewPermissionActivity;
 import com.incrementaventures.okey.R;
 
@@ -137,7 +138,7 @@ public class NewPermissionFragment extends Fragment {
                 data.putExtra(NewPermissionActivity.NEW_PERMISSION_TYPE, mPermissionTypeView.getText().toString());
                 data.putExtra(NewPermissionActivity.NEW_PERMISSION_DATE, mEndDateView.getText().toString());
                 data.putExtra(NewPermissionActivity.NEW_PERMISSION_HOUR, mEndHourView.getText().toString());
-
+                data.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
                 getActivity().setResult(Activity.RESULT_OK, data);
                 getActivity().finish();
             }

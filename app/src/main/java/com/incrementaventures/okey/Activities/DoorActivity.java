@@ -145,7 +145,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mProgressDialog.dismiss();
+                if (mProgressDialog != null) mProgressDialog.dismiss();
                 if (state == BluetoothClient.OPEN_MODE) {
                     mDoor.save();
                     Toast.makeText(DoorActivity.this, R.string.door_opened, Toast.LENGTH_SHORT).show();
@@ -171,7 +171,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mProgressDialog.dismiss();
+                if (mProgressDialog != null) mProgressDialog.dismiss();
                 if (mConfiguring){
                     mDoor = getDoor();
                     Permission p = Permission.create(mCurrentUser,mDoor , type, key, Permission.PERMANENT_DATE);
@@ -243,7 +243,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
 
     @Override
     public void deviceNotFound() {
-        mProgressDialog.dismiss();
+        if (mProgressDialog != null) mProgressDialog.dismiss();
         Toast.makeText(this, R.string.device_not_found, Toast.LENGTH_SHORT).show();
     }
 

@@ -49,7 +49,6 @@ public class DoorFragment extends Fragment {
 
         setUI();
 
-
         return v;
     }
 
