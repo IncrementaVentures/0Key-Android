@@ -22,6 +22,8 @@ public class BluetoothProtocol {
     public static final String ALL_PERMISSIONS_RESPONSE_CODE = "05";
     public static final String PERMISSION_CREATED_OR_MODIFY_RESPONSE_CODE = "06";
     public static final String DOOR_OPENED_RESPONSE_CODE = "07";
+    public static final String GET_USER_PERMISSION_MESSAGE_CODE = "08";
+    public static final String GET_ALL_PERMISSIONS_MESSAGE_CODE = "09";
 
     public static final int ADMIN_PERMISSION = 0;
     public static final int PERMANENT_PERMISSION = 1;
@@ -49,11 +51,14 @@ public class BluetoothProtocol {
     }
 
 
-    public static String buildOpenMessage(String permissionKey){
+    public static String buildOpenMessage(String permissionKey, int slaveId){
 
         StringBuilder builder = new StringBuilder();
 
         builder.append(OPEN_CLOSE_MESSAGE_CODE);
+        builder.append(SEPARATOR);
+
+        builder.append(slaveId);
         builder.append(SEPARATOR);
 
         Time now = new Time();
@@ -76,6 +81,9 @@ public class BluetoothProtocol {
         builder.append(FIRST_CONFIGURATION_MESSAGE_CODE);
         builder.append(SEPARATOR);
 
+        // Space because no slave id is needed (?)
+        builder.append(SEPARATOR);
+
         Time now = new Time();
         now.setToNow();
 
@@ -96,10 +104,14 @@ public class BluetoothProtocol {
         return builder.toString();
     }
 
-    public static String buildNewPermissionMessage(String permissionType, String endDate, String endHour, String adminKey) {
+    public static String buildNewPermissionMessage(String permissionType, int slaveId, String endDate, String endHour, String adminKey) {
         StringBuilder builder = new StringBuilder();
 
         builder.append(MODIFY_PERMISSIONS_MESSAGE_CODE);
+        builder.append(SEPARATOR);
+
+        //TODO: when the app accepts slave permissions
+        // builder.append(slaveId);
         builder.append(SEPARATOR);
 
         Time time = new Time();
@@ -123,6 +135,53 @@ public class BluetoothProtocol {
 
         return builder.toString();
     }
+
+    public static String buildGetUserPermissionMessage(int slaveId, String permissionKey) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(GET_USER_PERMISSION_MESSAGE_CODE);
+        builder.append(SEPARATOR);
+
+        //TODO: when the app accepts slave permissions
+        // builder.append(slaveId);
+        builder.append(SEPARATOR);
+
+        Time time = new Time();
+        time.setToNow();
+        builder.append(formatDate(time));
+        builder.append(SEPARATOR);
+
+        builder.append(permissionKey);
+        builder.append(SEPARATOR);
+
+        builder.append(MESSAGE_END);
+
+        return builder.toString();
+    }
+
+    public static String buildGetAllPermissions(int slaveId, String permissionKey) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(GET_ALL_PERMISSIONS_MESSAGE_CODE);
+        builder.append(SEPARATOR);
+
+        //TODO: when the app accepts slave permissions
+        // builder.append(slaveId);
+        builder.append(SEPARATOR);
+
+        Time time = new Time();
+        time.setToNow();
+        builder.append(formatDate(time));
+        builder.append(SEPARATOR);
+
+        builder.append(permissionKey);
+        builder.append(SEPARATOR);
+
+        builder.append(MESSAGE_END);
+
+        return builder.toString();
+    }
+
 
     public static int getPermissionType(String p){
         switch (p){

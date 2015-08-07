@@ -1,9 +1,12 @@
 package com.incrementaventures.okey.Models;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.List;
 
 
 public class Permission implements com.incrementaventures.okey.Models.ParseObject {
@@ -19,7 +22,8 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
 
     public static final String PERMISSION_CLASS_NAME = "Permission";
     public static final String USER_UUID = "user_uuid";
-    public static final String DOOR_UUID = "door_uuid";
+    public static final String MASTER_UUID = "master_uuid";
+    public static final String SLAVE_UUID = "master_uuid";
     public static final String UUID = "uuid";
     public static final String TYPE = "type";
     public static final String KEY = "key";
@@ -31,10 +35,10 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         mParsePermission = parsePermission;
     }
 
-    private Permission(User user, Door door, int type, String key, String end) {
+    private Permission(User user, Master master, int type, String key, String end) {
         mParsePermission = ParseObject.create(PERMISSION_CLASS_NAME);
         mParsePermission.put(USER_UUID, user.getUUID());
-        mParsePermission.put(DOOR_UUID, door.getUUID());
+        mParsePermission.put(MASTER_UUID, master.getUUID());
         mParsePermission.put(TYPE, type);
         mParsePermission.put(KEY, key);
         mParsePermission.put(END_DATE, end);
@@ -42,8 +46,8 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
 
     }
 
-    public static Permission create(User user, Door door, int type, String key, String end){
-        return new Permission(user, door, type, key, end);
+    public static Permission create(User user, Master master, int type, String key, String end){
+        return new Permission(user, master, type, key, end);
     }
 
     public static Permission create(ParseObject parsePermission){
@@ -51,7 +55,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     }
 
     @Override
-    public String getId() {
+    public String getObjectId() {
         return mParsePermission.getObjectId();
     }
 
@@ -75,12 +79,12 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         return mParsePermission.getString(UUID);
     }
 
-    public Door getDoor(){
-        ParseQuery query = new ParseQuery(Door.DOOR_CLASS_NAME);
-        query.whereEqualTo(Door.UUID, mParsePermission.getString(DOOR_UUID));
+    public Master getMaster(){
+        ParseQuery query = new ParseQuery(Master.MASTER_CLASS_NAME);
+        query.whereEqualTo(Master.UUID, mParsePermission.getString(MASTER_UUID));
         try {
             ParseObject o = query.getFirst();
-            return Door.create(o);
+            return Master.create(o);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -122,6 +126,25 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
 
     public void setKey(String key){
         mParsePermission.put(KEY, key);
+    }
+
+    public static void deleteAll(){
+        ParseQuery<ParseObject> query = new ParseQuery<>(Permission.PERMISSION_CLASS_NAME);
+        query.fromLocalDatastore();
+
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                for (ParseObject o : list){
+                    try {
+                        o.deleteEventually();
+                        o.unpin();
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
 }

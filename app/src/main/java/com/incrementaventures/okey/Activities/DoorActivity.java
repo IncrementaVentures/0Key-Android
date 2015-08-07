@@ -17,19 +17,20 @@ import android.widget.Toast;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.incrementaventures.okey.Fragments.DoorFragment;
-import com.incrementaventures.okey.Models.Door;
+import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
+import com.incrementaventures.okey.Models.Slave;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorActionsResponse, User.OnPermissionsResponse, User.OnUserBluetoothToActivityResponse {
+public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorActionsResponse, User.OnPermissionsResponse, User.OnUserBluetoothToActivityResponse, DoorFragment.OnSlaveSelectedListener {
 
     public static final int NEW_PERMISSION_REQUEST = 40;
 
-    private Door mDoor;
+    private Master mMaster;
     private ProgressDialog mProgressDialog;
     private User mCurrentUser;
     private DoorFragment mDoorFragment;
@@ -42,27 +43,27 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_door);
-        setTitle(getIntent().getExtras().getString(MainActivity.DOOR_NAME_EXTRA));
-        mDoor = getDoor();
+        setTitle(getIntent().getExtras().getString(MainActivity.MASTER_NAME_EXTRA));
+        mMaster = getDoor();
         mCurrentUser = User.getLoggedUser(this);
         mScannedDoor = getIntent().getExtras().getBoolean(MainActivity.SCANNED_DOOR_EXTRA);
         mDoorFragment = (DoorFragment) getSupportFragmentManager().findFragmentById(R.id.door_fragment);
     }
 
 
-    private Door getDoor(){
-        final String name = getIntent().getExtras().getString(MainActivity.DOOR_NAME_EXTRA);
+    private Master getDoor(){
+        final String name = getIntent().getExtras().getString(MainActivity.MASTER_NAME_EXTRA);
         if (mScannedDoor){
-            return Door.create(name, "");
+            return Master.create(name, "");
         }
 
-        ParseQuery query = new ParseQuery(Door.DOOR_CLASS_NAME);
+        ParseQuery query = new ParseQuery(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
-        query.whereEqualTo(Door.UUID, getIntent().getExtras().getString(Door.UUID));
+        query.whereEqualTo(Master.UUID, getIntent().getExtras().getString(Master.UUID));
 
         try {
             ParseObject doorParse = query.getFirst();
-            return Door.create(doorParse);
+            return Master.create(doorParse);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -90,11 +91,6 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
         else if (id == R.id.action_new_permission){
             Intent intent = new Intent(this, NewPermissionActivity.class);
             startActivityForResult(intent, DoorActivity.NEW_PERMISSION_REQUEST);
-            return true;
-        }
-
-        else if (id == R.id.open_door_action) {
-            mCurrentUser.openDoor(mDoor);
             return true;
         }
 
@@ -126,10 +122,10 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
                 mPermissionKey = input.getText().toString();
-                mDoor = getDoor();
-                Permission p = mDoor.getPermission();
+                mMaster = getDoor();
+                Permission p = mMaster.getPermission();
                 if (p == null){
-                    p = Permission.create(mCurrentUser, mDoor, Permission.UNKNOWN_PERMISSION,  mPermissionKey, Permission.UNKNOWN_DATE);
+                    p = Permission.create(mCurrentUser, mMaster, Permission.UNKNOWN_PERMISSION,  mPermissionKey, Permission.UNKNOWN_DATE);
                 } else {
                     p.setKey(mPermissionKey);
                 }
@@ -147,7 +143,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
             public void run() {
                 if (mProgressDialog != null) mProgressDialog.dismiss();
                 if (state == BluetoothClient.OPEN_MODE) {
-                    mDoor.save();
+                    mMaster.save();
                     Toast.makeText(DoorActivity.this, R.string.door_opened, Toast.LENGTH_SHORT).show();
                 } else if (state == BluetoothClient.DOOR_ALREADY_OPENED) {
                     Toast.makeText(DoorActivity.this, R.string.door_already_opened, Toast.LENGTH_SHORT).show();
@@ -173,9 +169,9 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
             public void run() {
                 if (mProgressDialog != null) mProgressDialog.dismiss();
                 if (mConfiguring){
-                    mDoor = getDoor();
-                    Permission p = Permission.create(mCurrentUser,mDoor , type, key, Permission.PERMANENT_DATE);
-                    mDoor.save();
+                    mMaster = getDoor();
+                    Permission p = Permission.create(mCurrentUser, mMaster, type, key, Permission.PERMANENT_DATE);
+                    mMaster.save();
                     p.save();
                     Toast.makeText(DoorActivity.this, "Success. Your key " + key + " is saved.", Toast.LENGTH_SHORT).show();
                     mConfiguring = false;
@@ -263,7 +259,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
 
                         mCurrentUser.makeFirstAdminConnection(extras.getString( MainActivity.DEFAULT_KEY_EXTRA),
                                 extras.getString( MainActivity.NEW_KEY_EXTRA),
-                                extras.getString( MainActivity.DOOR_NAME_EXTRA));
+                                extras.getString( MainActivity.MASTER_NAME_EXTRA));
                     }
                     mConfiguring = false;
                 }
@@ -274,7 +270,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
 
                     mCurrentUser.makeFirstAdminConnection(extras.getString( MainActivity.DEFAULT_KEY_EXTRA),
                             extras.getString( MainActivity.NEW_KEY_EXTRA),
-                            extras.getString( MainActivity.DOOR_NAME_EXTRA));
+                            extras.getString( MainActivity.MASTER_NAME_EXTRA));
                     mProgressDialog = ProgressDialog.show(this, null,  getResources().getString(R.string.configuring_door_dialog));
                     mConfiguring = true;
                 }
@@ -286,11 +282,16 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
                     String type = extras.getString(NewPermissionActivity.NEW_PERMISSION_TYPE);
                     String hour = extras.getString(NewPermissionActivity.NEW_PERMISSION_HOUR);
                     String date = extras.getString(NewPermissionActivity.NEW_PERMISSION_DATE);
-                    mCurrentUser.createNewPermission(type, date, hour, mDoor.getPermission().getKey(), mDoor.getName());
+                    mCurrentUser.createNewPermission(type, date, hour, mMaster.getPermission().getKey(), mMaster.getName());
                 }
                 break;
             default:
                 Toast.makeText(this, R.string.not_implemented_code_on_result, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void slaveSelected(Master master, Slave slave) {
+        mCurrentUser.openDoor(master, slave);
     }
 }

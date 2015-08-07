@@ -64,6 +64,9 @@
     <string name="set_key_permission"> Set permission key</string>
     <string name="permission_key_setted"> Permission key setted</string>
     <string name="no_devices_found_yet"> No devices found </string>
+    <string name="masters"> Masters </string>
+    <string name="logging"> Logging </string>
+    <string name="creating_account"> Creating account </string>
 
 
 <!-- TODO: Remove or change this placeholder text -->

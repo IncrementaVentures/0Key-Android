@@ -7,17 +7,17 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.incrementaventures.okey.Models.Door;
+import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
 
 
-public class DoorsAdapter extends ArrayAdapter<Door> {
+public class MastersAdapter extends ArrayAdapter<Master> {
 
     private LayoutInflater mLayoutInflator;
 
-    public DoorsAdapter(Context context, int resource, ArrayList<Door> objects){
+    public MastersAdapter(Context context, int resource, ArrayList<Master> objects){
         super(context, resource, objects);
         mLayoutInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -25,18 +25,18 @@ public class DoorsAdapter extends ArrayAdapter<Door> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        Door door = getItem(position);
+        Master master = getItem(position);
 
         if (view == null){
-            view = mLayoutInflator.inflate(R.layout.door_list_item, parent, false);
+            view = mLayoutInflator.inflate(R.layout.master_list_item, parent, false);
         }
 
         TextView doorName = (TextView) view.findViewById(R.id.door_name_list_item);
-        doorName.setText(door.getName());
+        doorName.setText(master.getName());
 
         TextView doorDescription = (TextView) view.findViewById(R.id.door_description_list_item);
-        doorDescription.setText(door.getDescription());
-        if (door.getDescription() == null || door.getDescription().equals("")){
+        doorDescription.setText(master.getDescription());
+        if (master.getDescription() == null || master.getDescription().equals("")){
             doorDescription.setText("No description");
         }
         return view;

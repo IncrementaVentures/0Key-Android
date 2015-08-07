@@ -13,7 +13,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.SparseArray;
 
-import com.incrementaventures.okey.Models.Door;
+import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 
 import java.util.LinkedList;
@@ -68,13 +68,15 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
      */
     private Handler mHandler;
     /*
-        Open or close door mode
+        The mode in which the class is permforming an action. For example, OPEN_MODE.
      */
     private int mMode;
 
     private String mPermissionKey;
     private String mFactoryKey;
-    private String mDoorName;
+    private String mMasterName;
+    private int mSlaveId;
+
 
     private String mPermissionType;
     private String mEndDate;
@@ -138,24 +140,25 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     }
 
 
-    public void executeOpenDoor(String key, String doorName){
+    public void executeOpenDoor(String key, String masterName, int slaveId){
         mPermissionKey = key;
-        mDoorName = doorName;
+        mSlaveId = slaveId;
+        mMasterName = masterName;
         mMode = OPEN_MODE;
         startScan();
     }
 
-    public void executeFirstConnectionConfiguration(String factoryKey, String permissionKey, String doorName){
+    public void executeFirstConnectionConfiguration(String factoryKey, String permissionKey, String masterName){
         mPermissionKey = permissionKey;
         mFactoryKey = factoryKey;
-        mDoorName = doorName;
+        mMasterName = masterName;
         mMode = FIRST_ADMIN_CONNECTION_MODE;
         startScan();
     }
 
     public void executeCreateNewPermission(String type, String date, String hour, String permissionKey, String doorName){
         mMode = CREATE_NEW_PERMISSION_MODE;
-        mDoorName = doorName;
+        mMasterName = doorName;
         mPermissionType = type;
         mPermissionKey = permissionKey;
         mEndDate = date;
@@ -196,9 +199,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
         //TODO: filter by the real door name
-        if ((mMode == OPEN_MODE && device.getName().equals(mDoorName))
-                || (mMode == CREATE_NEW_PERMISSION_MODE && device.getName().equals(mDoorName))
-                || (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(Door.FACTORY_NAME))){
+        if ((mMode == OPEN_MODE && device.getName().equals(mMasterName))
+                || (mMode == CREATE_NEW_PERMISSION_MODE && device.getName().equals(mMasterName))
+                || (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(Master.FACTORY_NAME))){
             mDevices.put(device.hashCode(), device);
             device.connectGatt(mContext, true, mGattCallback);
         }
@@ -244,19 +247,19 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             switch (mMode){
                 case OPEN_MODE:
                     // Separate the messsage in 20 bytes parts, then send each part
-                    String openMessage = BluetoothProtocol.buildOpenMessage(mPermissionKey);
+                    String openMessage = BluetoothProtocol.buildOpenMessage(mPermissionKey, mSlaveId);
                     mMessageParts = BluetoothProtocol.separateMessage(openMessage);
                     mSending = true;
                     BluetoothProtocol.sendMessage(gatt, mWriteCharacteristic, mMessageParts.poll());
                     break;
                 case FIRST_ADMIN_CONNECTION_MODE:
-                    String configurationMessage = BluetoothProtocol.buildFirstConfigurationMessage(mPermissionKey, mFactoryKey, mDoorName);
+                    String configurationMessage = BluetoothProtocol.buildFirstConfigurationMessage(mPermissionKey,mFactoryKey, mMasterName);
                     mMessageParts = BluetoothProtocol.separateMessage(configurationMessage);
                     mSending = true;
                     BluetoothProtocol.sendMessage(gatt, mWriteCharacteristic, mMessageParts.poll());
                     break;
                 case CREATE_NEW_PERMISSION_MODE:
-                    String newPermissionMessage = BluetoothProtocol.buildNewPermissionMessage(mPermissionType, mEndDate, mEndHour, mPermissionKey);
+                    String newPermissionMessage = BluetoothProtocol.buildNewPermissionMessage(mPermissionType, mSlaveId ,mEndDate, mEndHour, mPermissionKey);
                     mMessageParts = BluetoothProtocol.separateMessage(newPermissionMessage);
                     mSending = true;
                     BluetoothProtocol.sendMessage(gatt, mWriteCharacteristic, mMessageParts.poll());
