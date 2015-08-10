@@ -49,6 +49,8 @@
     <string name="new_door">Create door</string>
     <string name="due_date">End date</string>
     <string name="due_hour">End hour</string>
+    <string name="start_date">Start date</string>
+    <string name="start_hour">Start hour</string>
     <string name="scan_devices">Scan devices</string>
     <string name="share">Share</string>
     <string name="creating_permission">Creating permission</string>

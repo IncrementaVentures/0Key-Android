@@ -180,7 +180,6 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
                     Intent intent = new Intent(getBaseContext(), ShareKeyActivity.class);
                     intent.putExtra(Permission.KEY, key);
                     startActivity(intent);
-
                 }
             }
         });
@@ -280,9 +279,11 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
                     mProgressDialog = ProgressDialog.show(this, null, getResources().getString(R.string.creating_permission));
                     Bundle extras = data.getExtras();
                     String type = extras.getString(NewPermissionActivity.NEW_PERMISSION_TYPE);
-                    String hour = extras.getString(NewPermissionActivity.NEW_PERMISSION_HOUR);
-                    String date = extras.getString(NewPermissionActivity.NEW_PERMISSION_DATE);
-                    mCurrentUser.createNewPermission(type, date, hour, mMaster.getPermission().getKey(), mMaster.getName());
+                    String startHour = extras.getString(NewPermissionActivity.NEW_PERMISSION_START_HOUR);
+                    String startDate = extras.getString(NewPermissionActivity.NEW_PERMISSION_START_DATE);
+                    String endHour = extras.getString(NewPermissionActivity.NEW_PERMISSION_END_HOUR);
+                    String endDate = extras.getString(NewPermissionActivity.NEW_PERMISSION_END_DATE);
+                    mCurrentUser.createNewPermission(type, startDate, startHour, endDate, endHour, mMaster.getPermission().getKey(), mMaster.getName());
                 }
                 break;
             default:

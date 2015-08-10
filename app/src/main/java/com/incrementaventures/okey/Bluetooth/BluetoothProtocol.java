@@ -104,7 +104,7 @@ public class BluetoothProtocol {
         return builder.toString();
     }
 
-    public static String buildNewPermissionMessage(String permissionType, int slaveId, String endDate, String endHour, String adminKey) {
+    public static String buildNewPermissionMessage(String permissionType, int slaveId, String startDate, String startHour, String endDate, String endHour, String adminKey) {
         StringBuilder builder = new StringBuilder();
 
         builder.append(MODIFY_PERMISSIONS_MESSAGE_CODE);

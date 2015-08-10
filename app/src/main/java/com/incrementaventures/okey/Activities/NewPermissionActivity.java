@@ -12,9 +12,10 @@ import com.incrementaventures.okey.R;
 public class NewPermissionActivity extends ActionBarActivity {
 
     public static final String NEW_PERMISSION_TYPE = "permission_type";
-    public static final String NEW_PERMISSION_DATE = "permission_date";
-    public static final String NEW_PERMISSION_HOUR = "permission_hour";
-
+    public static final String NEW_PERMISSION_START_DATE = "permission_start_date";
+    public static final String NEW_PERMISSION_START_HOUR = "permission_start_hour";
+    public static final String NEW_PERMISSION_END_DATE = "permission_end_date";
+    public static final String NEW_PERMISSION_END_HOUR = "permission_end_hour";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

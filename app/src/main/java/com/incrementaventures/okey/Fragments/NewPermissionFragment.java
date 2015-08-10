@@ -37,11 +37,23 @@ public class NewPermissionFragment extends Fragment {
     @Bind(R.id.due_hour_layout)
     LinearLayout mDueHourLayout;
 
+    @Bind(R.id.start_date_layout)
+    LinearLayout mStartDateLayout;
+
+    @Bind(R.id.start_hour_layout)
+    LinearLayout mStartHourLayout;
+
     @Bind(R.id.end_date_new)
     TextView mEndDateView;
 
     @Bind(R.id.end_hour_new)
     TextView mEndHourView;
+
+    @Bind(R.id.start_date_new)
+    TextView mStartDateView;
+
+    @Bind(R.id.start_hour_layout)
+    TextView mStartHourView;
 
     @Bind(R.id.new_permission_button)
     Button mNewPermissionButton;
@@ -50,8 +62,10 @@ public class NewPermissionFragment extends Fragment {
     TextView mPermissionTypeView;
 
     private CharSequence mPermissionTypes[];
-    private String mDate;
-    private String mHour;
+    private String mEndDate;
+    private String mStartDate;
+    private String mEndHour;
+    private String mStartHour;
 
 
     public NewPermissionFragment() {
@@ -107,8 +121,26 @@ public class NewPermissionFragment extends Fragment {
                         String min = String.valueOf(minute);
                         if (hour.length() == 1) hour = "0" + hour;
                         if (min.length() == 1) min = "0" + min;
-                        mHour = hour + ":" + min;
-                        mEndHourView.setText(mHour);
+                        mEndHour = hour + ":" + min;
+                        mEndHourView.setText(mEndHour);
+                    }
+                };
+                newFragment.show(getActivity().getFragmentManager(), "datePicker");
+            }
+        });
+
+        mStartHourLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new TimePickerFragment(){
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        String hour = String.valueOf(hourOfDay);
+                        String min = String.valueOf(minute);
+                        if (hour.length() == 1) hour = "0" + hour;
+                        if (min.length() == 1) min = "0" + min;
+                        mStartHour = hour + ":" + min;
+                        mStartHourView.setText(mStartHour);
                     }
                 };
                 newFragment.show(getActivity().getFragmentManager(), "datePicker");
@@ -121,23 +153,43 @@ public class NewPermissionFragment extends Fragment {
                 DialogFragment newFragment = new DatePickerFragment(){
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
-                        mDate = String.valueOf(year) + "-"
+                        mEndDate = String.valueOf(year) + "-"
                                 + "0" + String.valueOf(month)
                                 + "-" + "0" + String.valueOf(day);
-                        mEndDateView.setText(mDate);
+                        mEndDateView.setText(mEndDate);
                     }
                 };
                 newFragment.show(getActivity().getFragmentManager(), "datePicker");
             }
         });
 
+        mStartDateLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new DatePickerFragment(){
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        mStartDate = String.valueOf(year) + "-"
+                                + "0" + String.valueOf(month)
+                                + "-" + "0" + String.valueOf(day);
+                        mEndDateView.setText(mStartDate);
+                    }
+                };
+                newFragment.show(getActivity().getFragmentManager(), "datePicker");
+            }
+        });
+
+
+
         mNewPermissionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent data = new Intent();
                 data.putExtra(NewPermissionActivity.NEW_PERMISSION_TYPE, mPermissionTypeView.getText().toString());
-                data.putExtra(NewPermissionActivity.NEW_PERMISSION_DATE, mEndDateView.getText().toString());
-                data.putExtra(NewPermissionActivity.NEW_PERMISSION_HOUR, mEndHourView.getText().toString());
+                data.putExtra(NewPermissionActivity.NEW_PERMISSION_START_DATE, mStartDateView.getText().toString());
+                data.putExtra(NewPermissionActivity.NEW_PERMISSION_START_HOUR, mStartHourView.getText().toString());
+                data.putExtra(NewPermissionActivity.NEW_PERMISSION_END_DATE, mEndDateView.getText().toString());
+                data.putExtra(NewPermissionActivity.NEW_PERMISSION_END_HOUR, mEndHourView.getText().toString());
                 data.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
                 getActivity().setResult(Activity.RESULT_OK, data);
                 getActivity().finish();

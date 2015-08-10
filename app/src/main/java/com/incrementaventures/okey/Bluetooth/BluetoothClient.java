@@ -81,6 +81,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private String mPermissionType;
     private String mEndDate;
     private String mEndHour;
+    private String mStartDate;
+    private String mStartHour;
+
 
 
 
@@ -156,13 +159,15 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan();
     }
 
-    public void executeCreateNewPermission(String type, String date, String hour, String permissionKey, String doorName){
+    public void executeCreateNewPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
         mMode = CREATE_NEW_PERMISSION_MODE;
         mMasterName = doorName;
         mPermissionType = type;
         mPermissionKey = permissionKey;
-        mEndDate = date;
-        mEndHour = hour;
+        mEndDate = endDate;
+        mEndHour = endHour;
+        mStartDate = startDate;
+        mStartHour = startHour;
         startScan();
     }
 
@@ -259,7 +264,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     BluetoothProtocol.sendMessage(gatt, mWriteCharacteristic, mMessageParts.poll());
                     break;
                 case CREATE_NEW_PERMISSION_MODE:
-                    String newPermissionMessage = BluetoothProtocol.buildNewPermissionMessage(mPermissionType, mSlaveId ,mEndDate, mEndHour, mPermissionKey);
+                    String newPermissionMessage = BluetoothProtocol.buildNewPermissionMessage(mPermissionType, mSlaveId, mStartDate, mStartHour ,mEndDate, mEndHour, mPermissionKey);
                     mMessageParts = BluetoothProtocol.separateMessage(newPermissionMessage);
                     mSending = true;
                     BluetoothProtocol.sendMessage(gatt, mWriteCharacteristic, mMessageParts.poll());
