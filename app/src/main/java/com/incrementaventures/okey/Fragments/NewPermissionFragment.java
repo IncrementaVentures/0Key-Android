@@ -101,9 +101,13 @@ public class NewPermissionFragment extends Fragment {
                         if (mPermissionTypes[which].equals(getResources().getString(R.string.permission_type_temporal))) {
                             mDueDateLayout.setVisibility(LinearLayout.VISIBLE);
                             mDueHourLayout.setVisibility(LinearLayout.VISIBLE);
+                            mStartDateLayout.setVisibility(LinearLayout.VISIBLE);
+                            mStartHourLayout.setVisibility(LinearLayout.VISIBLE);
                         } else{
                             mDueDateLayout.setVisibility(LinearLayout.GONE);
                             mDueHourLayout.setVisibility(LinearLayout.GONE);
+                            mStartDateLayout.setVisibility(LinearLayout.GONE);
+                            mStartHourLayout.setVisibility(LinearLayout.GONE);
                         }
                     }
                 });
