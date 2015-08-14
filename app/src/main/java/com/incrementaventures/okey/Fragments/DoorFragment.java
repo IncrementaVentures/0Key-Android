@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -65,16 +67,38 @@ public class DoorFragment extends Fragment {
         mMaster = getMaster();
         setPermission();
 
-        setUI();
+        setUI(inflater);
         setListeners();
 
         return v;
     }
 
-    private void setUI(){
+    private void setUI(final LayoutInflater inflater){
         if (mPermission != null){
             mSlaves = mMaster.getSlaves();
-            mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves);
+            mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves){
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    View view = convertView;
+                    final Slave slave = getItem(position);
+
+                    if (view == null){
+                        view = inflater.inflate(R.layout.slave_list_item, parent, false);
+                    }
+
+                    TextView doorName = (TextView) view.findViewById(R.id.slave_name);
+                    doorName.setText(slave.getName());
+
+                    LinearLayout openButton = (LinearLayout) view.findViewById(R.id.open_slave_layout);
+                    openButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mListener.slaveSelected(mMaster, slave);
+                        }
+                    });
+                    return view;
+                }
+            };
             mSlavesListView.setAdapter(mSlavesAdapter);
             mPermissionTypeView.setText(mPermission.getType());
             mEndDateView.setText(mPermission.getEndDate());

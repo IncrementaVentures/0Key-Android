@@ -186,6 +186,13 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
     }
 
     @Override
+    public void permissionReceived(int type, String key, String start, String end) {
+        if (mProgressDialog != null) mProgressDialog.dismiss();
+        Toast.makeText(this, "Permission received", Toast.LENGTH_SHORT).show();
+        // TODO: show in UI
+    }
+
+    @Override
     public void error(final int code) {
         runOnUiThread(new Runnable() {
             @Override

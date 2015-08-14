@@ -79,6 +79,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
 
     public interface OnPermissionsResponse{
         void permissionCreated(String key, int type);
+        void permissionReceived(int type, String key, String start, String end);
         void error(int code);
     }
 
@@ -100,6 +101,11 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     @Override
     public void permissionCreated(String key, int type) {
         mPermissionsListener.permissionCreated(key, type);
+    }
+
+    @Override
+    public void permissionReceived(int type, String key, String start, String end) {
+        mPermissionsListener.permissionReceived(type, key, start, end);
     }
 
     @Override

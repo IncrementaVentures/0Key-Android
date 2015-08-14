@@ -27,6 +27,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public static final String UUID = "uuid";
     public static final String TYPE = "type";
     public static final String KEY = "key";
+    public static final String START_DATE = "start_date";
     public static final String END_DATE = "end_date";
 
     private ParseObject mParsePermission;

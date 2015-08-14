@@ -303,6 +303,11 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     }
 
     @Override
+    public void permissionReceived(int type, String key, String start, String end) {
+
+    }
+
+    @Override
     public void error(final int code) {
         runOnUiThread(new Runnable() {
             @Override

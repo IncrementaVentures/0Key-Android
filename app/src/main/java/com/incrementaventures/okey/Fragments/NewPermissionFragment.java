@@ -52,7 +52,7 @@ public class NewPermissionFragment extends Fragment {
     @Bind(R.id.start_date_new)
     TextView mStartDateView;
 
-    @Bind(R.id.start_hour_layout)
+    @Bind(R.id.start_hour_new)
     TextView mStartHourView;
 
     @Bind(R.id.new_permission_button)
