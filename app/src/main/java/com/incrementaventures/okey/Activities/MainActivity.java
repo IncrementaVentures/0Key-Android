@@ -262,7 +262,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
     @Override
     public void stopScanning() {
-        mScanDevicesFragment.stopScanning();
+        if (mScanDevicesFragment != null) mScanDevicesFragment.stopScanning();
     }
 
 
