@@ -59,7 +59,7 @@ public class ProtocolTest {
 
     @Test
     public void testBuildGetAllPermissionsMessage(){
-        String message = BluetoothProtocol.buildGetAllPermissions(1, "1234");
+        String message = BluetoothProtocol.buildGetAllPermissionsMessage(1, "1234");
         String[] parts = message.split(BluetoothProtocol.SEPARATOR);
 
         Assert.assertEquals("09", parts[0]);

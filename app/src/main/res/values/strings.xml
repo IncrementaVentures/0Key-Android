@@ -33,8 +33,12 @@
     <string name="enter_pin">Insert pin</string>
     <string name="okey">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="read_my_permission">My permission</string>
+    <string name="read_all_permissions">All permissions</string>
 
     <string name="pin_incorrect">Pin incorrect</string>
+
+    <string name="get_slaves">Get slaves</string>
 
     <string name="gonna_be_admin">I will be the house administrator</string>
     <string name="insert_default_key">Insert the default key.</string>

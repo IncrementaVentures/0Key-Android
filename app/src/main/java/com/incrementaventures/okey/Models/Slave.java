@@ -11,20 +11,21 @@ public class Slave implements ParseObject{
     private com.parse.ParseObject mParseSlave;
 
 
-    private Slave(String uuidMaster, String name, int type){
+    private Slave(String uuidMaster, String name, int type, int id){
         mParseSlave = com.parse.ParseObject.create(SLAVE_CLASS_NAME);
         mParseSlave.put(UUID, java.util.UUID.randomUUID().toString());
         mParseSlave.put(UUID_MASTER, uuidMaster);
         mParseSlave.put(NAME, name);
         mParseSlave.put(TYPE, type);
+        mParseSlave.put(ID, id);
     }
 
     private Slave(com.parse.ParseObject parseSlave){
         mParseSlave = parseSlave;
     }
 
-    public static Slave create( String uuidMaster, String name, int type){
-        return new Slave(uuidMaster, name, type);
+    public static Slave create( String uuidMaster, String name, int type, int id){
+        return new Slave(uuidMaster, name, type, id);
     }
 
     public static Slave create(com.parse.ParseObject parseSlave){

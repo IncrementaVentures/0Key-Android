@@ -3,7 +3,10 @@ package com.incrementaventures.okey.Fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,12 +26,13 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DoorFragment extends Fragment {
+public class DoorFragment extends Fragment implements PopupMenu.OnMenuItemClickListener{
 
     @Bind(R.id.permission_type)
     TextView mPermissionTypeView;
@@ -45,16 +49,24 @@ public class DoorFragment extends Fragment {
     private List<Slave> mSlaves;
     private SlavesAdapter mSlavesAdapter;
 
+    private Slave mSelectedSlave;
+
     private boolean mScannedDoor;
 
     private OnSlaveSelectedListener mListener;
 
+
+
     public interface OnSlaveSelectedListener{
-        void slaveSelected(Master master, Slave slave);
+        void openDoorSelected(Master master, Slave slave);
+        void readMyPermissionSelected(Master master, Slave slave, String permissionKey);
+        void readAllPermissionsSelected(Master master, Slave slave, String permissionKey);
     }
 
     public DoorFragment() {
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,11 +101,24 @@ public class DoorFragment extends Fragment {
                     TextView doorName = (TextView) view.findViewById(R.id.slave_name);
                     doorName.setText(slave.getName());
 
+                    ImageButton moreOptionsButton = (ImageButton) view.findViewById(R.id.more_options_button);
+                    moreOptionsButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mSelectedSlave = slave;
+                            PopupMenu popup = new PopupMenu(getContext(), v);
+                            MenuInflater inflater = popup.getMenuInflater();
+                            inflater.inflate(R.menu.menu_more_options_slave, popup.getMenu());
+                            popup.setOnMenuItemClickListener(DoorFragment.this);
+                            popup.show();
+                        }
+                    });
+
                     LinearLayout openButton = (LinearLayout) view.findViewById(R.id.open_slave_layout);
                     openButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mListener.slaveSelected(mMaster, slave);
+                            mListener.openDoorSelected(mMaster, slave);
                         }
                     });
                     return view;
@@ -113,10 +138,12 @@ public class DoorFragment extends Fragment {
         mSlavesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mListener.slaveSelected(mMaster, mSlaves.get(position));
+                mListener.openDoorSelected(mMaster, mSlaves.get(position));
             }
         });
     }
+
+
 
     private Master getMaster(){
         if (mScannedDoor){
@@ -145,6 +172,20 @@ public class DoorFragment extends Fragment {
 
     }
 
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_read_my_permission:
+                mListener.readMyPermissionSelected(mMaster, mSelectedSlave, mPermission.getKey());
+                return true;
+            case R.id.action_read_all_permissions:
+                mListener.readAllPermissionsSelected(mMaster, mSelectedSlave, mPermission.getKey());
+                return true;
+            default:
+                return false;
+        }
+    }
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -154,6 +195,16 @@ public class DoorFragment extends Fragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement OnSlaveSelectedListener");
         }
+    }
+
+    public void addSlave(String id, String type, String name){
+        Slave s = Slave.create(mMaster.getUUID(), name, Integer.valueOf(type), Integer.valueOf(id));
+        if (mSlaves == null) mSlaves = new ArrayList<>();
+        mSlaves.add(s);
+        mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves);
+        mSlavesListView.setAdapter(mSlavesAdapter);
+        mSlavesAdapter.notifyDataSetChanged();
+        s.save();
     }
 
 

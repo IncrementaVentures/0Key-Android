@@ -206,7 +206,7 @@ public class BluetoothProtocol {
         return builder.toString();
     }
 
-    public static String buildGetAllPermissions(int slaveId, String permissionKey) {
+    public static String buildGetAllPermissionsMessage(int slaveId, String permissionKey) {
         StringBuilder builder = new StringBuilder();
         Time time = new Time();
         time.setToNow();

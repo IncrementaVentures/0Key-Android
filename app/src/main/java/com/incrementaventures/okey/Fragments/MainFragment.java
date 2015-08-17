@@ -106,13 +106,13 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
 
     private void createFakeData(){
         if (mMasters.size() == 0){
-            Master m1 = Master.create("Fake master 1", "This is a fake master.");
-            Master m2 = Master.create("Fake master 2", "This is a fake master too.");
+            Master m1 = Master.create("Fake master first", "This is a fake master.");
+            Master m2 = Master.create("Fake master second", "This is a fake master too.");
             m1.save();
             m2.save();
             for (int i = 1; i<6; i++){
-                Slave s1 = Slave.create(m1.getUUID(), "Slave "+i, 0);
-                Slave s2 = Slave.create(m2.getUUID(), "Slave "+i, 0);
+                Slave s1 = Slave.create(m1.getUUID(), "Slave "+i, 0, i);
+                Slave s2 = Slave.create(m2.getUUID(), "Slave "+i, 0, i);
                 s1.save();
                 s2.save();
             }

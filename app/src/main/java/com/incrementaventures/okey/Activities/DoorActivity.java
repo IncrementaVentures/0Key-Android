@@ -26,7 +26,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorActionsResponse, User.OnPermissionsResponse, User.OnUserBluetoothToActivityResponse, DoorFragment.OnSlaveSelectedListener {
+public class DoorActivity extends ActionBarActivity implements User.OnActionMasterResponse, User.OnPermissionsResponse, User.OnUserBluetoothToActivityResponse, DoorFragment.OnSlaveSelectedListener {
 
     public static final int NEW_PERMISSION_REQUEST = 40;
 
@@ -105,6 +105,10 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
             mConfiguring = true;
         }
 
+        else if (id == R.id.action_get_slaves){
+            mProgressDialog = ProgressDialog.show(this, null, "Getting slaves");
+            mCurrentUser.getSlaves(mMaster, mMaster.getPermission().getKey());
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -160,6 +164,11 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
     @Override
     public void noPermission() {
         Toast.makeText(this, R.string.no_permission, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void slaveFound(String id, String type, String name) {
+        mDoorFragment.addSlave(id, type, name);
     }
 
     @Override
@@ -299,7 +308,20 @@ public class DoorActivity extends ActionBarActivity implements User.OnOpenDoorAc
     }
 
     @Override
-    public void slaveSelected(Master master, Slave slave) {
+    public void openDoorSelected(Master master, Slave slave) {
         mCurrentUser.openDoor(master, slave);
+    }
+
+    @Override
+    public void readMyPermissionSelected(Master master, Slave slave, String permissionKey) {
+        mProgressDialog = ProgressDialog.show(this, null, "Reading permission");
+        mCurrentUser.readMyPermission(master, slave, permissionKey);
+    }
+
+    @Override
+    public void readAllPermissionsSelected(Master master, Slave slave, String permissionKey) {
+        mProgressDialog = ProgressDialog.show(this, null, "Reading permissions");
+        mCurrentUser.readAllPermissions(master, slave, permissionKey);
+
     }
 }

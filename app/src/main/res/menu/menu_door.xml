@@ -6,15 +6,19 @@
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 
+    <item android:id="@+id/action_get_slaves"
+          android:title="@string/get_slaves"
+          android:orderInCategory="99"
+          app:showAsAction="never" />
 
     <item android:id="@+id/first_config_action"
         android:title="@string/first_configuration_action_bar"
-        android:orderInCategory="99"
+        android:orderInCategory="98"
         app:showAsAction="never" />
 
     <item android:id="@+id/set_permission_key"
         android:title="@string/set_key_permission"
-        android:orderInCategory="98"
+        android:orderInCategory="97"
         app:showAsAction="never" />
 
     <item android:id="@+id/action_new_permission"

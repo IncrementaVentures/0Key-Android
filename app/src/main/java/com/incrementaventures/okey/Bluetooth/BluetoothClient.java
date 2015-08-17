@@ -16,6 +16,7 @@ import android.util.SparseArray;
 
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
+import com.incrementaventures.okey.Models.Slave;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int FIRST_ADMIN_CONNECTION_MODE = 4;
     public static final int CREATE_NEW_PERMISSION_MODE = 7;
     public static final int GET_SLAVES_MODE = 8;
+    public static final int READ_MY_PERMISSION_MODE = 9;
+    public static final int READ_ALL_PERMISSIONS_MODE = 10;
 
     public static final int DOOR_ALREADY_CLOSED = 2;
     public static final int DOOR_ALREADY_OPENED = 3;
@@ -114,6 +117,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         void permissionCreated(String key, int type);
         void permissionReceived(int type, String key, String start, String end);
         void stopScanning();
+        void slaveFound(String id, String type, String name);
         void doorClosed(int state);
         void error(int mode);
     }
@@ -176,6 +180,29 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan();
     }
 
+    public void executeReadUserPermission(String masterName, int slaveId, String permissionKey){
+        mMasterName = masterName;
+        mPermissionKey = permissionKey;
+        mSlaveId = slaveId;
+        mMode = READ_MY_PERMISSION_MODE;
+        startScan();
+    }
+
+    public void executeReadAllPermissions(String masterName, int slaveId, String permissionKey){
+        mMasterName = masterName;
+        mPermissionKey = permissionKey;
+        mSlaveId = slaveId;
+        mMode = READ_ALL_PERMISSIONS_MODE;
+        startScan();
+    }
+
+    public void executeGetSlaves(String masterName, String permissionKey){
+        mMasterName = masterName;
+        mPermissionKey = permissionKey;
+        mMode = GET_SLAVES_MODE;
+        startScan();
+    }
+
 
     private void startScan(){
         mScanning = true;
@@ -208,12 +235,18 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
      */
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-        //TODO: filter by the real door name
+
         if ((mMode == OPEN_MODE && device.getName().equals(mMasterName))
                 || (mMode == CREATE_NEW_PERMISSION_MODE && device.getName().equals(mMasterName))
-                || (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(Master.FACTORY_NAME))){
+                || (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(Master.FACTORY_NAME))
+                || (mMode == READ_MY_PERMISSION_MODE && device.getName().equals(mMasterName))
+                || (mMode == READ_ALL_PERMISSIONS_MODE && device.getName().equals(mMasterName))
+                || (mMode == GET_SLAVES_MODE && device.getName().equals(mMasterName))){
+
+
             mDevices.put(device.hashCode(), device);
             device.connectGatt(mContext, true, mGattCallback);
+
         }
         else if (mMode == SCAN_MODE) {
             mListener.deviceFound(device, rssi, scanRecord);
@@ -260,13 +293,19 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     message = BluetoothProtocol.buildOpenMessage(mPermissionKey, mSlaveId);
                     break;
                 case FIRST_ADMIN_CONNECTION_MODE:
-                    message = BluetoothProtocol.buildFirstConfigurationMessage(mPermissionKey,mFactoryKey, mMasterName);
+                    message = BluetoothProtocol.buildFirstConfigurationMessage(mPermissionKey, mFactoryKey, mMasterName);
                     break;
                 case CREATE_NEW_PERMISSION_MODE:
-                    message = BluetoothProtocol.buildNewPermissionMessage(mPermissionType, mSlaveId, mStartDate, mStartHour ,mEndDate, mEndHour, mPermissionKey);
+                    message = BluetoothProtocol.buildNewPermissionMessage(mPermissionType, mSlaveId, mStartDate, mStartHour, mEndDate, mEndHour, mPermissionKey);
                     break;
                 case GET_SLAVES_MODE:
                     message = BluetoothProtocol.buildGetSlavesMessage(mPermissionKey);
+                    break;
+                case READ_MY_PERMISSION_MODE:
+                    message = BluetoothProtocol.buildGetUserPermissionMessage(mSlaveId, mPermissionKey);
+                    break;
+                case READ_ALL_PERMISSIONS_MODE:
+                    message = BluetoothProtocol.buildGetAllPermissionsMessage(mSlaveId, mPermissionKey);
                     break;
                 default:
                     return;
@@ -312,9 +351,13 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 case BluetoothProtocol.INDIVIDUAL_PERMISSION_RESPONSE_CODE:
                     processIndividualPermissionResponse(fullMessage);
                     break;
+                case BluetoothProtocol.ALL_PERMISSIONS_RESPONSE_CODE:
+                    break;
                 case BluetoothProtocol.GET_SLAVES_MESSAGE_CODE:
                     processGetSlavesResponse(fullMessage);
                     break;
+
+
                 default:
                     mListener.error(RESPONSE_INCORRECT);
                     break;
@@ -457,11 +500,19 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         }
     }
 
+    private void processAllPermissionsResponse(String fullMessage){
+        // TODO: implement
+        mListener.error(RESPONSE_INCORRECT);
+    }
+
     private void processGetSlavesResponse(String fullMessage){
         String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
         switch (errorCode){
             case BluetoothProtocol.OK_ERROR_CODE:
                 ArrayList<HashMap<String,String>> slaves = BluetoothProtocol.getSlavesList(fullMessage);
+                for (HashMap<String, String> values : slaves){
+                    mListener.slaveFound(values.get(Slave.ID), values.get(Slave.TYPE), values.get(Slave.NAME));
+                }
                 break;
             default:
                 return;

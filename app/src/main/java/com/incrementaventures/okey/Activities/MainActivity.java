@@ -33,7 +33,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener, User.OnUserBluetoothToActivityResponse, User.OnOpenDoorActionsResponse, User.OnPermissionsResponse {
+public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener, User.OnUserBluetoothToActivityResponse, User.OnActionMasterResponse, User.OnPermissionsResponse {
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
     public static final String DEFAULT_KEY_EXTRA = "defaultkey";
@@ -294,6 +294,11 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     @Override
     public void noPermission() {
         Toast.makeText(this, R.string.no_permission, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void slaveFound(String id, String type, String name) {
+
     }
 
 
