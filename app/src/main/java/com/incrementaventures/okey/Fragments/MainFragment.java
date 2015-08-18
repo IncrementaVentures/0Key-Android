@@ -12,9 +12,10 @@ import android.widget.ListView;
 
 import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
-import com.incrementaventures.okey.Adapters.DoorsAdapter;
-import com.incrementaventures.okey.Models.Door;
+import com.incrementaventures.okey.Adapters.MastersAdapter;
+import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
+import com.incrementaventures.okey.Models.Slave;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
@@ -24,13 +25,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainFragment extends Fragment implements Door.OnDoorDataListener{
+public class MainFragment extends Fragment implements Master.OnMasterDataListener {
 
-    @Bind(R.id.door_list_main)
-    ListView mDoorList;
+    @Bind(R.id.master_list_main)
+    ListView mMasterList;
 
-    ArrayList<Door> mDoors;
-    DoorsAdapter mAdapter;
+    ArrayList<Master> mMasters;
+    MastersAdapter mAdapter;
 
     User mCurrentUser;
 
@@ -62,13 +63,13 @@ public class MainFragment extends Fragment implements Door.OnDoorDataListener{
     }
 
     private void setListeners(){
-        mDoorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mMasterList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String doorUuid = mDoors.get(position).getUUID();
-                Intent intent = new Intent (getActivity(), DoorActivity.class);
-                intent.putExtra(Door.UUID, doorUuid);
-                intent.putExtra(MainActivity.DOOR_NAME_EXTRA, mDoors.get(position).getName());
+                String doorUuid = mMasters.get(position).getUUID();
+                Intent intent = new Intent(getActivity(), DoorActivity.class);
+                intent.putExtra(Master.UUID, doorUuid);
+                intent.putExtra(MainActivity.MASTER_NAME_EXTRA, mMasters.get(position).getName());
                 intent.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
                 startActivity(intent);
             }
@@ -77,46 +78,53 @@ public class MainFragment extends Fragment implements Door.OnDoorDataListener{
 
 
     private void setUp(){
-        mDoors = new ArrayList<>();
+        mMasters = new ArrayList<>();
         if (mCurrentUser != null){
-            //Door.deleteAll();
-            Door.getDoors(this);
+            //Master.deleteAll();
+            //Permission.deleteAll();
+            Master.getMasters(this);
         }
 
     }
 
     private void setDoorList(){
-        mAdapter = new DoorsAdapter(getActivity(), R.layout.door_list_item, mDoors);
-        mDoorList.setAdapter(mAdapter);
+        mAdapter = new MastersAdapter(getActivity(), R.layout.master_list_item, mMasters);
+        mMasterList.setAdapter(mAdapter);
     }
 
 
     @Override
-    public void doorFinded(Door door) {
-        if (door == null ){
+    public void masterFinded(Master master) {
+        if (master == null ){
             createFakeData();
         } else{
-            mDoors.add(door);
-            mAdapter = new DoorsAdapter(getActivity(), R.layout.door_list_item, mDoors);
-            mDoorList.setAdapter(mAdapter);
+            mMasters.add(master);
+            mAdapter = new MastersAdapter(getActivity(), R.layout.master_list_item, mMasters);
+            mMasterList.setAdapter(mAdapter);
         }
     }
 
     private void createFakeData(){
-        if (mDoors.size() == 0){
-            Door d1 = Door.create("Fake door 1", "This is a fake door.");
-            Door d2 = Door.create("Fake door 2", "This is a fake door too.");
-            d1.save();
-            d2.save();
-            mDoors.add(d1);
-            mDoors.add(d2);
-            Permission p1 = Permission.create(mCurrentUser, d1, 0, "1234", Permission.PERMANENT_DATE);
-            Permission p2 = Permission.create(mCurrentUser, d2, 0, "1234", Permission.PERMANENT_DATE);
+        if (mMasters.size() == 0){
+            Master m1 = Master.create("Fake master first", "This is a fake master.");
+            Master m2 = Master.create("Fake master second", "This is a fake master too.");
+            m1.save();
+            m2.save();
+            for (int i = 1; i<6; i++){
+                Slave s1 = Slave.create(m1.getUUID(), "Slave "+i, 0, i);
+                Slave s2 = Slave.create(m2.getUUID(), "Slave "+i, 0, i);
+                s1.save();
+                s2.save();
+            }
+            mMasters.add(m1);
+            mMasters.add(m2);
+            Permission p1 = Permission.create(mCurrentUser, m1, 0, "1234", Permission.PERMANENT_DATE);
+            Permission p2 = Permission.create(mCurrentUser, m2, 0, "1234", Permission.PERMANENT_DATE);
             p1.save();
             p2.save();
 
-            mAdapter = new DoorsAdapter(getActivity(), R.layout.door_list_item, mDoors);
-            mDoorList.setAdapter(mAdapter);
+            mAdapter = new MastersAdapter(getActivity(), R.layout.master_list_item, mMasters);
+            mMasterList.setAdapter(mAdapter);
         }
     }
 }

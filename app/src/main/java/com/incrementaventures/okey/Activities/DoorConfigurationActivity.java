@@ -42,7 +42,7 @@ public class DoorConfigurationActivity extends ActionBarActivity {
                 Intent results = new Intent();
                 results.putExtra(MainActivity.DEFAULT_KEY_EXTRA, defaultKey);
                 results.putExtra(MainActivity.NEW_KEY_EXTRA, newKey);
-                results.putExtra(MainActivity.DOOR_NAME_EXTRA, doorName);
+                results.putExtra(MainActivity.MASTER_NAME_EXTRA, doorName);
 
                 setResult(RESULT_OK, results);
                 finish();

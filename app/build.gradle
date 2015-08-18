@@ -11,6 +11,9 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -26,5 +29,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: 'Parse-*.jar')
     compile fileTree(dir: 'libs', include: 'ParseCrashReporting-*.jar')
     compile 'com.jakewharton:butterknife:7.0.1'
+    testCompile 'junit:junit:4.12'
+    testCompile "org.mockito:mockito-core:1.9.5"
 
 }

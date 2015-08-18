@@ -25,7 +25,7 @@ import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.incrementaventures.okey.Fragments.InsertPinFragment;
 import com.incrementaventures.okey.Fragments.MainFragment;
 import com.incrementaventures.okey.Fragments.ScanDevicesFragment;
-import com.incrementaventures.okey.Models.Door;
+import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
@@ -33,29 +33,28 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener, User.OnUserBluetoothToActivityResponse, User.OnOpenDoorActionsResponse, User.OnPermissionsResponse {
+public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener, User.OnUserBluetoothToActivityResponse, User.OnActionMasterResponse, User.OnPermissionsResponse {
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
     public static final String DEFAULT_KEY_EXTRA = "defaultkey";
     public static final String NEW_KEY_EXTRA = "newkey";
-    public static final String DOOR_NAME_EXTRA = "doorname";
+    public static final String MASTER_NAME_EXTRA = "doorname";
     public static final String SCANNED_DOOR_EXTRA = "scanneddoor";
 
 
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
-
     @Bind(R.id.left_drawer)
     ListView mDrawerList;
 
-    private User mCurrentUser;
-
     private String[] mDrawerItems;
     private ActionBarDrawerToggle mDrawerToggle;
-
     private ProgressDialog mProgressDialog;
 
     private ScanDevicesFragment mScanDevicesFragment;
+
+    private User mCurrentUser;
+    private boolean mScanning;
 
 
 
@@ -134,6 +133,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
                     .replace(R.id.content_frame, mScanDevicesFragment)
                     .addToBackStack(null)
                     .commit();
+            mScanning = true;
             return true;
         }
 
@@ -196,7 +196,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(R.string.app_name);
+                getSupportActionBar().setTitle(R.string.masters);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
@@ -251,8 +251,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
     @Override
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
-        // TODO: create the door. Send the door to the ScanDevicesFragment. Add door to listview.
-        mScanDevicesFragment.addDevice( Door.create(device.getName(), String.valueOf(rssi)));
+        mScanDevicesFragment.addDevice( Master.create(device.getName(), ""));
     }
 
     @Override
@@ -263,7 +262,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
     @Override
     public void stopScanning() {
-        mScanDevicesFragment.stopScanning();
+        if (mScanDevicesFragment != null) mScanDevicesFragment.stopScanning();
     }
 
 
@@ -297,9 +296,19 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         Toast.makeText(this, R.string.no_permission, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void slaveFound(String id, String type, String name) {
+
+    }
+
 
     @Override
     public void permissionCreated(String key, int type) {
+
+    }
+
+    @Override
+    public void permissionReceived(int type, String key, String start, String end) {
 
     }
 
@@ -340,9 +349,19 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
             case REQUEST_ENABLE_BT:
-                if(resultCode == RESULT_OK){
-                    mCurrentUser.openDoor(Door.create("Test", "TEST"));
+                if (mScanning){
+                    if(resultCode == RESULT_OK){
+                        mScanDevicesFragment = new ScanDevicesFragment();
+                        getFragmentManager().beginTransaction()
+                                .replace(R.id.content_frame, mScanDevicesFragment)
+                                .addToBackStack(null)
+                                .commit();
+                        mScanning = false;
+                    } else {
+                        mScanDevicesFragment.stopScanning();
+                    }
                 }
+
                 break;
             case FIRST_CONFIG:
                 if (resultCode == RESULT_OK){
@@ -350,7 +369,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
                     mCurrentUser.makeFirstAdminConnection(extras.getString(DEFAULT_KEY_EXTRA),
                                                           extras.getString(NEW_KEY_EXTRA),
-                                                          extras.getString(DOOR_NAME_EXTRA));
+                                                          extras.getString(MASTER_NAME_EXTRA));
                     mProgressDialog = ProgressDialog.show(this, null,  getResources().getString(R.string.configuring_door_dialog));
                 }
                 break;

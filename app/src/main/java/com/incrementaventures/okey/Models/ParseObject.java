@@ -2,7 +2,7 @@ package com.incrementaventures.okey.Models;
 
 public interface ParseObject {
 
-    String getId();
+    String getObjectId();
     void deleteFromLocal();
     void save();
     String getUUID();

@@ -2,6 +2,7 @@ package com.incrementaventures.okey.Fragments;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ public class LoginFragment extends Fragment implements User.OnParseUserResponse{
     EditText mLoginPassword;
 
     LoginFragment thisFragment = this;
+    ProgressDialog mProgressDialog;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -81,6 +83,7 @@ public class LoginFragment extends Fragment implements User.OnParseUserResponse{
                 String password = mLoginPassword.getText().toString();
                 String email = mLoginEmail.getText().toString();
                 User.logIn(thisFragment, email, password);
+                mProgressDialog = ProgressDialog.show(getActivity(), null, getResources().getString(R.string.logging));
             }
         });
 
@@ -95,6 +98,7 @@ public class LoginFragment extends Fragment implements User.OnParseUserResponse{
 
     @Override
     public void userLoggedIn() {
+        if (mProgressDialog != null) mProgressDialog.dismiss();
         Intent intent = new Intent(getActivity(), MainActivity.class);
         startActivity(intent);
         getActivity().finish();
@@ -102,6 +106,7 @@ public class LoginFragment extends Fragment implements User.OnParseUserResponse{
 
     @Override
     public void authError(ParseException e) {
+        if (mProgressDialog != null) mProgressDialog.dismiss();
         Toast.makeText(getActivity().getApplicationContext(), R.string.auth_error, Toast.LENGTH_SHORT).show();
     }
 }

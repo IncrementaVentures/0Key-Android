@@ -1,13 +1,13 @@
 package com.incrementaventures.okey.Fragments;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -32,11 +32,11 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserR
     EditText mPhone;
     @Bind(R.id.create_account_button)
     Button mCreateButton;
-    @Bind(R.id.gonna_be_admin)
-    CheckBox mIsAdminCheckBox;
 
 
     CreateAccountFragment thisFragment = this;
+
+    private ProgressDialog mProgressDialog;
 
     public CreateAccountFragment() {
     }
@@ -62,18 +62,17 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserR
                 String email = mEmail.getText().toString();
                 String phone = mPhone.getText().toString();
                 User.signUp(thisFragment, name, password, email, phone);
+                mProgressDialog = ProgressDialog.show(getActivity(), null, getResources().getString(R.string.logging));
+
             }
         });
     }
 
     @Override
     public void userSignedUp() {
-        if (mIsAdminCheckBox.isChecked()){
-            // TODO: start activity to insert default key
-        } else {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            startActivity(intent);
-        }
+        if (mProgressDialog != null) mProgressDialog.dismiss();
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -83,6 +82,7 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserR
 
     @Override
     public void authError(ParseException e) {
+        if (mProgressDialog != null) mProgressDialog.dismiss();
         Toast.makeText(getActivity().getApplicationContext(), R.string.auth_error, Toast.LENGTH_SHORT).show();
     }
 }

@@ -14,8 +14,8 @@ import android.widget.TextView;
 
 import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
-import com.incrementaventures.okey.Adapters.DoorsAdapter;
-import com.incrementaventures.okey.Models.Door;
+import com.incrementaventures.okey.Adapters.MastersAdapter;
+import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
@@ -36,8 +36,8 @@ public class ScanDevicesFragment extends Fragment {
     @Bind(R.id.no_devices_found_view)
     TextView mNoDevicesFound;
 
-    ArrayList<Door> mDoors;
-    DoorsAdapter mAdapter;
+    ArrayList<Master> mMasters;
+    MastersAdapter mAdapter;
 
     User mCurrentUser;
 
@@ -64,8 +64,8 @@ public class ScanDevicesFragment extends Fragment {
 
     private void setUp(){
         getActivity().setTitle(R.string.scan_devices);
-        mDoors = new ArrayList<>();
-        mAdapter = new DoorsAdapter(getActivity(), R.id.door_name_list_item, mDoors);
+        mMasters = new ArrayList<>();
+        mAdapter = new MastersAdapter(getActivity(), R.id.door_name_list_item, mMasters);
         mDevicesList.setAdapter(mAdapter);
     }
 
@@ -77,19 +77,19 @@ public class ScanDevicesFragment extends Fragment {
         mDevicesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String doorUuid = mDoors.get(position).getUUID();
-                Intent intent = new Intent (getActivity(), DoorActivity.class);
-                intent.putExtra(Door.UUID, doorUuid);
-                intent.putExtra(MainActivity.DOOR_NAME_EXTRA, mDoors.get(position).getName());
+                String doorUuid = mMasters.get(position).getUUID();
+                Intent intent = new Intent(getActivity(), DoorActivity.class);
+                intent.putExtra(Master.UUID, doorUuid);
+                intent.putExtra(MainActivity.MASTER_NAME_EXTRA, mMasters.get(position).getName());
                 intent.putExtra(MainActivity.SCANNED_DOOR_EXTRA, true);
                 startActivity(intent);
             }
         });
     }
 
-    public void addDevice(Door door){
+    public void addDevice(Master master){
         mNoDevicesFound.setVisibility(TextView.GONE);
-        mDoors.add(door);
+        mMasters.add(master);
         ((BaseAdapter) mDevicesList.getAdapter()).notifyDataSetChanged();
 
     }
@@ -97,6 +97,8 @@ public class ScanDevicesFragment extends Fragment {
     public void stopScanning(){
         mScanningTopBar.setVisibility(TextView.GONE);
     }
+
+
 
 
 

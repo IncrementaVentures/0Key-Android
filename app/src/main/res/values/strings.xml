@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_create_account">CreateAccountActivity</string>
-    <string name="auth_error">Cant authenticate, try again</string>
+    <string name="auth_error">Can\'t authenticate, try again</string>
     <string name="door_opened">Door opened</string>
     <string name="door_closed">Door closed</string>
 
@@ -20,6 +20,7 @@
     <string name="door_cant_close">Can\'t close</string>
 
     <string name="open_door">Open door</string>
+    <string name="open">Open</string>
     <string name="close_door">Close door</string>
 
     <string name="door_already_opened"> Already opened</string>
@@ -32,8 +33,12 @@
     <string name="enter_pin">Insert pin</string>
     <string name="okey">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="read_my_permission">My permission</string>
+    <string name="read_all_permissions">All permissions</string>
 
     <string name="pin_incorrect">Pin incorrect</string>
+
+    <string name="get_slaves">Get slaves</string>
 
     <string name="gonna_be_admin">I will be the house administrator</string>
     <string name="insert_default_key">Insert the default key.</string>
@@ -49,6 +54,8 @@
     <string name="new_door">Create door</string>
     <string name="due_date">End date</string>
     <string name="due_hour">End hour</string>
+    <string name="start_date">Start date</string>
+    <string name="start_hour">Start hour</string>
     <string name="scan_devices">Scan devices</string>
     <string name="share">Share</string>
     <string name="creating_permission">Creating permission</string>
@@ -64,6 +71,9 @@
     <string name="set_key_permission"> Set permission key</string>
     <string name="permission_key_setted"> Permission key setted</string>
     <string name="no_devices_found_yet"> No devices found </string>
+    <string name="masters"> Masters </string>
+    <string name="logging"> Logging </string>
+    <string name="creating_account"> Creating account </string>
 
 
 <!-- TODO: Remove or change this placeholder text -->
