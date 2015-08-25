@@ -48,7 +48,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int CANT_CONFIGURE = 104;
     public static final int PERMISSION_NOT_CREATED = 105;
     public static final int DONT_HAVE_PERMISSION = 106;
-
+    public static final int BAD_INPUT = 107;
+    public static final int DONT_HAVE_PERMISSION_THIS_HOUR = 108;
     private boolean mScanning;
     private boolean mConnected;
     private boolean mSending;
@@ -353,7 +354,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     break;
                 case BluetoothProtocol.ALL_PERMISSIONS_RESPONSE_CODE:
                     break;
-                case BluetoothProtocol.GET_SLAVES_MESSAGE_CODE:
+                case BluetoothProtocol.GET_SLAVES_RESPONSE_CODE:
                     processGetSlavesResponse(fullMessage);
                     break;
 
@@ -449,8 +450,13 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
         // Returns the key created by the external device
         String key = BluetoothProtocol.getNewPermissionKey(fullMessage);
+        if (!errorCode.equals(BluetoothProtocol.OK_ERROR_CODE)){
+            int e = determineError(errorCode);
+            mListener.error(e);
+            return;
+        }
 
-        if (key != null && errorCode.equals(BluetoothProtocol.OK_ERROR_CODE)){
+        if (key != null){
             switch (mMode){
                 case FIRST_ADMIN_CONNECTION_MODE:
                     mListener.permissionCreated(key, Permission.ADMIN_PERMISSION);
@@ -480,7 +486,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             mListener.doorOpened(OPEN_MODE);
         }
         else{
-            mListener.error(CANT_OPEN);
+            String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
+            int e = determineError(errorCode);
+            mListener.error(e);
         }
     }
 
@@ -496,6 +504,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                                              data.getString(Permission.END_DATE)) ;
                 break;
             default:
+                int e = determineError(errorCode);
+                mListener.error(e);
                 return;
         }
     }
@@ -515,8 +525,35 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 }
                 break;
             default:
+                int e = determineError(errorCode);
+                mListener.error(e);
                 return;
         }
+    }
+
+    private int determineError(String code){
+        int e;
+        switch (code){
+            case BluetoothProtocol.NO_PERMISSION_ERROR_CODE:
+                e = DONT_HAVE_PERMISSION;
+                break;
+            case BluetoothProtocol.MASTER_CANT_PROCESS_INPUT_ERROR_CODE:
+                e = BAD_INPUT;
+                break;
+            case BluetoothProtocol.NO_ADMIN_PERMISSION_ERROR_CODE:
+                e = DONT_HAVE_PERMISSION;
+                break;
+            case BluetoothProtocol.NO_PERMISSION_THIS_HOUR_ERROR_CODE:
+                e = DONT_HAVE_PERMISSION_THIS_HOUR;
+                break;
+            case BluetoothProtocol.PERMISSION_EXPIRED_ERROR_CODE:
+                e = DONT_HAVE_PERMISSION;
+                break;
+            default:
+                e = RESPONSE_INCORRECT;
+                break;
+        }
+        return e;
     }
 
 }

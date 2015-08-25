@@ -23,8 +23,11 @@
     <string name="open">Open</string>
     <string name="close_door">Close door</string>
 
-    <string name="door_already_opened"> Already opened</string>
-    <string name="door_already_closed"> Already closed</string>
+    <string name="door_already_opened"> Already opened </string>
+    <string name="door_already_closed"> Already closed </string>
+    <string name="door_already_configured"> Door already configured </string>
+    <string name="getting_slaves"> Getting slaves </string>
+    <string name="you_are_not_admin"> You are not an administrator </string>
 
     <string name="protect_with_key"> Protect app with key</string>
     <string name="pin"> PIN </string>
@@ -50,6 +53,8 @@
     <string name="configuring_door_dialog">Configuring door</string>
     <string name="opening_door">Opening door</string>
     <string name="no_permission">You don\'t have permission</string>
+    <string name="no_permission_this_hour">You don\'t have permission now</string>
+    <string name="bad_input_error">Communication problem. Contact support.</string>
     <string name="no_permission_setted">No permission</string>
     <string name="new_door">Create door</string>
     <string name="due_date">End date</string>
@@ -74,6 +79,7 @@
     <string name="masters"> Masters </string>
     <string name="logging"> Logging </string>
     <string name="creating_account"> Creating account </string>
+    <string name="configure_or_set_key_first"> Configure master or set key first. </string>
 
 
 <!-- TODO: Remove or change this placeholder text -->

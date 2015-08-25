@@ -106,8 +106,6 @@ public class NewPermissionFragment extends Fragment {
                         } else{
                             mDueDateLayout.setVisibility(LinearLayout.GONE);
                             mDueHourLayout.setVisibility(LinearLayout.GONE);
-                            mStartDateLayout.setVisibility(LinearLayout.GONE);
-                            mStartHourLayout.setVisibility(LinearLayout.GONE);
                         }
                     }
                 });
@@ -176,7 +174,7 @@ public class NewPermissionFragment extends Fragment {
                         mStartDate = String.valueOf(year) + "-"
                                 + "0" + String.valueOf(month)
                                 + "-" + "0" + String.valueOf(day);
-                        mEndDateView.setText(mStartDate);
+                        mStartDateView.setText(mStartDate);
                     }
                 };
                 newFragment.show(getActivity().getFragmentManager(), "datePicker");

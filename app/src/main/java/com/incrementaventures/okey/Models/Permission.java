@@ -148,4 +148,10 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         });
     }
 
+    public boolean isAdmin(){
+        if (mParsePermission.getInt(TYPE) == ADMIN_PERMISSION)
+            return true;
+        return false;
+    }
+
 }

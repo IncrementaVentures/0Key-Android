@@ -123,8 +123,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     public void doorClosed(int state) { }
 
     @Override
-    public void error(int mode) {
-        mMasterListener.error(mode);
+    public void error(int code) {
+        mMasterListener.error(code);
     }
 
 
@@ -392,6 +392,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         //TODO: get from mParseUser and transform each to the model. Filter by door.
         return null;
     }
+
+
 
 
 

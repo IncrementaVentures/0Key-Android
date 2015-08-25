@@ -89,8 +89,11 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             return true;
         }
         else if (id == R.id.action_new_permission){
-            Intent intent = new Intent(this, NewPermissionActivity.class);
-            startActivityForResult(intent, DoorActivity.NEW_PERMISSION_REQUEST);
+            if (mMaster.getPermission().isAdmin()) {
+                openNewPermissionActivity();
+            } else {
+                Toast.makeText(this, R.string.you_are_not_admin, Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
 
@@ -100,16 +103,40 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         }
 
         else if (id == R.id.first_config_action){
-            Intent intent = new Intent(this, DoorConfigurationActivity.class);
-            startActivityForResult(intent, MainActivity.FIRST_CONFIG);
-            mConfiguring = true;
+            if (mScannedDoor){
+                openFirstConfigurationActivity();
+            }
+            else {
+                Toast.makeText(this, R.string.door_already_configured, Toast.LENGTH_SHORT).show();
+            }
+            return true;
         }
 
         else if (id == R.id.action_get_slaves){
-            mProgressDialog = ProgressDialog.show(this, null, "Getting slaves");
-            mCurrentUser.getSlaves(mMaster, mMaster.getPermission().getKey());
+            if (!mScannedDoor){
+                getSlaves();
+            } else{
+                Toast.makeText(this, R.string.configure_or_set_key_first, Toast.LENGTH_SHORT).show();
+            }
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openNewPermissionActivity(){
+        Intent intent = new Intent(this, NewPermissionActivity.class);
+        startActivityForResult(intent, DoorActivity.NEW_PERMISSION_REQUEST);
+    }
+
+    private void openFirstConfigurationActivity(){
+        Intent intent = new Intent(this, DoorConfigurationActivity.class);
+        startActivityForResult(intent, MainActivity.FIRST_CONFIG);
+        mConfiguring = true;
+    }
+
+    private void getSlaves(){
+        mProgressDialog = ProgressDialog.show(this, null, getResources().getString(R.string.getting_slaves));
+        mCurrentUser.getSlaves(mMaster, mMaster.getPermission().getKey());
     }
 
     private void showSetKeyDialog(){
@@ -134,6 +161,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                     p.setKey(mPermissionKey);
                 }
                 p.save();
+                mMaster.save();
+                mScannedDoor = false;
                 Toast.makeText(DoorActivity.this, R.string.permission_key_setted, Toast.LENGTH_SHORT).show();
             }
         });
@@ -168,6 +197,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
 
     @Override
     public void slaveFound(String id, String type, String name) {
+        if (mProgressDialog != null) mProgressDialog.dismiss();
         mDoorFragment.addSlave(id, type, name);
     }
 
@@ -182,8 +212,9 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                     Permission p = Permission.create(mCurrentUser, mMaster, type, key, Permission.PERMANENT_DATE);
                     mMaster.save();
                     p.save();
-                    Toast.makeText(DoorActivity.this, "Success. Your key " + key + " is saved.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DoorActivity.this, "Success. Your private key is saved.", Toast.LENGTH_SHORT).show();
                     mConfiguring = false;
+                    mScannedDoor = false;
                 } else {
                     Toast.makeText(DoorActivity.this, "Permission added successfully", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getBaseContext(), ShareKeyActivity.class);
@@ -225,6 +256,12 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                         break;
                     case BluetoothClient.DONT_HAVE_PERMISSION:
                         Toast.makeText(DoorActivity.this, R.string.no_permission, Toast.LENGTH_SHORT).show();
+                        break;
+                    case BluetoothClient.DONT_HAVE_PERMISSION_THIS_HOUR:
+                        Toast.makeText(DoorActivity.this, R.string.no_permission_this_hour, Toast.LENGTH_SHORT).show();
+                        break;
+                    case BluetoothClient.BAD_INPUT:
+                        Toast.makeText(DoorActivity.this, R.string.bad_input_error, Toast.LENGTH_SHORT).show();
                         break;
                     default:
                         break;
