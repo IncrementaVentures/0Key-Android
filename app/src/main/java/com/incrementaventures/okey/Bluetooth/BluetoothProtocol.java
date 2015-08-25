@@ -274,7 +274,7 @@ public class BluetoothProtocol {
     }
 
 
-    private static String formatDate(Time now){
+    public static String formatDate(Time now){
         String month = String.valueOf(now.month);
         String day = String.valueOf(now.month);
         String hour = String.valueOf(now.month);
@@ -344,7 +344,6 @@ public class BluetoothProtocol {
 
     public static boolean isDoorOpened(String response){
         String[] parts = response.split(SEPARATOR);
-
         String resultCode = parts[1];
         if (resultCode.equals(String.valueOf(ERROR))){
             return false;

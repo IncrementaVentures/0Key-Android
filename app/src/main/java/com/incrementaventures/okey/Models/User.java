@@ -128,7 +128,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     }
 
 
-    private User(String name, String password, String email, String phone){
+    public User(String name, String password, String email, String phone){
         mParseUser = new ParseUser();
         mParseUser.put(NAME, name);
         mParseUser.put(PHONE, phone);
@@ -260,7 +260,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
 
         Permission p = master.getPermission();
 
-        if (p == null){
+        if (p == null || !p.isValid()){
             mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
             return;
         }

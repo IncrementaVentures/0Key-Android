@@ -1,5 +1,8 @@
 package com.incrementaventures.okey.Models;
 
+import android.text.format.Time;
+
+import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -120,6 +123,28 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         return mParsePermission.getString(KEY);
     }
 
+    private boolean started(Time time){
+        if (mParsePermission.getString(START_DATE) == null) return true;
+        return mParsePermission.getString(START_DATE).compareTo(BluetoothProtocol.formatDate(time))> 0;
+    }
+
+    private boolean finished(Time time){
+        if (mParsePermission.getString(END_DATE) == null) return true;
+        return mParsePermission.getString(END_DATE).compareTo(BluetoothProtocol.formatDate(time)) > 0;
+    }
+
+    public boolean isValid(){
+        Time time = new Time();
+
+        if (mParsePermission.getInt(TYPE) == ADMIN_PERMISSION) return true;
+        else if (mParsePermission.getInt(TYPE) == PERMANENT_PERMISSION && started(time)){
+            return true;
+        }
+        else if (mParsePermission.getInt(TYPE) == TEMPORAL_PERMISSION && started(time) && !finished(time)){
+            return true;
+        }
+        return false;
+    }
 
     public String getEndDate(){
         return mParsePermission.getString(END_DATE);
