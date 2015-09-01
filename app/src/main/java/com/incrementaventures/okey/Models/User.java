@@ -80,6 +80,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
 
     public interface OnPermissionsResponse{
         void permissionCreated(String key, int type);
+        void permissionEdited(String key, int type);
         void permissionReceived(int type, String key, String start, String end);
         void error(int code);
     }
@@ -105,6 +106,11 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     }
 
     @Override
+    public void permissionEdited(String key, int type) {
+        mPermissionsListener.permissionEdited(key, type);
+    }
+
+    @Override
     public void permissionReceived(int type, String key, String start, String end) {
         mPermissionsListener.permissionReceived(type, key, start, end);
     }
@@ -123,12 +129,12 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     public void doorClosed(int state) { }
 
     @Override
-    public void error(int mode) {
-        mMasterListener.error(mode);
+    public void error(int code) {
+        mMasterListener.error(code);
     }
 
 
-    private User(String name, String password, String email, String phone){
+    public User(String name, String password, String email, String phone){
         mParseUser = new ParseUser();
         mParseUser.put(NAME, name);
         mParseUser.put(PHONE, phone);
@@ -260,7 +266,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
 
         Permission p = master.getPermission();
 
-        if (p == null){
+        if (p == null || !p.isValid()){
             mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
             return;
         }
@@ -328,6 +334,44 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         }
 
         mBluetoothClient.executeCreateNewPermission(type, startDate, startHour, endDate, endHour, permissionKey, doorName);
+    }
+
+    public void openWhenClose(Master master, Slave slave, String key){
+        Permission p = master.getPermission();
+
+        if (p == null || !p.isValid()){
+            mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
+            return;
+        }
+
+
+        mBluetoothClient = new BluetoothClient(mContext, this);
+
+        if (!mBluetoothClient.isSupported()){
+            mBluetoothListener.bluetoothNotSupported();
+            return;
+        }
+        else if (!mBluetoothClient.isEnabled()){
+            mBluetoothListener.enableBluetooth();
+            return;
+        }
+
+        mBluetoothClient.executeOpenDoorWhenClose(p.getKey(), master.getName(), slave.getId());
+    }
+
+    public void editPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
+        mBluetoothClient = new BluetoothClient(mContext, this);
+
+        if (!mBluetoothClient.isSupported()){
+            mBluetoothListener.bluetoothNotSupported();
+            return;
+        }
+        else if (!mBluetoothClient.isEnabled()){
+            mBluetoothListener.enableBluetooth();
+            return;
+        }
+
+        mBluetoothClient.executeEditPermission(type, startDate, startHour, endDate, endHour, permissionKey, doorName);
 
     }
 
@@ -392,6 +436,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         //TODO: get from mParseUser and transform each to the model. Filter by door.
         return null;
     }
+
+
 
 
 

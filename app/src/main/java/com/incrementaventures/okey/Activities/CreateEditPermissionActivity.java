@@ -9,19 +9,23 @@ import android.view.MenuItem;
 
 import com.incrementaventures.okey.R;
 
-public class NewPermissionActivity extends ActionBarActivity {
+public class CreateEditPermissionActivity extends ActionBarActivity {
 
-    public static final String NEW_PERMISSION_TYPE = "permission_type";
-    public static final String NEW_PERMISSION_START_DATE = "permission_start_date";
-    public static final String NEW_PERMISSION_START_HOUR = "permission_start_hour";
-    public static final String NEW_PERMISSION_END_DATE = "permission_end_date";
-    public static final String NEW_PERMISSION_END_HOUR = "permission_end_hour";
+    public static final String PERMISSION_TYPE = "permission_type";
+    public static final String PERMISSION_START_DATE = "permission_start_date";
+    public static final String PERMISSION_START_HOUR = "permission_start_hour";
+    public static final String PERMISSION_END_DATE = "permission_end_date";
+    public static final String PERMISSION_END_HOUR = "permission_end_hour";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_permission);
-        setTitle(R.string.title_activity_new_permission);
+        if (getIntent().getIntExtra(DoorActivity.REQUEST_CODE, DoorActivity.NEW_PERMISSION_REQUEST) == DoorActivity.EDIT_PERMISSION_REQUEST){
+            setTitle(R.string.edit_permission);
+        } else{
+            setTitle(R.string.title_activity_new_permission);
+        }
     }
 
 

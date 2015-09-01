@@ -251,7 +251,12 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
     @Override
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
-        mScanDevicesFragment.addDevice( Master.create(device.getName(), ""));
+        String deviceName = device.getName();
+        if (deviceName == null){
+            deviceName = "No name";
+        }
+        if (mScanDevicesFragment != null)
+            mScanDevicesFragment.addDevice(Master.create(deviceName, ""));
     }
 
     @Override
@@ -304,6 +309,11 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
     @Override
     public void permissionCreated(String key, int type) {
+
+    }
+
+    @Override
+    public void permissionEdited(String key, int type) {
 
     }
 

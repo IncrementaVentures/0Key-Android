@@ -43,7 +43,7 @@
                 android:value="com.incrementaventures.okey.Activities.MainActivity" />
         </activity>
         <activity
-            android:name=".Activities.NewPermissionActivity"
+            android:name=".Activities.CreateEditPermissionActivity"
             android:label="@string/title_activity_new_permission"
             android:parentActivityName=".Activities.DoorActivity" >
             <meta-data

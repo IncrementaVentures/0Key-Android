@@ -4,6 +4,7 @@ package com.incrementaventures.okey.Fragments;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.ListView;
 import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Adapters.MastersAdapter;
+import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
@@ -118,8 +120,10 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
             }
             mMasters.add(m1);
             mMasters.add(m2);
-            Permission p1 = Permission.create(mCurrentUser, m1, 0, "1234", Permission.PERMANENT_DATE);
-            Permission p2 = Permission.create(mCurrentUser, m2, 0, "1234", Permission.PERMANENT_DATE);
+            Time now = new Time();
+            now.setToNow();
+            Permission p1 = Permission.create(mCurrentUser, m1, 0, "1234", BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE);
+            Permission p2 = Permission.create(mCurrentUser, m2, 0, "1234", BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE);
             p1.save();
             p2.save();
 

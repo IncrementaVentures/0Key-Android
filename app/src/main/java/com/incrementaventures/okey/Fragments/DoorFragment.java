@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -61,6 +62,7 @@ public class DoorFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         void openDoorSelected(Master master, Slave slave);
         void readMyPermissionSelected(Master master, Slave slave, String permissionKey);
         void readAllPermissionsSelected(Master master, Slave slave, String permissionKey);
+        void openWhenCloseSelected(Master master, Slave slave, String permissionKey);
     }
 
     public DoorFragment() {
@@ -88,6 +90,7 @@ public class DoorFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     private void setUI(final LayoutInflater inflater){
         if (mPermission != null){
             mSlaves = mMaster.getSlaves();
+            if (mSlaves == null) mSlaves = new ArrayList<>();
             mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves){
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
@@ -181,6 +184,8 @@ public class DoorFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             case R.id.action_read_all_permissions:
                 mListener.readAllPermissionsSelected(mMaster, mSelectedSlave, mPermission.getKey());
                 return true;
+            case R.id.action_open_when_close:
+                mListener.openWhenCloseSelected(mMaster, mSelectedSlave, mPermission.getKey());
             default:
                 return false;
         }
@@ -197,14 +202,21 @@ public class DoorFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         }
     }
 
-    public void addSlave(String id, String type, String name){
-        Slave s = Slave.create(mMaster.getUUID(), name, Integer.valueOf(type), Integer.valueOf(id));
-        if (mSlaves == null) mSlaves = new ArrayList<>();
-        mSlaves.add(s);
-        mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves);
-        mSlavesListView.setAdapter(mSlavesAdapter);
-        mSlavesAdapter.notifyDataSetChanged();
-        s.save();
+    public void addSlave(final String id, final String type, final String name){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Slave s = Slave.create(mMaster.getUUID(), name, Integer.valueOf(type), Integer.valueOf(id));
+                if (mSlaves == null) {
+                    mSlaves = new ArrayList<>();
+                }
+                mSlaves.add(s);
+                mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves);
+                ((BaseAdapter) mSlavesListView.getAdapter()).notifyDataSetChanged();
+                s.save();
+            }
+        });
+
     }
 
 

@@ -1,5 +1,8 @@
 package com.incrementaventures.okey.Models;
 
+import android.text.format.Time;
+
+import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -36,19 +39,20 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         mParsePermission = parsePermission;
     }
 
-    private Permission(User user, Master master, int type, String key, String end) {
+    private Permission(User user, Master master, int type, String key, String startDate, String endDate) {
         mParsePermission = ParseObject.create(PERMISSION_CLASS_NAME);
         mParsePermission.put(USER_UUID, user.getUUID());
         mParsePermission.put(MASTER_UUID, master.getUUID());
         mParsePermission.put(TYPE, type);
         mParsePermission.put(KEY, key);
-        mParsePermission.put(END_DATE, end);
+        mParsePermission.put(START_DATE, startDate);
+        mParsePermission.put(END_DATE, endDate);
         mParsePermission.put(UUID, java.util.UUID.randomUUID().toString());
 
     }
 
-    public static Permission create(User user, Master master, int type, String key, String end){
-        return new Permission(user, master, type, key, end);
+    public static Permission create(User user, Master master, int type, String key, String startDate, String endDate){
+        return new Permission(user, master, type, key, startDate, endDate);
     }
 
     public static Permission create(ParseObject parsePermission){
@@ -101,7 +105,8 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;    }
+        return null;
+    }
 
     public String getType(){
         switch (mParsePermission.getInt(TYPE)){
@@ -116,13 +121,51 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         }
     }
 
+    public void setType(int type){
+        mParsePermission.put(TYPE, type);
+    }
+
     public String getKey(){
         return mParsePermission.getString(KEY);
     }
 
+    private boolean started(Time time){
+        if (mParsePermission.getString(START_DATE) == null) return true;
+        return mParsePermission.getString(START_DATE).compareTo(BluetoothProtocol.formatDate(time))> 0;
+    }
+
+    private boolean finished(Time time){
+        if (mParsePermission.getString(END_DATE) == null) return true;
+        return mParsePermission.getString(END_DATE).compareTo(BluetoothProtocol.formatDate(time)) > 0;
+    }
+
+    public boolean isValid(){
+        Time time = new Time();
+
+        if (mParsePermission.getInt(TYPE) == ADMIN_PERMISSION) return true;
+        else if (mParsePermission.getInt(TYPE) == PERMANENT_PERMISSION && started(time)){
+            return true;
+        }
+        else if (mParsePermission.getInt(TYPE) == TEMPORAL_PERMISSION && started(time) && !finished(time)){
+            return true;
+        }
+        return false;
+    }
+
+    public String getStartDate(){
+        return mParsePermission.getString(START_DATE);
+    }
+
+    public void setStartDate(String startDate){
+        mParsePermission.put(START_DATE, startDate);
+    }
 
     public String getEndDate(){
         return mParsePermission.getString(END_DATE);
+    }
+
+    public void setEndDate(String endDate){
+        mParsePermission.put(START_DATE, endDate);
     }
 
     public void setKey(String key){
@@ -146,6 +189,12 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
                 }
             }
         });
+    }
+
+    public boolean isAdmin(){
+        if (mParsePermission.getInt(TYPE) == ADMIN_PERMISSION)
+            return true;
+        return false;
     }
 
 }

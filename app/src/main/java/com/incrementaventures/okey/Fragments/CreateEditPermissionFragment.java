@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.incrementaventures.okey.Activities.MainActivity;
-import com.incrementaventures.okey.Activities.NewPermissionActivity;
+import com.incrementaventures.okey.Activities.CreateEditPermissionActivity;
 import com.incrementaventures.okey.R;
 
 import butterknife.Bind;
@@ -26,7 +26,7 @@ import butterknife.ButterKnife;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class NewPermissionFragment extends Fragment {
+public class CreateEditPermissionFragment extends Fragment {
 
     @Bind(R.id.permission_type_layout)
     LinearLayout mPermissionTypeLayout;
@@ -68,7 +68,7 @@ public class NewPermissionFragment extends Fragment {
     private String mStartHour;
 
 
-    public NewPermissionFragment() {
+    public CreateEditPermissionFragment() {
     }
 
     @Override
@@ -106,8 +106,6 @@ public class NewPermissionFragment extends Fragment {
                         } else{
                             mDueDateLayout.setVisibility(LinearLayout.GONE);
                             mDueHourLayout.setVisibility(LinearLayout.GONE);
-                            mStartDateLayout.setVisibility(LinearLayout.GONE);
-                            mStartHourLayout.setVisibility(LinearLayout.GONE);
                         }
                     }
                 });
@@ -176,7 +174,7 @@ public class NewPermissionFragment extends Fragment {
                         mStartDate = String.valueOf(year) + "-"
                                 + "0" + String.valueOf(month)
                                 + "-" + "0" + String.valueOf(day);
-                        mEndDateView.setText(mStartDate);
+                        mStartDateView.setText(mStartDate);
                     }
                 };
                 newFragment.show(getActivity().getFragmentManager(), "datePicker");
@@ -189,11 +187,11 @@ public class NewPermissionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent data = new Intent();
-                data.putExtra(NewPermissionActivity.NEW_PERMISSION_TYPE, mPermissionTypeView.getText().toString());
-                data.putExtra(NewPermissionActivity.NEW_PERMISSION_START_DATE, mStartDateView.getText().toString());
-                data.putExtra(NewPermissionActivity.NEW_PERMISSION_START_HOUR, mStartHourView.getText().toString());
-                data.putExtra(NewPermissionActivity.NEW_PERMISSION_END_DATE, mEndDateView.getText().toString());
-                data.putExtra(NewPermissionActivity.NEW_PERMISSION_END_HOUR, mEndHourView.getText().toString());
+                data.putExtra(CreateEditPermissionActivity.PERMISSION_TYPE, mPermissionTypeView.getText().toString());
+                data.putExtra(CreateEditPermissionActivity.PERMISSION_START_DATE, mStartDateView.getText().toString());
+                data.putExtra(CreateEditPermissionActivity.PERMISSION_START_HOUR, mStartHourView.getText().toString());
+                data.putExtra(CreateEditPermissionActivity.PERMISSION_END_DATE, mEndDateView.getText().toString());
+                data.putExtra(CreateEditPermissionActivity.PERMISSION_END_HOUR, mEndHourView.getText().toString());
                 data.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
                 getActivity().setResult(Activity.RESULT_OK, data);
                 getActivity().finish();
