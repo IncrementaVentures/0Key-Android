@@ -75,7 +75,12 @@
     <string name="permission_type_permanent"> Permanent </string>
     <string name="permission_type_unknown"> Unknown </string>
 
+    <string name="searching_door">Searching door</string>
+    <string name="reading_permission">Reading permission</string>
+    <string name="reading_permissions">Reading permissions</string>
+
     <string name="door_cant_configure"> Can\'t configure</string>
+    <string name="open_when_close"> Open when door is close</string>
     <string name="set_key_permission"> Set permission key</string>
     <string name="permission_key_setted"> Permission key setted</string>
     <string name="no_devices_found_yet"> No devices found </string>

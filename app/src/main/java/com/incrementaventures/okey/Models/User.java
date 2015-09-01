@@ -334,7 +334,29 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         }
 
         mBluetoothClient.executeCreateNewPermission(type, startDate, startHour, endDate, endHour, permissionKey, doorName);
+    }
 
+    public void openWhenClose(Master master, Slave slave, String key){
+        Permission p = master.getPermission();
+
+        if (p == null || !p.isValid()){
+            mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
+            return;
+        }
+
+
+        mBluetoothClient = new BluetoothClient(mContext, this);
+
+        if (!mBluetoothClient.isSupported()){
+            mBluetoothListener.bluetoothNotSupported();
+            return;
+        }
+        else if (!mBluetoothClient.isEnabled()){
+            mBluetoothListener.enableBluetooth();
+            return;
+        }
+
+        mBluetoothClient.executeOpenDoorWhenClose(p.getKey(), master.getName(), slave.getId());
     }
 
     public void editPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){

@@ -62,6 +62,7 @@ public class DoorFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         void openDoorSelected(Master master, Slave slave);
         void readMyPermissionSelected(Master master, Slave slave, String permissionKey);
         void readAllPermissionsSelected(Master master, Slave slave, String permissionKey);
+        void openWhenCloseSelected(Master master, Slave slave, String permissionKey);
     }
 
     public DoorFragment() {
@@ -183,6 +184,8 @@ public class DoorFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             case R.id.action_read_all_permissions:
                 mListener.readAllPermissionsSelected(mMaster, mSelectedSlave, mPermission.getKey());
                 return true;
+            case R.id.action_open_when_close:
+                mListener.openWhenCloseSelected(mMaster, mSelectedSlave, mPermission.getKey());
             default:
                 return false;
         }

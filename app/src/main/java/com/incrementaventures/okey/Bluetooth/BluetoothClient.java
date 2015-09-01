@@ -25,7 +25,8 @@ import java.util.UUID;
 
 public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
-    private final int SCAN_TIME = 4000;
+    private final int NORMAL_SCAN_TIME = 4000;
+    private final int LONG_SCAN_TIME = 120000;
     public static final int CLOSE_MODE = 0;
 
     public static final int OPEN_MODE = 1;
@@ -77,7 +78,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     Context mContext;
     /*
-        Used principally for stop scanning after SCAN_TIME miliseconds.
+        Used principally for stop scanning after NORMAL_SCAN_TIME miliseconds.
      */
     private Handler mHandler;
     /*
@@ -152,7 +153,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     public void scanDevices(){
         mMode = SCAN_MODE;
-        startScan();
+        startScan(LONG_SCAN_TIME);
     }
 
 
@@ -161,7 +162,15 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         mSlaveId = slaveId;
         mMasterName = masterName;
         mMode = OPEN_MODE;
-        startScan();
+        startScan(NORMAL_SCAN_TIME);
+    }
+
+    public void executeOpenDoorWhenClose(String key, String masterName, int slaveId){
+        mPermissionKey = key;
+        mSlaveId = slaveId;
+        mMasterName = masterName;
+        mMode = OPEN_MODE;
+        startScan(LONG_SCAN_TIME);
     }
 
     public void executeFirstConnectionConfiguration(String factoryKey, String permissionKey, String masterName){
@@ -169,7 +178,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         mFactoryKey = factoryKey;
         mMasterName = masterName;
         mMode = FIRST_ADMIN_CONNECTION_MODE;
-        startScan();
+        startScan(NORMAL_SCAN_TIME);
     }
 
     public void executeCreateNewPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
@@ -181,7 +190,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         mEndHour = endHour;
         mStartDate = startDate;
         mStartHour = startHour;
-        startScan();
+        startScan(NORMAL_SCAN_TIME);
     }
 
     public void executeEditPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
@@ -193,7 +202,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         mEndHour = endHour;
         mStartDate = startDate;
         mStartHour = startHour;
-        startScan();
+        startScan(NORMAL_SCAN_TIME);
     }
 
     public void executeReadUserPermission(String masterName, int slaveId, String permissionKey){
@@ -201,7 +210,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         mPermissionKey = permissionKey;
         mSlaveId = slaveId;
         mMode = READ_MY_PERMISSION_MODE;
-        startScan();
+        startScan(NORMAL_SCAN_TIME);
     }
 
     public void executeReadAllPermissions(String masterName, int slaveId, String permissionKey){
@@ -209,18 +218,18 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         mPermissionKey = permissionKey;
         mSlaveId = slaveId;
         mMode = READ_ALL_PERMISSIONS_MODE;
-        startScan();
+        startScan(NORMAL_SCAN_TIME);
     }
 
     public void executeGetSlaves(String masterName, String permissionKey){
         mMasterName = masterName;
         mPermissionKey = permissionKey;
         mMode = GET_SLAVES_MODE;
-        startScan();
+        startScan(NORMAL_SCAN_TIME);
     }
 
 
-    private void startScan(){
+    private void startScan(int time){
         mScanning = true;
         if (mMode == SCAN_MODE){
             mBluetoothAdapter.startLeScan(this);
@@ -228,13 +237,13 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         } else{
             mBluetoothAdapter.startLeScan(new UUID[]{UUID.fromString(BluetoothProtocol.DOOR_SERVICE_UUID)}, this);
         }
-        // Stop the scanning after SCAN_TIME miliseconds. Saves battery.
+        // Stop the scanning after NORMAL_SCAN_TIME miliseconds. Saves battery.
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 stopScan();
             }
-        }, SCAN_TIME);
+        }, time);
     }
 
     private void stopScan(){

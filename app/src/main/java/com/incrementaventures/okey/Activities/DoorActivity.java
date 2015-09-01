@@ -390,14 +390,20 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
 
     @Override
     public void readMyPermissionSelected(Master master, Slave slave, String permissionKey) {
-        mProgressDialog = ProgressDialog.show(this, null, "Reading permission");
+        mProgressDialog = ProgressDialog.show(this, null, getResources().getString(R.string.reading_permission));
         mCurrentUser.readMyPermission(master, slave, permissionKey);
     }
 
     @Override
     public void readAllPermissionsSelected(Master master, Slave slave, String permissionKey) {
-        mProgressDialog = ProgressDialog.show(this, null, "Reading permissions");
+        mProgressDialog = ProgressDialog.show(this, null, getResources().getString(R.string.reading_permissions));
         mCurrentUser.readAllPermissions(master, slave, permissionKey);
 
+    }
+
+    @Override
+    public void openWhenCloseSelected(Master master, Slave slave, String permissionKey) {
+        mProgressDialog = ProgressDialog.show(this, null, getResources().getString(R.string.searching_door));
+        mCurrentUser.openWhenClose(master, slave, permissionKey);
     }
 }
