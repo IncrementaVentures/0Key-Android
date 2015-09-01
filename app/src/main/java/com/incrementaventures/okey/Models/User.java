@@ -80,6 +80,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
 
     public interface OnPermissionsResponse{
         void permissionCreated(String key, int type);
+        void permissionEdited(String key, int type);
         void permissionReceived(int type, String key, String start, String end);
         void error(int code);
     }
@@ -102,6 +103,11 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     @Override
     public void permissionCreated(String key, int type) {
         mPermissionsListener.permissionCreated(key, type);
+    }
+
+    @Override
+    public void permissionEdited(String key, int type) {
+        mPermissionsListener.permissionEdited(key, type);
     }
 
     @Override
@@ -328,6 +334,22 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         }
 
         mBluetoothClient.executeCreateNewPermission(type, startDate, startHour, endDate, endHour, permissionKey, doorName);
+
+    }
+
+    public void editPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
+        mBluetoothClient = new BluetoothClient(mContext, this);
+
+        if (!mBluetoothClient.isSupported()){
+            mBluetoothListener.bluetoothNotSupported();
+            return;
+        }
+        else if (!mBluetoothClient.isEnabled()){
+            mBluetoothListener.enableBluetooth();
+            return;
+        }
+
+        mBluetoothClient.executeEditPermission(type, startDate, startHour, endDate, endHour, permissionKey, doorName);
 
     }
 

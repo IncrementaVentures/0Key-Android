@@ -52,16 +52,10 @@ public class BluetoothProtocol {
     public static final int MODIFY_PERMISSION_CODE = 1;
     public static final int DELETE_PERMISSION_CODE = 2;
 
-
-
     public static final String DOOR_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
     public static final String CHARACTERISTIC_WRITE_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
     public static final String CHARACTERISTIC_NOTIFICATION_UUID="6e400003-b5a3-f393-e0a9-e50e24dcca9e";
-
     public static final String CHARACTERISTIC_UPDATE_NOTIFICATION_DESCRIPTOR_UUID ="00002902-0000-1000-8000-00805f9b34fb";
-
-
-
 
     public static String buildOpenMessage(String permissionKey, int slaveId){
 
@@ -181,6 +175,63 @@ public class BluetoothProtocol {
 
         return builder.toString();
     }
+
+    public static String buildEditPermissionMessage(String permissionType, int slaveId, String startDate, String startHour, String endDate, String endHour, String adminKey) {
+        StringBuilder builder = new StringBuilder();
+        Time time = new Time();
+        time.setToNow();
+
+        // "02;"
+        builder.append(MODIFY_PERMISSIONS_MESSAGE_CODE);
+        builder.append(SEPARATOR);
+
+        // "02;date;"
+        builder.append(formatDate(time));
+        builder.append(SEPARATOR);
+
+        // "02;date;key;"
+        builder.append(adminKey);
+        builder.append(SEPARATOR);
+
+        builder.append(EMPTY);
+        builder.append(SEPARATOR);
+
+        // "02;date;key;0;1;"
+        builder.append(MODIFY_PERMISSION_CODE);
+        builder.append(SEPARATOR);
+
+        int type = getPermissionType(permissionType);
+        // "02;date;key;0;1;permissionType;"
+        builder.append(type);
+        builder.append(SEPARATOR);
+
+        if (type == TEMPORAL_PERMISSION){
+            // "02;date;key;0;1;permissionType;startDateTstartHour;"
+            builder.append(startDate + "T" + startHour);
+            builder.append(SEPARATOR);
+
+            // "02;date;key;0;1;permissionType;startDateTstartHour;endDateTendHour;"
+            builder.append(endDate + "T" + endHour);
+            builder.append(SEPARATOR);
+        } else {
+            // "02;date;key;0;1;permissionType;startDateTstartHour;0;"
+            builder.append(startDate + "T" + startHour);
+            builder.append(SEPARATOR);
+            builder.append(EMPTY);
+            builder.append(SEPARATOR);
+        }
+
+        // permission key
+        // "02;date;key;0;0;permissionType;startDateTstartHour;endDateTendHour;key;"
+        builder.append(adminKey);
+        builder.append(SEPARATOR);
+
+        // "02;date;key;0;0;permissionType;startDateTstartHour;endDateTendHour;key;*"
+        builder.append(MESSAGE_END);
+
+        return builder.toString();
+    }
+
 
     public static String buildGetUserPermissionMessage(int slaveId, String permissionKey) {
         StringBuilder builder = new StringBuilder();

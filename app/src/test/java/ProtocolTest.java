@@ -135,6 +135,24 @@ public class ProtocolTest {
     }
 
     @Test
+    public void testEditPermissionMessage(){
+        String message = BluetoothProtocol.buildEditPermissionMessage("Temporal",
+                1,
+                "2015-12-18", "10:00",
+                "2016-12-18", "09:00", "4444");
+        String[] parts = message.split(BluetoothProtocol.SEPARATOR);
+
+        Assert.assertEquals("02", parts[0]);
+        Assert.assertEquals("4444", parts[2]);
+        Assert.assertEquals("0", parts[3]);
+        Assert.assertEquals("1", parts[4]); // tipo modificacion
+        Assert.assertEquals("2", parts[5]); // tipo permiso
+        Assert.assertEquals("2015-12-18T10:00", parts[6]); // fecha inicio
+        Assert.assertEquals("2016-12-18T09:00", parts[7]); // fecha termino
+        Assert.assertEquals("4444" , parts[8]); // clave
+    }
+
+    @Test
     public void testBuildFirstConfigurationMessage(){
         String message = BluetoothProtocol.buildFirstConfigurationMessage("1234", "0000", "Puerta");
         String[] parts = message.split(BluetoothProtocol.SEPARATOR);

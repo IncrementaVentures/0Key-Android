@@ -35,6 +35,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int GET_SLAVES_MODE = 8;
     public static final int READ_MY_PERMISSION_MODE = 9;
     public static final int READ_ALL_PERMISSIONS_MODE = 10;
+    public static final int EDIT_PERMISSION_MODE = 11;
 
     public static final int DOOR_ALREADY_CLOSED = 2;
     public static final int DOOR_ALREADY_OPENED = 3;
@@ -50,6 +51,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int DONT_HAVE_PERMISSION = 106;
     public static final int BAD_INPUT = 107;
     public static final int DONT_HAVE_PERMISSION_THIS_HOUR = 108;
+    public static final int PERMISSION_NOT_EDITED = 109;
     private boolean mScanning;
     private boolean mConnected;
     private boolean mSending;
@@ -116,6 +118,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         void deviceNotFound();
         void doorOpened(int state);
         void permissionCreated(String key, int type);
+        void permissionEdited(String key, int type);
         void permissionReceived(int type, String key, String start, String end);
         void stopScanning();
         void slaveFound(String id, String type, String name);
@@ -171,6 +174,18 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     public void executeCreateNewPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
         mMode = CREATE_NEW_PERMISSION_MODE;
+        mMasterName = doorName;
+        mPermissionType = type;
+        mPermissionKey = permissionKey;
+        mEndDate = endDate;
+        mEndHour = endHour;
+        mStartDate = startDate;
+        mStartHour = startHour;
+        startScan();
+    }
+
+    public void executeEditPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
+        mMode = EDIT_PERMISSION_MODE;
         mMasterName = doorName;
         mPermissionType = type;
         mPermissionKey = permissionKey;
@@ -242,7 +257,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 || (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(Master.FACTORY_NAME))
                 || (mMode == READ_MY_PERMISSION_MODE && device.getName().equals(mMasterName))
                 || (mMode == READ_ALL_PERMISSIONS_MODE && device.getName().equals(mMasterName))
-                || (mMode == GET_SLAVES_MODE && device.getName().equals(mMasterName))){
+                || (mMode == GET_SLAVES_MODE && device.getName().equals(mMasterName))
+                || (mMode == EDIT_PERMISSION_MODE && device.getName().endsWith(mMasterName))){
 
 
             mDevices.put(device.hashCode(), device);
@@ -298,6 +314,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     break;
                 case CREATE_NEW_PERMISSION_MODE:
                     message = BluetoothProtocol.buildNewPermissionMessage(mPermissionType, mSlaveId, mStartDate, mStartHour, mEndDate, mEndHour, mPermissionKey);
+                    break;
+                case EDIT_PERMISSION_MODE:
+                    message = BluetoothProtocol.buildEditPermissionMessage(mPermissionType, mSlaveId, mStartDate, mStartHour, mEndDate, mEndHour, mPermissionKey);
                     break;
                 case GET_SLAVES_MODE:
                     message = BluetoothProtocol.buildGetSlavesMessage(mPermissionKey);
@@ -464,6 +483,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 case CREATE_NEW_PERMISSION_MODE:
                     mListener.permissionCreated(key, BluetoothProtocol.getPermissionType(mPermissionType));
                     break;
+                case EDIT_PERMISSION_MODE:
+                    mListener.permissionEdited(key, BluetoothProtocol.getPermissionType(mPermissionType));
+                    break;
                 default:
                     mListener.error(RESPONSE_INCORRECT);
             }
@@ -474,6 +496,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     break;
                 case CREATE_NEW_PERMISSION_MODE:
                     mListener.error(PERMISSION_NOT_CREATED);
+                    break;
+                case EDIT_PERMISSION_MODE:
+                    mListener.error(PERMISSION_NOT_EDITED);
                     break;
                 default:
                     mListener.error(RESPONSE_INCORRECT);

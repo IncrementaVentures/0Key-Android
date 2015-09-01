@@ -8,6 +8,8 @@
     <string name="auth_error">Can\'t authenticate, try again</string>
     <string name="door_opened">Door opened</string>
     <string name="door_closed">Door closed</string>
+    <string name="edit_permission">Edit permission</string>
+    <string name="editing_permission">Editing permission</string>
 
     <string name="not_implemented_code_on_result">Not implemented code onResult()</string>
     <string name="ble_not_supported">Bluetooth LE not supported</string>
@@ -65,6 +67,7 @@
     <string name="share">Share</string>
     <string name="creating_permission">Creating permission</string>
     <string name="permission_not_created">Permission not created</string>
+    <string name="permission_not_edited">Permission not edited</string>
 
     <string name="permission_type"> Permission type</string>
     <string name="permission_type_admin"> Administrator</string>

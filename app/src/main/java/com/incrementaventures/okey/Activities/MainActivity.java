@@ -313,6 +313,11 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     }
 
     @Override
+    public void permissionEdited(String key, int type) {
+
+    }
+
+    @Override
     public void permissionReceived(int type, String key, String start, String end) {
 
     }

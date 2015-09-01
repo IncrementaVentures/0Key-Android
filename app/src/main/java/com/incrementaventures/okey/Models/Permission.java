@@ -39,19 +39,20 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         mParsePermission = parsePermission;
     }
 
-    private Permission(User user, Master master, int type, String key, String end) {
+    private Permission(User user, Master master, int type, String key, String startDate, String endDate) {
         mParsePermission = ParseObject.create(PERMISSION_CLASS_NAME);
         mParsePermission.put(USER_UUID, user.getUUID());
         mParsePermission.put(MASTER_UUID, master.getUUID());
         mParsePermission.put(TYPE, type);
         mParsePermission.put(KEY, key);
-        mParsePermission.put(END_DATE, end);
+        mParsePermission.put(START_DATE, startDate);
+        mParsePermission.put(END_DATE, endDate);
         mParsePermission.put(UUID, java.util.UUID.randomUUID().toString());
 
     }
 
-    public static Permission create(User user, Master master, int type, String key, String end){
-        return new Permission(user, master, type, key, end);
+    public static Permission create(User user, Master master, int type, String key, String startDate, String endDate){
+        return new Permission(user, master, type, key, startDate, endDate);
     }
 
     public static Permission create(ParseObject parsePermission){
@@ -104,7 +105,8 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;    }
+        return null;
+    }
 
     public String getType(){
         switch (mParsePermission.getInt(TYPE)){
@@ -117,6 +119,10 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
             default:
                 return "Unknown";
         }
+    }
+
+    public void setType(int type){
+        mParsePermission.put(TYPE, type);
     }
 
     public String getKey(){
@@ -146,8 +152,20 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         return false;
     }
 
+    public String getStartDate(){
+        return mParsePermission.getString(START_DATE);
+    }
+
+    public void setStartDate(String startDate){
+        mParsePermission.put(START_DATE, startDate);
+    }
+
     public String getEndDate(){
         return mParsePermission.getString(END_DATE);
+    }
+
+    public void setEndDate(String endDate){
+        mParsePermission.put(START_DATE, endDate);
     }
 
     public void setKey(String key){

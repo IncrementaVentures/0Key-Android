@@ -29,7 +29,8 @@ import com.parse.ParseQuery;
 public class DoorActivity extends ActionBarActivity implements User.OnActionMasterResponse, User.OnPermissionsResponse, User.OnUserBluetoothToActivityResponse, DoorFragment.OnSlaveSelectedListener {
 
     public static final int NEW_PERMISSION_REQUEST = 40;
-
+    public static final int EDIT_PERMISSION_REQUEST = 41;
+    public static final String REQUEST_CODE = "request_code";
     private Master mMaster;
     private ProgressDialog mProgressDialog;
     private User mCurrentUser;
@@ -37,6 +38,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     private boolean mScannedDoor;
     private boolean mConfiguring;
     private String mPermissionKey;
+
+    private Bundle mPermissionData;
 
 
     @Override
@@ -90,7 +93,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         }
         else if (id == R.id.action_new_permission){
             if (mMaster.getPermission().isAdmin()) {
-                openNewPermissionActivity();
+                openCreateEditPermissionActivity(NEW_PERMISSION_REQUEST);
             } else {
                 Toast.makeText(this, R.string.you_are_not_admin, Toast.LENGTH_SHORT).show();
             }
@@ -101,6 +104,11 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             showSetKeyDialog();
             return true;
         }
+
+        else if( id == R.id.edit_permission){
+            openCreateEditPermissionActivity(EDIT_PERMISSION_REQUEST);
+        }
+
 
         else if (id == R.id.first_config_action){
             if (mScannedDoor){
@@ -123,9 +131,10 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         return super.onOptionsItemSelected(item);
     }
 
-    private void openNewPermissionActivity(){
-        Intent intent = new Intent(this, NewPermissionActivity.class);
-        startActivityForResult(intent, DoorActivity.NEW_PERMISSION_REQUEST);
+    private void openCreateEditPermissionActivity(int mode){
+        Intent intent = new Intent(this, CreateEditPermissionActivity.class);
+        intent.putExtra(REQUEST_CODE, mode);
+        startActivityForResult(intent, mode);
     }
 
     private void openFirstConfigurationActivity(){
@@ -156,7 +165,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 mMaster = getDoor();
                 Permission p = mMaster.getPermission();
                 if (p == null){
-                    p = Permission.create(mCurrentUser, mMaster, Permission.UNKNOWN_PERMISSION,  mPermissionKey, Permission.UNKNOWN_DATE);
+                    p = Permission.create(mCurrentUser, mMaster, Permission.UNKNOWN_PERMISSION,  mPermissionKey, Permission.UNKNOWN_DATE, Permission.UNKNOWN_DATE);
                 } else {
                     p.setKey(mPermissionKey);
                 }
@@ -209,7 +218,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 if (mProgressDialog != null) mProgressDialog.dismiss();
                 if (mConfiguring){
                     mMaster = getDoor();
-                    Permission p = Permission.create(mCurrentUser, mMaster, type, key, Permission.PERMANENT_DATE);
+                    Permission p = Permission.create(mCurrentUser, mMaster, type, key, Permission.PERMANENT_DATE, Permission.PERMANENT_DATE);
                     mMaster.save();
                     p.save();
                     Toast.makeText(DoorActivity.this, "Success. Your private key is saved.", Toast.LENGTH_SHORT).show();
@@ -223,6 +232,20 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 }
             }
         });
+    }
+
+    @Override
+    public void permissionEdited(String key, int type) {
+        if (mProgressDialog != null) mProgressDialog.dismiss();
+        String startHour = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_START_HOUR);
+        String startDate = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_START_DATE);
+        String endHour = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_END_HOUR);
+        String endDate = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_END_DATE);
+        Permission p = mMaster.getPermission();
+        p.setStartDate(startDate + "T" + startHour);
+        p.setEndDate(endDate + "T" + endHour);
+        p.setType(type);
+        p.save();
     }
 
     @Override
@@ -254,6 +277,9 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                     case BluetoothClient.PERMISSION_NOT_CREATED:
                         Toast.makeText(DoorActivity.this, R.string.permission_not_created, Toast.LENGTH_SHORT).show();
                         break;
+                    case BluetoothClient.PERMISSION_NOT_EDITED:
+                        Toast.makeText(DoorActivity.this, R.string.permission_not_edited, Toast.LENGTH_SHORT).show();
+                        break;
                     case BluetoothClient.DONT_HAVE_PERMISSION:
                         Toast.makeText(DoorActivity.this, R.string.no_permission, Toast.LENGTH_SHORT).show();
                         break;
@@ -275,6 +301,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
      */
     @Override
     public void enableBluetooth() {
+        if (mProgressDialog != null) mProgressDialog.dismiss();
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(enableBtIntent, MainActivity.REQUEST_ENABLE_BT);
     }
@@ -330,13 +357,25 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             case DoorActivity.NEW_PERMISSION_REQUEST:
                 if (resultCode == RESULT_OK){
                     mProgressDialog = ProgressDialog.show(this, null, getResources().getString(R.string.creating_permission));
-                    Bundle extras = data.getExtras();
-                    String type = extras.getString(NewPermissionActivity.NEW_PERMISSION_TYPE);
-                    String startHour = extras.getString(NewPermissionActivity.NEW_PERMISSION_START_HOUR);
-                    String startDate = extras.getString(NewPermissionActivity.NEW_PERMISSION_START_DATE);
-                    String endHour = extras.getString(NewPermissionActivity.NEW_PERMISSION_END_HOUR);
-                    String endDate = extras.getString(NewPermissionActivity.NEW_PERMISSION_END_DATE);
+                    mPermissionData = data.getExtras();
+                    String type = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_TYPE);
+                    String startHour = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_START_HOUR);
+                    String startDate = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_START_DATE);
+                    String endHour = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_END_HOUR);
+                    String endDate = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_END_DATE);
                     mCurrentUser.createNewPermission(type, startDate, startHour, endDate, endHour, mMaster.getPermission().getKey(), mMaster.getName());
+                }
+                break;
+            case DoorActivity.EDIT_PERMISSION_REQUEST:
+                if (resultCode == RESULT_OK){
+                    mProgressDialog = ProgressDialog.show(this, null, getResources().getString(R.string.editing_permission));
+                    Bundle extras = data.getExtras();
+                    String type = extras.getString(CreateEditPermissionActivity.PERMISSION_TYPE);
+                    String startHour = extras.getString(CreateEditPermissionActivity.PERMISSION_START_HOUR);
+                    String startDate = extras.getString(CreateEditPermissionActivity.PERMISSION_START_DATE);
+                    String endHour = extras.getString(CreateEditPermissionActivity.PERMISSION_END_HOUR);
+                    String endDate = extras.getString(CreateEditPermissionActivity.PERMISSION_END_DATE);
+                    mCurrentUser.editPermission(type, startDate, startHour, endDate, endHour, mMaster.getPermission().getKey(), mMaster.getName());
                 }
                 break;
             default:
