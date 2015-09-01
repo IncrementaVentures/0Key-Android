@@ -40,6 +40,7 @@ public class BluetoothProtocol {
     public static final String NO_PERMISSION_THIS_HOUR_ERROR_CODE = "3";
     public static final String MASTER_CANT_PROCESS_INPUT_ERROR_CODE = "4";
     public static final String NO_ADMIN_PERMISSION_ERROR_CODE = "5";
+    public static final String DOOR_NOT_CONFIGURED_ERROR_CODE = "6";
 
     public static final int ADMIN_PERMISSION = 0;
     public static final int PERMANENT_PERMISSION = 1;

@@ -289,6 +289,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                     case BluetoothClient.BAD_INPUT:
                         Toast.makeText(DoorActivity.this, R.string.bad_input_error, Toast.LENGTH_SHORT).show();
                         break;
+                    case BluetoothClient.DOOR_NOT_CONFIGURED:
+                        Toast.makeText(DoorActivity.this, R.string.door_not_configured, Toast.LENGTH_SHORT).show();
                     default:
                         break;
                 }

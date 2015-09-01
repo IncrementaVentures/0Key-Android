@@ -88,6 +88,7 @@
     <string name="logging"> Logging </string>
     <string name="creating_account"> Creating account </string>
     <string name="configure_or_set_key_first"> Configure master or set key first. </string>
+    <string name="door_not_configured"> Configure master or set key first. </string>
 
 
 <!-- TODO: Remove or change this placeholder text -->

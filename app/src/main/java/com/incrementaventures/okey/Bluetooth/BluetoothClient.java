@@ -53,6 +53,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int BAD_INPUT = 107;
     public static final int DONT_HAVE_PERMISSION_THIS_HOUR = 108;
     public static final int PERMISSION_NOT_EDITED = 109;
+    public static final int DOOR_NOT_CONFIGURED = 110;
     private boolean mScanning;
     private boolean mConnected;
     private boolean mSending;
@@ -582,6 +583,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 break;
             case BluetoothProtocol.PERMISSION_EXPIRED_ERROR_CODE:
                 e = DONT_HAVE_PERMISSION;
+                break;
+            case BluetoothProtocol.DOOR_NOT_CONFIGURED_ERROR_CODE:
+                e = DOOR_NOT_CONFIGURED;
                 break;
             default:
                 e = RESPONSE_INCORRECT;
