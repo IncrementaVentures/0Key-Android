@@ -13,7 +13,9 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject {
     public static final String ID = "id";
     public static final String UUID = "uuid";
     public static final String NAME = "name";
-    private final String DESCRIPTION = "description";
+    private static final String DESCRIPTION = "description";
+    private static final String CREATED_AT = "createdAt";
+    private static final String UPDATED_AT = "upatedAt";
 
     public static final String FACTORY_NAME = "PSN";
 
@@ -62,6 +64,7 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject {
     public static void getMasters(final OnMasterDataListener listener){
         ParseQuery<ParseObject> query = new ParseQuery<>(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
+        query.orderByDescending(CREATED_AT);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {

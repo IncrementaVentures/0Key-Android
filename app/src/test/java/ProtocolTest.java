@@ -1,4 +1,5 @@
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
+import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
 
 import junit.framework.Assert;
@@ -22,6 +23,65 @@ public class ProtocolTest {
         Assert.assertEquals("0", type);
         Assert.assertEquals("Esclavo2", name);
     }
+
+    @Test
+    public void testGetEmptySlaveList(){
+        String response = "11;0;*";
+        ArrayList<HashMap<String,String>> data = BluetoothProtocol.getSlavesList(response);
+        Assert.assertEquals(true, data.size() == 0);
+    }
+
+    @Test
+    public void testGetPermissionsSizeOne(){
+        String fullMessage = "05;1234;0;FECHAINICIO1;FECHATERMINO1;0;*";
+        String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
+        ArrayList<HashMap<String, String>> permissions = new ArrayList<>();
+
+        switch (errorCode){
+            case BluetoothProtocol.OK_ERROR_CODE:
+                String onlyPermissionData = fullMessage.substring(2, fullMessage.length() - 3);
+                String[] permissionData = onlyPermissionData.split(BluetoothProtocol.ITEM_SEPARATOR);
+                for (String p : permissionData){
+                    permissions.add(BluetoothProtocol.getPermissionData(p));
+                }
+                break;
+            default:
+                break;
+        }
+        Assert.assertEquals("0", permissions.get(0).get(Permission.TYPE));
+        Assert.assertEquals("1234", permissions.get(0).get(Permission.KEY));
+        Assert.assertEquals("FECHAINICIO1", permissions.get(0).get(Permission.START_DATE));
+        Assert.assertEquals("FECHATERMINO1", permissions.get(0).get(Permission.END_DATE));
+    }
+
+    @Test
+    public void testGetPermissionsSizeTwo(){
+        String fullMessage = "05;1234;0;FECHAINICIO1;FECHATERMINO1;&;1234;1;FECHAINICIO2;FECHATERMINO2;0;*";
+        String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
+        ArrayList<HashMap<String, String>> permissions = new ArrayList<>();
+
+        switch (errorCode){
+            case BluetoothProtocol.OK_ERROR_CODE:
+                String onlyPermissionData = fullMessage.substring(2, fullMessage.length() - 3);
+                String[] permissionData = onlyPermissionData.split(BluetoothProtocol.ITEM_SEPARATOR);
+                for (String p : permissionData){
+                    permissions.add(BluetoothProtocol.getPermissionData(p));
+                }
+                break;
+            default:
+                break;
+        }
+        Assert.assertEquals("0", permissions.get(0).get(Permission.TYPE));
+        Assert.assertEquals("1", permissions.get(1).get(Permission.TYPE));
+        Assert.assertEquals("1234", permissions.get(0).get(Permission.KEY));
+        Assert.assertEquals("1234", permissions.get(1).get(Permission.KEY));
+        Assert.assertEquals("FECHAINICIO1", permissions.get(0).get(Permission.START_DATE));
+        Assert.assertEquals("FECHAINICIO2", permissions.get(1).get(Permission.START_DATE));
+        Assert.assertEquals("FECHATERMINO1", permissions.get(0).get(Permission.END_DATE));
+        Assert.assertEquals("FECHATERMINO2", permissions.get(1).get(Permission.END_DATE));
+    }
+
+
 
     @Test
     public void testIsLastMessagePart(){

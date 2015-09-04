@@ -18,6 +18,7 @@ import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -27,8 +28,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     private final int NORMAL_SCAN_TIME = 4000;
     private final int LONG_SCAN_TIME = 120000;
-    public static final int CLOSE_MODE = 0;
 
+    public static final int CLOSE_MODE = 0;
     public static final int OPEN_MODE = 1;
     public static final int SCAN_MODE = 2;
     public static final int FIRST_ADMIN_CONNECTION_MODE = 4;
@@ -117,11 +118,13 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     public interface OnBluetoothToUserResponse{
         void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord);
+        void masterWithNoSlaves();
         void deviceNotFound();
         void doorOpened(int state);
         void permissionCreated(String key, int type);
         void permissionEdited(String key, int type);
         void permissionReceived(int type, String key, String start, String end);
+        void permissionsReceived(ArrayList<HashMap<String, String>> permisionsData);
         void stopScanning();
         void slaveFound(String id, String type, String name);
         void doorClosed(int state);
@@ -154,7 +157,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     public void scanDevices(){
         mMode = SCAN_MODE;
-        startScan(LONG_SCAN_TIME);
+        startScan(NORMAL_SCAN_TIME);
     }
 
 
@@ -382,12 +385,11 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     processIndividualPermissionResponse(fullMessage);
                     break;
                 case BluetoothProtocol.ALL_PERMISSIONS_RESPONSE_CODE:
+                    processAllPermissionsResponse(fullMessage);
                     break;
                 case BluetoothProtocol.GET_SLAVES_RESPONSE_CODE:
                     processGetSlavesResponse(fullMessage);
                     break;
-
-
                 default:
                     mListener.error(RESPONSE_INCORRECT);
                     break;
@@ -531,12 +533,12 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
         switch (errorCode){
             case BluetoothProtocol.OK_ERROR_CODE:
-                Bundle data = BluetoothProtocol.getPermissionData(fullMessage);
-                int type = BluetoothProtocol.getPermissionType(data.getString(Permission.TYPE));
+                HashMap<String, String> data = BluetoothProtocol.getPermissionData(fullMessage);
+                int type = BluetoothProtocol.getPermissionType(data.get(Permission.TYPE));
                 mListener.permissionReceived(type,
-                                             data.getString(Permission.KEY),
-                                             data.getString(Permission.START_DATE),
-                                             data.getString(Permission.END_DATE)) ;
+                                             data.get(Permission.KEY),
+                                             data.get(Permission.START_DATE),
+                                             data.get(Permission.END_DATE)) ;
                 break;
             default:
                 int e = determineError(errorCode);
@@ -546,8 +548,24 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     }
 
     private void processAllPermissionsResponse(String fullMessage){
-        // TODO: implement
-        mListener.error(RESPONSE_INCORRECT);
+        String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
+
+        switch (errorCode){
+            case BluetoothProtocol.OK_ERROR_CODE:
+                String onlyPermissionData = fullMessage.substring(2, fullMessage.length()-3);
+                String[] permissionData = onlyPermissionData.split(BluetoothProtocol.ITEM_SEPARATOR);
+                ArrayList<HashMap<String, String>> permissions = new ArrayList<>();
+                for (String p : permissionData){
+                   permissions.add(BluetoothProtocol.getPermissionData(p));
+                }
+
+                mListener.permissionsReceived(permissions) ;
+                break;
+            default:
+                int e = determineError(errorCode);
+                mListener.error(e);
+                return;
+        }
     }
 
     private void processGetSlavesResponse(String fullMessage){
@@ -555,6 +573,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         switch (errorCode){
             case BluetoothProtocol.OK_ERROR_CODE:
                 ArrayList<HashMap<String,String>> slaves = BluetoothProtocol.getSlavesList(fullMessage);
+                if (slaves.size() == 0) mListener.masterWithNoSlaves();
                 for (HashMap<String, String> values : slaves){
                     mListener.slaveFound(values.get(Slave.ID), values.get(Slave.TYPE), values.get(Slave.NAME));
                 }

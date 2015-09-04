@@ -29,6 +29,9 @@ import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -306,6 +309,10 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
     }
 
+    @Override
+    public void masterWithNoSlaves() {
+    }
+
 
     @Override
     public void permissionCreated(String key, int type) {
@@ -314,6 +321,11 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
     @Override
     public void permissionEdited(String key, int type) {
+
+    }
+
+    @Override
+    public void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData) {
 
     }
 

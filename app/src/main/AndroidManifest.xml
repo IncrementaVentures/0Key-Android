@@ -54,9 +54,6 @@
             android:name=".Activities.ShareKeyActivity"
             android:label="@string/title_activity_share_key"
             android:parentActivityName=".Activities.DoorActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.incrementaventures.okey.Activities.DoorActivity" />
         </activity>
     </application>
 

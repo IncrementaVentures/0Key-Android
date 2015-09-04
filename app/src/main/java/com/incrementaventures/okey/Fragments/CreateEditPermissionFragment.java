@@ -18,6 +18,8 @@ import android.widget.TimePicker;
 
 import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Activities.CreateEditPermissionActivity;
+import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
+import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.R;
 
 import butterknife.Bind;
@@ -66,6 +68,7 @@ public class CreateEditPermissionFragment extends Fragment {
     private String mStartDate;
     private String mEndHour;
     private String mStartHour;
+    private String mKey;
 
 
     public CreateEditPermissionFragment() {
@@ -76,6 +79,7 @@ public class CreateEditPermissionFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_new_permission, container, false);
         ButterKnife.bind(this, v);
+        mKey = getActivity().getIntent().getStringExtra(Permission.KEY);
         setListeners();
 
         mPermissionTypes =  new CharSequence[]{
@@ -192,6 +196,7 @@ public class CreateEditPermissionFragment extends Fragment {
                 data.putExtra(CreateEditPermissionActivity.PERMISSION_START_HOUR, mStartHourView.getText().toString());
                 data.putExtra(CreateEditPermissionActivity.PERMISSION_END_DATE, mEndDateView.getText().toString());
                 data.putExtra(CreateEditPermissionActivity.PERMISSION_END_HOUR, mEndHourView.getText().toString());
+                data.putExtra(CreateEditPermissionActivity.PERMISSION_KEY, mKey);
                 data.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
                 getActivity().setResult(Activity.RESULT_OK, data);
                 getActivity().finish();

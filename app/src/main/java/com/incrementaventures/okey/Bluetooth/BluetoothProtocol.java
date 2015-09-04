@@ -378,13 +378,13 @@ public class BluetoothProtocol {
         }
     }
 
-    public static Bundle getPermissionData(String fullMessage){
-        String[] parts = fullMessage.split(SEPARATOR);
-        Bundle data = new Bundle();
-        data.putString(Permission.KEY, parts[1]);
-        data.putString(Permission.TYPE, parts[2]);
-        data.putString(Permission.START_DATE, parts[3]);
-        data.putString(Permission.END_DATE, parts[4]);
+    public static HashMap<String,String> getPermissionData(String permissionPart){
+        String[] parts = permissionPart.split(SEPARATOR);
+        HashMap<String,String> data = new HashMap<>();
+        data.put(Permission.KEY, parts[1]);
+        data.put(Permission.TYPE, parts[2]);
+        data.put(Permission.START_DATE, parts[3]);
+        data.put(Permission.END_DATE, parts[4]);
         return data;
     }
 
@@ -425,7 +425,7 @@ public class BluetoothProtocol {
         response = response.substring(2, response.length()-3);
         String[] parts = response.split(ITEM_SEPARATOR);
         HashMap<String,String> m ;
-
+        if (response.equals(SEPARATOR)) return data;
         for (String part : parts){
             m = new HashMap<>();
             part = part.substring(1, part.length()-1);

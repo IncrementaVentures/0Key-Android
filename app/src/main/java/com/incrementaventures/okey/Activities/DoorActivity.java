@@ -10,12 +10,18 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
+import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
 import com.incrementaventures.okey.Fragments.DoorFragment;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
@@ -25,6 +31,9 @@ import com.incrementaventures.okey.R;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DoorActivity extends ActionBarActivity implements User.OnActionMasterResponse, User.OnPermissionsResponse, User.OnUserBluetoothToActivityResponse, DoorFragment.OnSlaveSelectedListener {
 
@@ -94,7 +103,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         else if (id == R.id.action_new_permission){
             if (mMaster.getPermission().isAdmin()) {
                 openCreateEditPermissionActivity(NEW_PERMISSION_REQUEST);
-            } else {
+            }
+            else {
                 Toast.makeText(this, R.string.you_are_not_admin, Toast.LENGTH_SHORT).show();
             }
             return true;
@@ -106,9 +116,15 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         }
 
         else if( id == R.id.edit_permission){
-            openCreateEditPermissionActivity(EDIT_PERMISSION_REQUEST);
+            Intent intent = new Intent(DoorActivity.this, CreateEditPermissionActivity.class);
+            Permission p = mMaster.getPermission();
+            intent.putExtra(Permission.KEY, p.getKey());
+            intent.putExtra(Permission.START_DATE,  p.getStartDate());
+            intent.putExtra(Permission.END_DATE,  p.getEndDate());
+            intent.putExtra(Permission.TYPE, BluetoothProtocol.getPermissionType(p.getType()));
+            intent.putExtra(REQUEST_CODE, EDIT_PERMISSION_REQUEST);
+            startActivityForResult(intent, EDIT_PERMISSION_REQUEST);
         }
-
 
         else if (id == R.id.first_config_action){
             if (mScannedDoor){
@@ -134,6 +150,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     private void openCreateEditPermissionActivity(int mode){
         Intent intent = new Intent(this, CreateEditPermissionActivity.class);
         intent.putExtra(REQUEST_CODE, mode);
+        intent.putExtra(Permission.KEY, mMaster.getPermission().getKey());
         startActivityForResult(intent, mode);
     }
 
@@ -163,7 +180,10 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             public void onClick(DialogInterface dialog, int whichButton) {
                 mPermissionKey = input.getText().toString();
                 mMaster = getDoor();
-                Permission p = mMaster.getPermission();
+                Permission p = null;
+                if (mMaster != null) {
+                    p = mMaster.getPermission();
+                }
                 if (p == null){
                     p = Permission.create(mCurrentUser, mMaster, Permission.UNKNOWN_PERMISSION,  mPermissionKey, Permission.UNKNOWN_DATE, Permission.UNKNOWN_DATE);
                 } else {
@@ -211,6 +231,12 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     }
 
     @Override
+    public void masterWithNoSlaves() {
+        if (mProgressDialog != null) mProgressDialog.dismiss();
+        Toast.makeText(this, R.string.no_permission, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void permissionCreated(final String key, final int type) {
         runOnUiThread(new Runnable() {
             @Override
@@ -246,6 +272,41 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         p.setEndDate(endDate + "T" + endHour);
         p.setType(type);
         p.save();
+        Toast.makeText(this, R.string.permission_edited, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void permissionsReceived(final ArrayList<HashMap<String, String>> permissionsData) {
+        if (mProgressDialog != null) mProgressDialog.dismiss();
+        ArrayList<String> array = new ArrayList<>();
+        for (HashMap<String, String> permission : permissionsData){
+            array.add(permission.get(Permission.KEY) +
+                      permission.get(Permission.TYPE) +
+                      permission.get(Permission.START_DATE) +
+                      permission.get(Permission.END_DATE));
+        }
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(DoorActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View convertView = inflater.inflate(R.layout.permissions_dialog, null);
+        alertDialog.setView(convertView);
+        alertDialog.setTitle(R.string.permissions);
+        ListView lv = (ListView) convertView.findViewById(R.id.list_permissions);
+        ArrayAdapter<String> adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, array);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HashMap<String, String> p = permissionsData.get(position);
+                Intent intent = new Intent(DoorActivity.this, CreateEditPermissionActivity.class);
+                intent.putExtra(Permission.KEY, p.get(Permission.KEY));
+                intent.putExtra(Permission.START_DATE, p.get(Permission.START_DATE));
+                intent.putExtra(Permission.END_DATE, p.get(Permission.END_DATE));
+                intent.putExtra(Permission.TYPE, p.get(Permission.TYPE));
+                intent.putExtra(REQUEST_CODE, EDIT_PERMISSION_REQUEST);
+                startActivityForResult(intent, EDIT_PERMISSION_REQUEST);
+            }
+        });
+        lv.setAdapter(adapter);
+        alertDialog.show();
     }
 
     @Override
@@ -291,6 +352,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                         break;
                     case BluetoothClient.DOOR_NOT_CONFIGURED:
                         Toast.makeText(DoorActivity.this, R.string.door_not_configured, Toast.LENGTH_SHORT).show();
+                        break;
                     default:
                         break;
                 }
@@ -377,7 +439,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                     String startDate = extras.getString(CreateEditPermissionActivity.PERMISSION_START_DATE);
                     String endHour = extras.getString(CreateEditPermissionActivity.PERMISSION_END_HOUR);
                     String endDate = extras.getString(CreateEditPermissionActivity.PERMISSION_END_DATE);
-                    mCurrentUser.editPermission(type, startDate, startHour, endDate, endHour, mMaster.getPermission().getKey(), mMaster.getName());
+                    String key = extras.getString(CreateEditPermissionActivity.PERMISSION_KEY);
+                    mCurrentUser.editPermission(type, startDate, startHour, endDate, endHour, key, mMaster.getName());
                 }
                 break;
             default:

@@ -13,6 +13,7 @@ import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incrementaventures.okey.Models.ParseObject {
 
@@ -75,12 +76,14 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         void doorOpening();
         void noPermission();
         void slaveFound(String id, String type, String name);
+        void masterWithNoSlaves();
         void error(int code);
     }
 
     public interface OnPermissionsResponse{
         void permissionCreated(String key, int type);
         void permissionEdited(String key, int type);
+        void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData);
         void permissionReceived(int type, String key, String start, String end);
         void error(int code);
     }
@@ -88,6 +91,11 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     @Override
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
         mBluetoothListener.deviceFound(device, rssi, scanRecord);
+    }
+
+    @Override
+    public void masterWithNoSlaves() {
+        mMasterListener.masterWithNoSlaves();
     }
 
     @Override
@@ -113,6 +121,11 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     @Override
     public void permissionReceived(int type, String key, String start, String end) {
         mPermissionsListener.permissionReceived(type, key, start, end);
+    }
+
+    @Override
+    public void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData) {
+        mPermissionsListener.permissionsReceived(permissionsData);
     }
 
     @Override

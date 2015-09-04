@@ -89,9 +89,13 @@
     <string name="creating_account"> Creating account </string>
     <string name="configure_or_set_key_first"> Configure master or set key first. </string>
     <string name="door_not_configured"> Configure master or set key first. </string>
+    <string name="master_with_no_slaves"> Master with no slaves </string>
+    <string name="permission_edited"> Permission edited </string>
+    <string name="permissions"> Permissions</string>
 
 
-<!-- TODO: Remove or change this placeholder text -->
+
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_door">Door</string>
     <string name="title_activity_new_permission">New permission</string>
