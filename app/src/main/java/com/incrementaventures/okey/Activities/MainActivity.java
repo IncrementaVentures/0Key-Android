@@ -305,8 +305,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     }
 
     @Override
-    public void slaveFound(String id, String type, String name) {
-
+    public void slavesFound(ArrayList<HashMap<String, String>> slavesData) {
     }
 
     @Override

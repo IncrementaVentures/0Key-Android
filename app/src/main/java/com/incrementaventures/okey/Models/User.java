@@ -75,7 +75,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         void doorOpened(int state);
         void doorOpening();
         void noPermission();
-        void slaveFound(String id, String type, String name);
+        void slavesFound(ArrayList<HashMap<String,String>> slavesData);
         void masterWithNoSlaves();
         void error(int code);
     }
@@ -134,8 +134,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     }
 
     @Override
-    public void slaveFound(String id, String type, String name) {
-        mMasterListener.slaveFound(id, type, name);
+    public void slavesFound(ArrayList<HashMap<String,String>> slavesData) {
+        mMasterListener.slavesFound(slavesData);
     }
 
     @Override

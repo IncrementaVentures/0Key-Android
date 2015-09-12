@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -28,29 +29,30 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DoorFragment extends Fragment implements PopupMenu.OnMenuItemClickListener{
+public class DoorFragment extends Fragment{
 
-    @Bind(R.id.permission_type)
+    /*@Bind(R.id.permission_type)
     TextView mPermissionTypeView;
     @Bind(R.id.end_date)
     TextView mEndDateView;
     @Bind(R.id.end_date_text_view)
-    TextView mEndDateStaticView;
+    TextView mEndDateStaticView;*/
     @Bind(R.id.slaves_door_fragment)
     ListView mSlavesListView;
+    @Bind(R.id.no_slaves_yet)
+    TextView mNoSlavesView;
 
     private Master mMaster;
     private Permission mPermission;
 
     private List<Slave> mSlaves;
     private SlavesAdapter mSlavesAdapter;
-
-    private Slave mSelectedSlave;
 
     private boolean mScannedDoor;
 
@@ -90,50 +92,13 @@ public class DoorFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     private void setUI(final LayoutInflater inflater){
         if (mPermission != null){
             mSlaves = mMaster.getSlaves();
-            if (mSlaves == null) mSlaves = new ArrayList<>();
-            mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves){
-                @Override
-                public View getView(int position, View convertView, ViewGroup parent) {
-                    View view = convertView;
-                    final Slave slave = getItem(position);
+            if (mSlaves == null || mSlaves.size() == 0) {
+                mSlaves = new ArrayList<>();
+                mNoSlavesView.setVisibility(TextView.VISIBLE);
+            } else mNoSlavesView.setVisibility(TextView.GONE);
 
-                    if (view == null){
-                        view = inflater.inflate(R.layout.slave_list_item, parent, false);
-                    }
-
-                    TextView doorName = (TextView) view.findViewById(R.id.slave_name);
-                    doorName.setText(slave.getName());
-
-                    ImageButton moreOptionsButton = (ImageButton) view.findViewById(R.id.more_options_button);
-                    moreOptionsButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mSelectedSlave = slave;
-                            PopupMenu popup = new PopupMenu(getContext(), v);
-                            MenuInflater inflater = popup.getMenuInflater();
-                            inflater.inflate(R.menu.menu_more_options_slave, popup.getMenu());
-                            popup.setOnMenuItemClickListener(DoorFragment.this);
-                            popup.show();
-                        }
-                    });
-
-                    LinearLayout openButton = (LinearLayout) view.findViewById(R.id.open_slave_layout);
-                    openButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mListener.openDoorSelected(mMaster, slave);
-                        }
-                    });
-                    return view;
-                }
-            };
+            mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves, mMaster);
             mSlavesListView.setAdapter(mSlavesAdapter);
-            mPermissionTypeView.setText(mPermission.getType());
-            mEndDateView.setText(mPermission.getEndDate());
-        } else{
-            mPermissionTypeView.setText(R.string.permission_type_unknown);
-            mEndDateView.setVisibility(TextView.GONE);
-            mEndDateStaticView.setVisibility(TextView.GONE);
         }
     }
 
@@ -175,21 +140,7 @@ public class DoorFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_read_my_permission:
-                mListener.readMyPermissionSelected(mMaster, mSelectedSlave, mPermission.getKey());
-                return true;
-            case R.id.action_read_all_permissions:
-                mListener.readAllPermissionsSelected(mMaster, mSelectedSlave, mPermission.getKey());
-                return true;
-            case R.id.action_open_when_close:
-                mListener.openWhenCloseSelected(mMaster, mSelectedSlave, mPermission.getKey());
-            default:
-                return false;
-        }
-    }
+
 
 
     @Override
@@ -202,18 +153,27 @@ public class DoorFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         }
     }
 
-    public void addSlave(final String id, final String type, final String name){
+    public void addSlave(ArrayList<HashMap<String,String>> slavesData){
+        if (mSlaves == null) {
+            mSlaves = new ArrayList<>();
+        }
+        if (slavesData.size() != 0){
+            mNoSlavesView.setVisibility(TextView.GONE);
+        }
+        for (HashMap<String, String> slaveData : slavesData){
+            final Slave s = Slave.create(mMaster.getUUID(),
+                                        slaveData.get(Slave.ID),
+                                        Integer.valueOf(slaveData.get(Slave.TYPE)),
+                                        Integer.valueOf(slaveData.get(Slave.ID)));
+            s.save();
+            mSlaves.add(s);
+        }
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Slave s = Slave.create(mMaster.getUUID(), name, Integer.valueOf(type), Integer.valueOf(id));
-                if (mSlaves == null) {
-                    mSlaves = new ArrayList<>();
-                }
-                mSlaves.add(s);
-                mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves);
+                mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves, mMaster);
                 ((BaseAdapter) mSlavesListView.getAdapter()).notifyDataSetChanged();
-                s.save();
             }
         });
 

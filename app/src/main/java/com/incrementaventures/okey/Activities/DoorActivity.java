@@ -225,9 +225,9 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     }
 
     @Override
-    public void slaveFound(String id, String type, String name) {
+    public void slavesFound(ArrayList<HashMap<String,String>> slavesData) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
-        mDoorFragment.addSlave(id, type, name);
+        mDoorFragment.addSlave(slavesData);
     }
 
     @Override

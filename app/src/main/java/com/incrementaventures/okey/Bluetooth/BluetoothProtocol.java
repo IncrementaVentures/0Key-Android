@@ -433,7 +433,6 @@ public class BluetoothProtocol {
             String[] slaveData = part.split(SEPARATOR);
             m.put(Slave.ID, slaveData[0]);
             m.put(Slave.TYPE, slaveData[1]);
-            m.put(Slave.NAME, slaveData[2]);
             data.add(m);
         }
         return data;

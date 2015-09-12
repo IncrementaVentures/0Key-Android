@@ -21,7 +21,7 @@ public class ProtocolTest {
         String name = b.get(Slave.NAME);
         Assert.assertEquals("2", id);
         Assert.assertEquals("0", type);
-        Assert.assertEquals("Esclavo2", name);
+        Assert.assertNull(name);
     }
 
     @Test

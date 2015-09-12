@@ -10,7 +10,6 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
 import android.util.SparseArray;
 
@@ -18,7 +17,6 @@ import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -126,7 +124,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         void permissionReceived(int type, String key, String start, String end);
         void permissionsReceived(ArrayList<HashMap<String, String>> permisionsData);
         void stopScanning();
-        void slaveFound(String id, String type, String name);
+        void slavesFound(ArrayList<HashMap<String,String>> slavesData);
         void doorClosed(int state);
         void error(int mode);
     }
@@ -576,9 +574,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             case BluetoothProtocol.OK_ERROR_CODE:
                 ArrayList<HashMap<String,String>> slaves = BluetoothProtocol.getSlavesList(fullMessage);
                 if (slaves.size() == 0) mListener.masterWithNoSlaves();
-                for (HashMap<String, String> values : slaves){
-                    mListener.slaveFound(values.get(Slave.ID), values.get(Slave.TYPE), values.get(Slave.NAME));
-                }
+                mListener.slavesFound(slaves);
                 break;
             default:
                 int e = determineError(errorCode);
