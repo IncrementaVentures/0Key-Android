@@ -26,7 +26,7 @@ import java.util.UUID;
 
 public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
-    private final int NORMAL_SCAN_TIME = 4000;
+    private final int NORMAL_SCAN_TIME = 7000;
     private final int LONG_SCAN_TIME = 120000;
 
     public static final int CLOSE_MODE = 0;
@@ -185,9 +185,10 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executeCreateNewPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
+    public void executeCreateNewPermission(String type, String slave, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
         mMode = CREATE_NEW_PERMISSION_MODE;
         mMasterName = doorName;
+        mSlaveId = Integer.valueOf(slave);
         mPermissionType = type;
         mPermissionKey = permissionKey;
         mEndDate = endDate;
@@ -362,7 +363,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             mWaitingResponse = false;
 
             String response = new String(characteristic.getValue());
-            String responseCode = BluetoothProtocol.getResponseCode(response);
+
 
             if (mReceivedMessageParts == null) mReceivedMessageParts = new LinkedList<>();
             mReceivedMessageParts.offer(response);
@@ -373,6 +374,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             }
 
             String fullMessage = joinMessageParts(mReceivedMessageParts);
+            String responseCode = BluetoothProtocol.getResponseCode(response);
 
             switch (responseCode){
                 case BluetoothProtocol.DOOR_OPENED_RESPONSE_CODE:

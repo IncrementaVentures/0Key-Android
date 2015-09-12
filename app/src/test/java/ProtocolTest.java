@@ -94,7 +94,7 @@ public class ProtocolTest {
     @Test
     public void testOpenDoorResponse(){
         String openResponse = "07;1;0;*";
-        String notOpenResponse = "07;01;1;*";
+        String notOpenResponse = "07;1;1;*";
         Assert.assertTrue(BluetoothProtocol.isDoorOpened(openResponse));
         Assert.assertFalse(BluetoothProtocol.isDoorOpened(notOpenResponse));
     }

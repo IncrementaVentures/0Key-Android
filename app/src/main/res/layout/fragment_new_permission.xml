@@ -190,5 +190,29 @@
         android:layout_alignParentBottom="true"
         android:layout_alignEnd="@+id/view1" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Slave"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:id="@+id/textView8"
+        android:layout_below="@+id/due_date_layout"
+        android:layout_alignStart="@+id/due_date_layout" />
+
+
+    <EditText
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:ems="10"
+        android:id="@+id/permission_slave"
+        android:layout_below="@+id/due_date_layout"
+        android:layout_toEndOf="@+id/textView8" />
+
 
 </RelativeLayout>

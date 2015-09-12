@@ -17,6 +17,7 @@ public class CreateEditPermissionActivity extends ActionBarActivity {
     public static final String PERMISSION_END_DATE = "permission_end_date";
     public static final String PERMISSION_END_HOUR = "permission_end_hour";
     public static final String PERMISSION_KEY = "permission_key";
+    public static final String PERMISSION_SLAVE = "permission_slave";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

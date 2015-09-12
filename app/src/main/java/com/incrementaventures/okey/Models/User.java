@@ -334,7 +334,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         mBluetoothClient.scanDevices();
     }
 
-    public void createNewPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
+    public void createNewPermission(String type, String slave, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
         mBluetoothClient = new BluetoothClient(mContext, this);
 
         if (!mBluetoothClient.isSupported()){
@@ -346,7 +346,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             return;
         }
 
-        mBluetoothClient.executeCreateNewPermission(type, startDate, startHour, endDate, endHour, permissionKey, doorName);
+        mBluetoothClient.executeCreateNewPermission(type, slave, startDate, startHour, endDate, endHour, permissionKey, doorName);
     }
 
     public void openWhenClose(Master master, Slave slave, String key){

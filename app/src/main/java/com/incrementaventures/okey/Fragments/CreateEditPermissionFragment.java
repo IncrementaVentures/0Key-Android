@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -62,6 +63,9 @@ public class CreateEditPermissionFragment extends Fragment {
 
     @Bind(R.id.permission_type_new)
     TextView mPermissionTypeView;
+
+    @Bind(R.id.permission_slave)
+    EditText mPermissionSlave;
 
     private CharSequence mPermissionTypes[];
     private String mEndDate;
@@ -197,6 +201,7 @@ public class CreateEditPermissionFragment extends Fragment {
                 data.putExtra(CreateEditPermissionActivity.PERMISSION_END_DATE, mEndDateView.getText().toString());
                 data.putExtra(CreateEditPermissionActivity.PERMISSION_END_HOUR, mEndHourView.getText().toString());
                 data.putExtra(CreateEditPermissionActivity.PERMISSION_KEY, mKey);
+                data.putExtra(CreateEditPermissionActivity.PERMISSION_SLAVE, mPermissionSlave.getText().toString());
                 data.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
                 getActivity().setResult(Activity.RESULT_OK, data);
                 getActivity().finish();

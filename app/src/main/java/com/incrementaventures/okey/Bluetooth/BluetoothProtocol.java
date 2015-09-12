@@ -138,28 +138,28 @@ public class BluetoothProtocol {
         builder.append(adminKey);
         builder.append(SEPARATOR);
 
-        builder.append(EMPTY);
+        builder.append(slaveId);
         builder.append(SEPARATOR);
 
-        // "02;date;key;0;0;"
+        // "02;date;key;slaveid;0;"
         builder.append(CREATE_NEW_PERMISSION_CODE);
         builder.append(SEPARATOR);
 
         int type = getPermissionType(permissionType);
-        // "02;date;key;0;0;permissionType;"
+        // "02;date;key;slaveid;0;permissionType;"
         builder.append(type);
         builder.append(SEPARATOR);
 
         if (type == TEMPORAL_PERMISSION){
-            // "02;date;key;0;0;permissionType;startDateTstartHour;"
+            // "02;date;key;slaveid;0;permissionType;startDateTstartHour;"
             builder.append(startDate + "T" + startHour);
             builder.append(SEPARATOR);
 
-            // "02;date;key;0;0;permissionType;startDateTstartHour;endDateTendHour;"
+            // "02;date;key;slaveid;0;permissionType;startDateTstartHour;endDateTendHour;"
             builder.append(endDate + "T" + endHour);
             builder.append(SEPARATOR);
         } else {
-            // "02;date;key;0;0;permissionType;startDateTstartHour;0;"
+            // "02;date;key;slaveid;0;permissionType;startDateTstartHour;0;"
             builder.append(startDate + "T" + startHour);
             builder.append(SEPARATOR);
             builder.append(EMPTY);
@@ -167,11 +167,11 @@ public class BluetoothProtocol {
         }
 
         // permission key
-        // "02;date;key;0;0;permissionType;startDateTstartHour;endDateTendHour;0;"
+        // "02;date;key;slaveid;0;permissionType;startDateTstartHour;endDateTendHour;0;"
         builder.append(EMPTY);
         builder.append(SEPARATOR);
 
-        // "02;date;key;0;0;permissionType;startDateTstartHour;endDateTendHour;0;*"
+        // "02;date;key;slaveid;0;permissionType;startDateTstartHour;endDateTendHour;0;*"
         builder.append(MESSAGE_END);
 
         return builder.toString();
@@ -194,7 +194,7 @@ public class BluetoothProtocol {
         builder.append(adminKey);
         builder.append(SEPARATOR);
 
-        builder.append(EMPTY);
+        builder.append(slaveId);
         builder.append(SEPARATOR);
 
         // "02;date;key;0;1;"
@@ -382,9 +382,10 @@ public class BluetoothProtocol {
         String[] parts = permissionPart.split(SEPARATOR);
         HashMap<String,String> data = new HashMap<>();
         data.put(Permission.KEY, parts[1]);
-        data.put(Permission.TYPE, parts[2]);
-        data.put(Permission.START_DATE, parts[3]);
-        data.put(Permission.END_DATE, parts[4]);
+        data.put(Slave.ID, parts[2]);
+        data.put(Permission.TYPE, parts[3]);
+        data.put(Permission.START_DATE, parts[4]);
+        data.put(Permission.END_DATE, parts[5]);
         return data;
     }
 

@@ -278,9 +278,14 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     @Override
     public void permissionsReceived(final ArrayList<HashMap<String, String>> permissionsData) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
+        if (permissionsData.size() == 0){
+            Toast.makeText(this, "No slaves configured yet.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         ArrayList<String> array = new ArrayList<>();
         for (HashMap<String, String> permission : permissionsData){
             array.add(permission.get(Permission.KEY) +
+                      permission.get(Slave.ID)+
                       permission.get(Permission.TYPE) +
                       permission.get(Permission.START_DATE) +
                       permission.get(Permission.END_DATE));
@@ -301,6 +306,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 intent.putExtra(Permission.START_DATE, p.get(Permission.START_DATE));
                 intent.putExtra(Permission.END_DATE, p.get(Permission.END_DATE));
                 intent.putExtra(Permission.TYPE, p.get(Permission.TYPE));
+                intent.putExtra(Slave.ID, p.get(Slave.ID));
                 intent.putExtra(REQUEST_CODE, EDIT_PERMISSION_REQUEST);
                 startActivityForResult(intent, EDIT_PERMISSION_REQUEST);
             }
@@ -312,8 +318,12 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     @Override
     public void permissionReceived(int type, String key, String start, String end) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
-        Toast.makeText(this, "Permission received", Toast.LENGTH_SHORT).show();
-        // TODO: show in UI
+        Toast.makeText(this, "Permission received and saved", Toast.LENGTH_SHORT).show();
+        Permission p = mMaster.getPermission();
+        p.setType(type);
+        p.setStartDate(start);
+        p.setEndDate(end);
+        p.save();
     }
 
     @Override
@@ -427,7 +437,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                     String startDate = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_START_DATE);
                     String endHour = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_END_HOUR);
                     String endDate = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_END_DATE);
-                    mCurrentUser.createNewPermission(type, startDate, startHour, endDate, endHour, mMaster.getPermission().getKey(), mMaster.getName());
+                    String slave = mPermissionData.getString(CreateEditPermissionActivity.PERMISSION_SLAVE);
+                    mCurrentUser.createNewPermission(type, slave, startDate, startHour, endDate, endHour, mMaster.getPermission().getKey(), mMaster.getName());
                 }
                 break;
             case DoorActivity.EDIT_PERMISSION_REQUEST:
@@ -463,7 +474,6 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     public void readAllPermissionsSelected(Master master, Slave slave, String permissionKey) {
         mProgressDialog = ProgressDialog.show(this, null, getResources().getString(R.string.reading_permissions));
         mCurrentUser.readAllPermissions(master, slave, permissionKey);
-
     }
 
     @Override
