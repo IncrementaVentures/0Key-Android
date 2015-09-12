@@ -33,7 +33,7 @@ public class ProtocolTest {
 
     @Test
     public void testGetPermissionsSizeOne(){
-        String fullMessage = "05;1234;0;FECHAINICIO1;FECHATERMINO1;0;*";
+        String fullMessage = "05;1234;0;0;FECHAINICIO1;FECHATERMINO1;0;*";
         String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
         ArrayList<HashMap<String, String>> permissions = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public class ProtocolTest {
 
     @Test
     public void testGetPermissionsSizeTwo(){
-        String fullMessage = "05;1234;0;FECHAINICIO1;FECHATERMINO1;&;1234;1;FECHAINICIO2;FECHATERMINO2;0;*";
+        String fullMessage = "05;1234;0;0;FECHAINICIO1;FECHATERMINO1;&;1234;1;2;FECHAINICIO2;FECHATERMINO2;0;*";
         String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
         ArrayList<HashMap<String, String>> permissions = new ArrayList<>();
 
@@ -72,7 +72,7 @@ public class ProtocolTest {
                 break;
         }
         Assert.assertEquals("0", permissions.get(0).get(Permission.TYPE));
-        Assert.assertEquals("1", permissions.get(1).get(Permission.TYPE));
+        Assert.assertEquals("2", permissions.get(1).get(Permission.TYPE));
         Assert.assertEquals("1234", permissions.get(0).get(Permission.KEY));
         Assert.assertEquals("1234", permissions.get(1).get(Permission.KEY));
         Assert.assertEquals("FECHAINICIO1", permissions.get(0).get(Permission.START_DATE));
@@ -94,7 +94,7 @@ public class ProtocolTest {
     @Test
     public void testOpenDoorResponse(){
         String openResponse = "07;1;0;*";
-        String notOpenResponse = "07;1;1;*";
+        String notOpenResponse = "07;0;2;*";
         Assert.assertTrue(BluetoothProtocol.isDoorOpened(openResponse));
         Assert.assertFalse(BluetoothProtocol.isDoorOpened(notOpenResponse));
     }
@@ -149,7 +149,7 @@ public class ProtocolTest {
 
         Assert.assertEquals("02", parts[0]);
         Assert.assertEquals("4444", parts[2]);
-        Assert.assertEquals(BluetoothProtocol.EMPTY , parts[3]);
+        Assert.assertEquals("1" , parts[3]);
         Assert.assertEquals("0", parts[4]); // tipo modificacion
         Assert.assertEquals("2", parts[5]); // tipo permiso
         Assert.assertEquals("2015-12-18T10:00", parts[6]); // fecha inicio
@@ -167,7 +167,7 @@ public class ProtocolTest {
 
         Assert.assertEquals("02", parts[0]);
         Assert.assertEquals("4444", parts[2]);
-        Assert.assertEquals(BluetoothProtocol.EMPTY, parts[3]);
+        Assert.assertEquals("1", parts[3]);
         Assert.assertEquals("0", parts[4]); // tipo modificacion
         Assert.assertEquals("1", parts[5]); // tipo permiso
         Assert.assertEquals("2015-12-18T10:00", parts[6]); // fecha inicio
@@ -186,7 +186,7 @@ public class ProtocolTest {
 
         Assert.assertEquals("02", parts[0]);
         Assert.assertEquals("4444", parts[2]);
-        Assert.assertEquals("0", parts[3]);
+        Assert.assertEquals("1", parts[3]);
         Assert.assertEquals("0", parts[4]); // tipo modificacion
         Assert.assertEquals("0", parts[5]); // tipo permiso
         Assert.assertEquals("2015-12-18T10:00", parts[6]); // fecha inicio
@@ -204,7 +204,7 @@ public class ProtocolTest {
 
         Assert.assertEquals("02", parts[0]);
         Assert.assertEquals("4444", parts[2]);
-        Assert.assertEquals("0", parts[3]);
+        Assert.assertEquals("1", parts[3]);
         Assert.assertEquals("1", parts[4]); // tipo modificacion
         Assert.assertEquals("2", parts[5]); // tipo permiso
         Assert.assertEquals("2015-12-18T10:00", parts[6]); // fecha inicio
