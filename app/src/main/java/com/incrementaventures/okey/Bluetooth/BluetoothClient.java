@@ -11,15 +11,20 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
@@ -90,13 +95,13 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private String mFactoryKey;
     private String mMasterName;
     private int mSlaveId;
-
-
+    private int mNewSlaveId;
     private String mPermissionType;
     private String mEndDate;
     private String mEndHour;
     private String mStartDate;
     private String mStartHour;
+    private String mToEditPermissionKey;
 
     /**
      * Handles the connection with the BLE device
@@ -106,13 +111,12 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public BluetoothClient(Context context,  OnBluetoothToUserResponse listener){
         mListener = listener;
         mContext = context;
-        BluetoothManager bluetoothManager = (BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothManager bluetoothManager =
+                (BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
         mHandler = new Handler();
         mDevices = new SparseArray<>();
-
     }
-
 
     public interface OnBluetoothToUserResponse{
         void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord);
@@ -135,7 +139,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
      */
     public boolean isSupported(){
         if (mBluetoothAdapter == null) {
-            // Device doesnt support Bluetooth
+            // Device doesn't support Bluetooth
             return false;
         }
         return true;
@@ -158,7 +162,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-
     public void executeOpenDoor(String key, String masterName, int slaveId){
         mPermissionKey = key;
         mSlaveId = slaveId;
@@ -175,7 +178,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(LONG_SCAN_TIME);
     }
 
-    public void executeFirstConnectionConfiguration(String factoryKey, String permissionKey, String masterName){
+    public void executeFirstConnectionConfiguration(String factoryKey, String permissionKey,
+                                                    String masterName){
         mPermissionKey = permissionKey;
         mFactoryKey = factoryKey;
         mMasterName = masterName;
@@ -183,7 +187,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executeCreateNewPermission(String type, String slave, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
+    public void executeCreateNewPermission(String type, String slave, String startDate,
+                                           String startHour, String endDate, String endHour,
+                                           String permissionKey, String doorName){
         mMode = CREATE_NEW_PERMISSION_MODE;
         mMasterName = doorName;
         mSlaveId = Integer.valueOf(slave);
@@ -196,11 +202,17 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executeEditPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
+    public void executeEditPermission(String type, int oldSlaveId, int newSlaveId,
+                                      String startDate, String startHour,
+                                      String endDate, String endHour, String adminKey,
+                                      String toEditPermissionKey, String doorName){
         mMode = EDIT_PERMISSION_MODE;
+        mSlaveId = oldSlaveId;
+        mNewSlaveId = newSlaveId;
+        mToEditPermissionKey = toEditPermissionKey;
         mMasterName = doorName;
         mPermissionType = type;
-        mPermissionKey = permissionKey;
+        mPermissionKey = adminKey;
         mEndDate = endDate;
         mEndHour = endHour;
         mStartDate = startDate;
@@ -238,7 +250,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             mBluetoothAdapter.startLeScan(this);
 
         } else{
-            mBluetoothAdapter.startLeScan(new UUID[]{UUID.fromString(BluetoothProtocol.DOOR_SERVICE_UUID)}, this);
+            mBluetoothAdapter.startLeScan(new UUID[]
+                    {UUID.fromString(BluetoothProtocol.DOOR_SERVICE_UUID)}, this);
         }
         // Stop the scanning after NORMAL_SCAN_TIME miliseconds. Saves battery.
         mHandler.postDelayed(new Runnable() {
@@ -258,26 +271,25 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         }
     }
 
+
+
     /*
         Called when a devices is found.
      */
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-
+        printScanRecord(scanRecord);
         if ((mMode == OPEN_MODE && device.getName().equals(mMasterName))
                 || (mMode == CREATE_NEW_PERMISSION_MODE && device.getName().equals(mMasterName))
-                || (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(Master.FACTORY_NAME))
+                |  (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(Master.FACTORY_NAME))
                 || (mMode == READ_MY_PERMISSION_MODE && device.getName().equals(mMasterName))
                 || (mMode == READ_ALL_PERMISSIONS_MODE && device.getName().equals(mMasterName))
                 || (mMode == GET_SLAVES_MODE && device.getName().equals(mMasterName))
                 || (mMode == EDIT_PERMISSION_MODE && device.getName().endsWith(mMasterName))){
 
-
             mDevices.put(device.hashCode(), device);
             device.connectGatt(mContext, true, mGattCallback);
-
-        }
-        else if (mMode == SCAN_MODE) {
+        } else if (mMode == SCAN_MODE) {
             mListener.deviceFound(device, rssi, scanRecord);
         }
     }
@@ -313,7 +325,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         }
 
         @Override
-        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor,
+                                      int status) {
             gatt.setCharacteristicNotification(mNotifyCharacteristic, true);
             String message;
             switch (mMode){
@@ -322,22 +335,28 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     message = BluetoothProtocol.buildOpenMessage(mPermissionKey, mSlaveId);
                     break;
                 case FIRST_ADMIN_CONNECTION_MODE:
-                    message = BluetoothProtocol.buildFirstConfigurationMessage(mPermissionKey, mFactoryKey, mMasterName);
+                    message = BluetoothProtocol.buildFirstConfigurationMessage(mPermissionKey,
+                            mFactoryKey, mMasterName);
                     break;
                 case CREATE_NEW_PERMISSION_MODE:
-                    message = BluetoothProtocol.buildNewPermissionMessage(mPermissionType, mSlaveId, mStartDate, mStartHour, mEndDate, mEndHour, mPermissionKey);
+                    message = BluetoothProtocol.buildNewPermissionMessage(mPermissionType,
+                            mSlaveId, mStartDate, mStartHour, mEndDate, mEndHour, mPermissionKey);
                     break;
                 case EDIT_PERMISSION_MODE:
-                    message = BluetoothProtocol.buildEditPermissionMessage(mPermissionType, mSlaveId, mStartDate, mStartHour, mEndDate, mEndHour, mPermissionKey);
+                    message = BluetoothProtocol.buildEditPermissionMessage(mPermissionType,
+                            mSlaveId, mNewSlaveId, mStartDate, mStartHour, mEndDate, mEndHour,
+                            mPermissionKey, mToEditPermissionKey);
                     break;
                 case GET_SLAVES_MODE:
                     message = BluetoothProtocol.buildGetSlavesMessage(mPermissionKey);
                     break;
                 case READ_MY_PERMISSION_MODE:
-                    message = BluetoothProtocol.buildGetUserPermissionMessage(mSlaveId, mPermissionKey);
+                    message = BluetoothProtocol.
+                            buildGetUserPermissionMessage(mSlaveId, mPermissionKey);
                     break;
                 case READ_ALL_PERMISSIONS_MODE:
-                    message = BluetoothProtocol.buildGetAllPermissionsMessage(mSlaveId, mPermissionKey);
+                    message = BluetoothProtocol.
+                            buildGetAllPermissionsMessage(mSlaveId, mPermissionKey);
                     break;
                 default:
                     return;
@@ -349,7 +368,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
 
         @Override
-        public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+        public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor,
+                                     int status) {
             super.onDescriptorRead(gatt, descriptor, status);
         }
 
@@ -357,7 +377,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             Called when a notification is sended by the BLE server
          */
         @Override
-        public void onCharacteristicChanged(final BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+        public void onCharacteristicChanged(final BluetoothGatt gatt,
+                                            BluetoothGattCharacteristic characteristic) {
             mWaitingResponse = false;
 
             String response = new String(characteristic.getValue());
@@ -400,7 +421,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             Indicates the result of a write operation in a characteristic
          */
         @Override
-        public void onCharacteristicWrite(final BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+        public void onCharacteristicWrite(final BluetoothGatt gatt,
+                                          BluetoothGattCharacteristic characteristic, int status) {
                        /*
                 Disconnect after 8 seconds
              */
@@ -429,7 +451,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             Indicates the result of a read operation in a characteristic
          */
         @Override
-        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+        public void onCharacteristicRead(BluetoothGatt gatt,
+                                         BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
         }
 
@@ -438,11 +461,14 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
          */
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            BluetoothGattService service = gatt.getService(UUID.fromString(BluetoothProtocol.DOOR_SERVICE_UUID));
+            BluetoothGattService service = gatt.getService(UUID.fromString(
+                    BluetoothProtocol.DOOR_SERVICE_UUID));
 
             // Get the read and notify characteristic
-            mWriteCharacteristic = service.getCharacteristic(UUID.fromString(BluetoothProtocol.CHARACTERISTIC_WRITE_UUID));
-            mNotifyCharacteristic = service.getCharacteristic(UUID.fromString(BluetoothProtocol.CHARACTERISTIC_NOTIFICATION_UUID));
+            mWriteCharacteristic = service.getCharacteristic(UUID.fromString(
+                    BluetoothProtocol.CHARACTERISTIC_WRITE_UUID));
+            mNotifyCharacteristic = service.getCharacteristic(UUID.fromString(
+                    BluetoothProtocol.CHARACTERISTIC_NOTIFICATION_UUID));
 
             setNotificationsOn(gatt);
         }
@@ -455,14 +481,16 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private void setNotificationsOn(BluetoothGatt gatt){
 
         // Write the configuration descriptor necessary to receive notifications
-        UUID configNotifyUuid = UUID.fromString(BluetoothProtocol.CHARACTERISTIC_UPDATE_NOTIFICATION_DESCRIPTOR_UUID);
+        UUID configNotifyUuid = UUID.fromString(
+                BluetoothProtocol.CHARACTERISTIC_UPDATE_NOTIFICATION_DESCRIPTOR_UUID);
         BluetoothGattDescriptor descriptor = mNotifyCharacteristic.getDescriptor(configNotifyUuid);
         descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
         gatt.writeDescriptor(descriptor);
         
     }
 
-    private void sendMessage(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, byte[] part){
+    private void sendMessage(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
+                             byte[] part){
         characteristic.setValue(part);
         gatt.writeCharacteristic(characteristic);
     }
@@ -493,10 +521,12 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     mListener.permissionCreated(key, Permission.ADMIN_PERMISSION);
                     break;
                 case CREATE_NEW_PERMISSION_MODE:
-                    mListener.permissionCreated(key, BluetoothProtocol.getPermissionType(mPermissionType));
+                    mListener.permissionCreated(key,
+                            BluetoothProtocol.getPermissionType(mPermissionType));
                     break;
                 case EDIT_PERMISSION_MODE:
-                    mListener.permissionEdited(key, BluetoothProtocol.getPermissionType(mPermissionType));
+                    mListener.permissionEdited(key,
+                            BluetoothProtocol.getPermissionType(mPermissionType));
                     break;
                 default:
                     mListener.error(RESPONSE_INCORRECT);
@@ -609,6 +639,79 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 break;
         }
         return e;
+    }
+
+    public void printScanRecord (byte[] scanRecord) {
+
+        // Simply print all raw bytes
+        try {
+            String decodedRecord = new String(scanRecord,"UTF-8");
+            Log.d("DEBUG","decoded String : " + ByteArrayToString(scanRecord));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        // Parse data bytes into individual records
+        List<AdRecord> records = AdRecord.parseScanRecord(scanRecord);
+
+
+        // Print individual records
+        if (records.size() == 0) {
+            Log.i("DEBUG", "Scan Record Empty");
+        } else {
+            Log.i("DEBUG", "Scan Record: " + TextUtils.join(",", records));
+        }
+
+    }
+
+
+    public static String ByteArrayToString(byte[] ba)
+    {
+        StringBuilder hex = new StringBuilder(ba.length * 2);
+        for (byte b : ba)
+            hex.append(b + " ");
+
+        return hex.toString();
+    }
+
+
+    public static class AdRecord {
+
+        public AdRecord(int length, int type, byte[] data) {
+            String decodedRecord = "";
+            try {
+                decodedRecord = new String(data,"UTF-8");
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            Log.d("DEBUG", "Length: " + length + " Type : " + type + " Data : " + decodedRecord);
+        }
+
+        public static List<AdRecord> parseScanRecord(byte[] scanRecord) {
+            List<AdRecord> records = new ArrayList<>();
+            int index = 0;
+            while (index < scanRecord.length) {
+                int length = scanRecord[index++];
+                //Done once we run out of records
+                if (length == 0) break;
+
+                int type = scanRecord[index];
+                //Done if our record isn't a valid type
+                if (type == 0) break;
+
+                byte[] data = Arrays.copyOfRange(scanRecord, index + 1, index + length);
+
+                records.add(new AdRecord(length, type, data));
+                //Advance
+                index += length;
+            }
+
+            return records;
+        }
+
+        // ...
     }
 
 }

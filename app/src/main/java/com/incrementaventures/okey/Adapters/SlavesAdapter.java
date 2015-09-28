@@ -92,7 +92,6 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
         }
     }
 
-
     // numero de tipos de items
     @Override
     public int getViewTypeCount() {

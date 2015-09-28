@@ -372,66 +372,55 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         mBluetoothClient.executeOpenDoorWhenClose(p.getKey(), master.getName(), slave.getId());
     }
 
-    public void editPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
+    public void editPermission(String type, int oldSlaveId, int newSlaveId,String startDate,
+                               String startHour, String endDate,String endHour, String adminKey,
+                               String toEditPermissionKey, String doorName){
         mBluetoothClient = new BluetoothClient(mContext, this);
-
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
-        }
-        else if (!mBluetoothClient.isEnabled()){
+        }else if (!mBluetoothClient.isEnabled()){
             mBluetoothListener.enableBluetooth();
             return;
         }
-
-        mBluetoothClient.executeEditPermission(type, startDate, startHour, endDate, endHour, permissionKey, doorName);
-
+        mBluetoothClient.executeEditPermission(type, oldSlaveId, newSlaveId, startDate, startHour,
+                endDate, endHour, adminKey, toEditPermissionKey, doorName);
     }
 
     public void readMyPermission(Master master, Slave slave, String permissionKey){
         mBluetoothClient = new BluetoothClient(mContext, this);
-
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
-        }
-        else if (!mBluetoothClient.isEnabled()){
+        } else if (!mBluetoothClient.isEnabled()){
             mBluetoothListener.enableBluetooth();
             return;
         }
-
         mBluetoothClient.executeReadUserPermission(master.getName(), slave.getId(), permissionKey);
     }
 
     public void readAllPermissions(Master master, Slave slave, String permissionKey){
         mBluetoothClient = new BluetoothClient(mContext, this);
-
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
-        }
-        else if (!mBluetoothClient.isEnabled()){
+        }else if (!mBluetoothClient.isEnabled()){
             mBluetoothListener.enableBluetooth();
             return;
         }
-
         mBluetoothClient.executeReadAllPermissions(master.getName(), slave.getId(), permissionKey);
     }
 
     public void getSlaves(Master master, String permissionKey){
         mBluetoothClient = new BluetoothClient(mContext, this);
-
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
-        }
-        else if (!mBluetoothClient.isEnabled()){
+        } else if (!mBluetoothClient.isEnabled()){
             mBluetoothListener.enableBluetooth();
             return;
         }
-
         mBluetoothClient.executeGetSlaves(master.getName(), permissionKey);
-
     }
 
 

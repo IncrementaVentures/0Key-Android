@@ -37,12 +37,6 @@ import butterknife.ButterKnife;
 
 public class DoorFragment extends Fragment{
 
-    /*@Bind(R.id.permission_type)
-    TextView mPermissionTypeView;
-    @Bind(R.id.end_date)
-    TextView mEndDateView;
-    @Bind(R.id.end_date_text_view)
-    TextView mEndDateStaticView;*/
     @Bind(R.id.slaves_door_fragment)
     ListView mSlavesListView;
     @Bind(R.id.no_slaves_yet)
@@ -139,9 +133,6 @@ public class DoorFragment extends Fragment{
     public void createPermission(User user, String key, int type){
 
     }
-
-
-
 
     @Override
     public void onAttach(Activity activity) {

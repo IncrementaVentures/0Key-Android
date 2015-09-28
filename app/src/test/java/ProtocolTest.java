@@ -15,12 +15,12 @@ public class ProtocolTest {
     public void testGetSlavesList(){
         String response = "11;1;0;Eslavo1;&;2;0;Esclavo2;&;3;0;Esclavo3;0;*";
         ArrayList<HashMap<String,String>> data = BluetoothProtocol.getSlavesList(response);
-        HashMap<String,String> b = data.get(1);
+        HashMap<String,String> b = data.get(0);
         String id = b.get(Slave.ID);
         String type = b.get(Slave.TYPE);
         String name = b.get(Slave.NAME);
-        Assert.assertEquals("2", id);
-        Assert.assertEquals("0", type);
+        Assert.assertEquals(id , "1");
+        Assert.assertEquals(type, "0");
         Assert.assertNull(name);
     }
 
@@ -80,8 +80,6 @@ public class ProtocolTest {
         Assert.assertEquals("FECHATERMINO1", permissions.get(0).get(Permission.END_DATE));
         Assert.assertEquals("FECHATERMINO2", permissions.get(1).get(Permission.END_DATE));
     }
-
-
 
     @Test
     public void testIsLastMessagePart(){
@@ -147,14 +145,15 @@ public class ProtocolTest {
                 "2016-12-18", "09:00", "4444");
         String[] parts = message.split(BluetoothProtocol.SEPARATOR);
 
-        Assert.assertEquals("02", parts[0]);
-        Assert.assertEquals("4444", parts[2]);
-        Assert.assertEquals("1" , parts[3]);
-        Assert.assertEquals("0", parts[4]); // tipo modificacion
-        Assert.assertEquals("2", parts[5]); // tipo permiso
-        Assert.assertEquals("2015-12-18T10:00", parts[6]); // fecha inicio
-        Assert.assertEquals("2016-12-18T09:00", parts[7]); // fecha termino
-        Assert.assertEquals(BluetoothProtocol.EMPTY, parts[8]); // clave
+        Assert.assertEquals("02", parts[0]); // tipo mensaje
+        Assert.assertEquals("4444", parts[2]); // clave permiso admin
+        Assert.assertEquals("0", parts[3]); // clave permiso editar
+        Assert.assertEquals("0", parts[4]); // id esclavo anterior
+        Assert.assertEquals("1", parts[5]); // id esclavo a crear
+        Assert.assertEquals("0", parts[6]); // tipo modificacion (crear)
+        Assert.assertEquals("2", parts[7]); // tipo permiso
+        Assert.assertEquals("2015-12-18T10:00", parts[8]); // fecha inicio
+        Assert.assertEquals("2016-12-18T09:00", parts[9]); // fecha termino
     }
 
     @Test
@@ -165,14 +164,15 @@ public class ProtocolTest {
                 "2016-12-18", "09:00", "4444");
         String[] parts = message.split(BluetoothProtocol.SEPARATOR);
 
-        Assert.assertEquals("02", parts[0]);
-        Assert.assertEquals("4444", parts[2]);
-        Assert.assertEquals("1", parts[3]);
-        Assert.assertEquals("0", parts[4]); // tipo modificacion
-        Assert.assertEquals("1", parts[5]); // tipo permiso
-        Assert.assertEquals("2015-12-18T10:00", parts[6]); // fecha inicio
-        Assert.assertEquals(BluetoothProtocol.EMPTY , parts[7]); // fecha termino
-        Assert.assertEquals(BluetoothProtocol.EMPTY , parts[8]); // clave
+        Assert.assertEquals("02", parts[0]); // tipo mensaje
+        Assert.assertEquals("4444", parts[2]); // clave permiso admin
+        Assert.assertEquals("0", parts[3]); // clave permiso editar
+        Assert.assertEquals("0", parts[4]); // id esclavo anterior
+        Assert.assertEquals("1", parts[5]); // id esclavo a crear
+        Assert.assertEquals("0", parts[6]); // tipo modificacion (crear)
+        Assert.assertEquals("1", parts[7]); // tipo permiso
+        Assert.assertEquals("2015-12-18T10:00", parts[8]); // fecha inicio
+        Assert.assertEquals(BluetoothProtocol.EMPTY, parts[9]); // fecha termino
     }
 
 
@@ -184,32 +184,35 @@ public class ProtocolTest {
                 "2016-12-18", "09:00", "4444");
         String[] parts = message.split(BluetoothProtocol.SEPARATOR);
 
-        Assert.assertEquals("02", parts[0]);
-        Assert.assertEquals("4444", parts[2]);
-        Assert.assertEquals("1", parts[3]);
-        Assert.assertEquals("0", parts[4]); // tipo modificacion
-        Assert.assertEquals("0", parts[5]); // tipo permiso
-        Assert.assertEquals("2015-12-18T10:00", parts[6]); // fecha inicio
-        Assert.assertEquals(BluetoothProtocol.EMPTY , parts[7]); // fecha termino
-        Assert.assertEquals(BluetoothProtocol.EMPTY , parts[8]); // clave
+        Assert.assertEquals("02", parts[0]); // tipo mensaje
+        Assert.assertEquals("4444", parts[2]); // clave permiso admin
+        Assert.assertEquals("0", parts[3]); // clave permiso editar
+        Assert.assertEquals("0", parts[4]); // id esclavo anterior
+        Assert.assertEquals("1", parts[5]); // id esclavo a crear
+        Assert.assertEquals("0", parts[6]); // tipo modificacion (crear)
+        Assert.assertEquals("0", parts[7]); // tipo permiso
+        Assert.assertEquals("2015-12-18T10:00", parts[8]); // fecha inicio
+        Assert.assertEquals(BluetoothProtocol.EMPTY , parts[9]); // fecha termino
     }
 
     @Test
     public void testEditPermissionMessage(){
         String message = BluetoothProtocol.buildEditPermissionMessage("Temporal",
-                1,
+                1, 2,
                 "2015-12-18", "10:00",
-                "2016-12-18", "09:00", "4444");
+                "2016-12-18", "09:00", "4444", "5555");
         String[] parts = message.split(BluetoothProtocol.SEPARATOR);
 
         Assert.assertEquals("02", parts[0]);
-        Assert.assertEquals("4444", parts[2]);
-        Assert.assertEquals("1", parts[3]);
-        Assert.assertEquals("1", parts[4]); // tipo modificacion
-        Assert.assertEquals("2", parts[5]); // tipo permiso
-        Assert.assertEquals("2015-12-18T10:00", parts[6]); // fecha inicio
-        Assert.assertEquals("2016-12-18T09:00", parts[7]); // fecha termino
-        Assert.assertEquals("4444" , parts[8]); // clave
+        Assert.assertEquals("4444", parts[2]); // admin key
+        Assert.assertEquals("5555", parts[3]); // edited permisison key
+        Assert.assertEquals("1", parts[4]); // old slave id
+        Assert.assertEquals("2", parts[5]); // new slave id
+        Assert.assertEquals("1", parts[6]); // modification type
+        Assert.assertEquals("2", parts[7]); // permission type
+        Assert.assertEquals("2015-12-18T10:00" , parts[8]); // start date
+        Assert.assertEquals("2016-12-18T09:00" , parts[9]); // end date
+        Assert.assertEquals(BluetoothProtocol.MESSAGE_END , parts[10]); // end
     }
 
     @Test

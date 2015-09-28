@@ -22,7 +22,6 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public static final String PERMANENT_DATE = "Permanent";
     public static final String UNKNOWN_DATE = "Unknown";
 
-
     public static final String PERMISSION_CLASS_NAME = "Permission";
     public static final String USER_UUID = "user_uuid";
     public static final String MASTER_UUID = "master_uuid";
@@ -48,7 +47,6 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         mParsePermission.put(START_DATE, startDate);
         mParsePermission.put(END_DATE, endDate);
         mParsePermission.put(UUID, java.util.UUID.randomUUID().toString());
-
     }
 
     public static Permission create(User user, Master master, int type, String key, String startDate, String endDate){
@@ -141,7 +139,6 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
 
     public boolean isValid(){
         Time time = new Time();
-
         if (mParsePermission.getInt(TYPE) == ADMIN_PERMISSION) return true;
         else if (mParsePermission.getInt(TYPE) == PERMANENT_PERMISSION && started(time)){
             return true;

@@ -91,9 +91,7 @@ public class CreateEditPermissionFragment extends Fragment {
                 getResources().getString(R.string.permission_type_permanent),
                 getResources().getString(R.string.permission_type_temporal)
         };
-
         return v;
-
     }
 
     private void setListeners(){
