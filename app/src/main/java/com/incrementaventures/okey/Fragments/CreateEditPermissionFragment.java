@@ -74,7 +74,6 @@ public class CreateEditPermissionFragment extends Fragment {
     private String mStartHour;
     private String mKey;
 
-
     public CreateEditPermissionFragment() {
     }
 
@@ -186,8 +185,6 @@ public class CreateEditPermissionFragment extends Fragment {
                 newFragment.show(getActivity().getFragmentManager(), "datePicker");
             }
         });
-
-
 
         mNewPermissionButton.setOnClickListener(new View.OnClickListener() {
             @Override

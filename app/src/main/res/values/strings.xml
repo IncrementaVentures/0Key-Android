@@ -22,7 +22,7 @@
     <string name="door_cant_open_bad_code">The door is not responding as expected. Contact support.</string>
     <string name="door_cant_close">Can\'t close</string>
     <string name="no_slaves_found_yet">No slaves yet.</string>
-
+    <string name="add_permission">Add permission</string>
     <string name="open_door">Open door</string>
     <string name="open">Open</string>
     <string name="close_door">Close door</string>

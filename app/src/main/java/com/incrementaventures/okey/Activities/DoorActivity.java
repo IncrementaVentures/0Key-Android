@@ -50,7 +50,6 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     private String mSelectedSlaveId;
     private Bundle mPermissionData;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,11 +67,9 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         if (mScannedDoor){
             return Master.create(name, "");
         }
-
         ParseQuery query = new ParseQuery(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
         query.whereEqualTo(Master.UUID, getIntent().getExtras().getString(Master.UUID));
-
         try {
             ParseObject doorParse = query.getFirst();
             return Master.create(doorParse);
@@ -109,12 +106,10 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             }
             return true;
         }
-
         else if (id == R.id.set_permission_key){
             showSetKeyDialog();
             return true;
         }
-
         else if( id == R.id.edit_permission){
             Intent intent = new Intent(DoorActivity.this, CreateEditPermissionActivity.class);
             Permission p = mMaster.getPermission();
@@ -125,9 +120,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             intent.putExtra(REQUEST_CODE, EDIT_PERMISSION_REQUEST);
             startActivityForResult(intent, EDIT_PERMISSION_REQUEST);
         }
-
-        else if (id == R.id.first_config_action){
-            if (mScannedDoor){
+        else if (id == R.id.first_config_action) {
+            if (mScannedDoor) {
                 openFirstConfigurationActivity();
             }
             else {
@@ -135,7 +129,9 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             }
             return true;
         }
-
+        else if (id == R.id.action_pair_slaves) {
+            mCurrentUser.pairSlaves(mMaster.getPermission().getKey());
+        }
         else if (id == R.id.action_get_slaves){
             if (!mScannedDoor){
                 getSlaves();
@@ -174,7 +170,6 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         InputFilter[] filterArray = new InputFilter[1];
         filterArray[0] = new InputFilter.LengthFilter(4);
         input.setFilters(filterArray);
-
         b.setView(input);
         b.setPositiveButton(R.string.okey, new DialogInterface.OnClickListener() {
             @Override
@@ -189,20 +184,20 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     private void setNewPermissionKey(String newKey){
         mPermissionKey = newKey;
         mMaster = getDoor();
-        Permission p = null;
+        Permission permission = null;
         if (mMaster != null) {
-            p = mMaster.getPermission();
+            permission = mMaster.getPermission();
         }
-        if (p == null){
-            p = Permission.create(mCurrentUser, mMaster, Permission.UNKNOWN_PERMISSION,
+        if (permission == null){
+            permission = Permission.create(mCurrentUser, mMaster, Permission.UNKNOWN_PERMISSION,
                     mPermissionKey, Permission.UNKNOWN_DATE, Permission.UNKNOWN_DATE);
         } else {
-            p.setKey(mPermissionKey);
-            p.setStartDate(Permission.UNKNOWN_DATE);
-            p.setEndDate(Permission.UNKNOWN_DATE);
-            p.setType(Permission.UNKNOWN_PERMISSION);
+            permission.setKey(mPermissionKey);
+            permission.setStartDate(Permission.UNKNOWN_DATE);
+            permission.setEndDate(Permission.UNKNOWN_DATE);
+            permission.setType(Permission.UNKNOWN_PERMISSION);
         }
-        p.save();
+        permission.save();
         mMaster.save();
         mScannedDoor = false;
         Toast.makeText(DoorActivity.this, R.string.permission_key_setted, Toast.LENGTH_SHORT).show();
@@ -286,11 +281,11 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 getString(CreateEditPermissionActivity.PERMISSION_END_HOUR);
         String endDate = mPermissionData.
                 getString(CreateEditPermissionActivity.PERMISSION_END_DATE);
-        Permission p = mMaster.getPermission();
-        p.setStartDate(startDate + "T" + startHour);
-        p.setEndDate(endDate + "T" + endHour);
-        p.setType(type);
-        p.save();
+        Permission permission = mMaster.getPermission();
+        permission.setStartDate(startDate + "T" + startHour);
+        permission.setEndDate(endDate + "T" + endHour);
+        permission.setType(type);
+        permission.save();
         Toast.makeText(this, R.string.permission_edited, Toast.LENGTH_SHORT).show();
     }
 
@@ -413,7 +408,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
 
     @Override
     public void bluetoothNotSupported() {
-        Toast.makeText(this, "Sorry, your device doesn't support bluetooth", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Sorry, your device doesn't support bluetooth",
+                Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -429,7 +425,6 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
 
     @Override
     public void stopScanning() { }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

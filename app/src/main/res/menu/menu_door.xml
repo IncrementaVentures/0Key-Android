@@ -27,8 +27,13 @@
         app:showAsAction="never" />
 
     <item android:id="@+id/action_new_permission"
-        android:title="Add permission"
+        android:title="@string/add_permission"
         android:orderInCategory="5"
         android:icon="@drawable/ic_action_add_circle_outline"
         app:showAsAction="always" />
+
+    <item android:id="@+id/action_pair_slaves"
+        android:title="Add permission"
+        android:orderInCategory="95"
+        app:showAsAction="never" />
 </menu>

@@ -23,13 +23,13 @@ public class CreateEditPermissionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_permission);
-        if (getIntent().getIntExtra(DoorActivity.REQUEST_CODE, DoorActivity.NEW_PERMISSION_REQUEST) == DoorActivity.EDIT_PERMISSION_REQUEST){
+        if (getIntent().getIntExtra(DoorActivity.REQUEST_CODE,
+                DoorActivity.NEW_PERMISSION_REQUEST) == DoorActivity.EDIT_PERMISSION_REQUEST){
             setTitle(R.string.edit_permission);
         } else{
             setTitle(R.string.title_activity_new_permission);
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

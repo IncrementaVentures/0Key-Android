@@ -1,3 +1,5 @@
+import android.text.format.Time;
+
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
@@ -12,8 +14,29 @@ import java.util.HashMap;
 public class ProtocolTest {
 
     @Test
-    public void testGetSlavesList(){
-        String response = "11;1;0;Eslavo1;&;2;0;Esclavo2;&;3;0;Esclavo3;0;*";
+    public void testFormatDate(){
+        Time time = new Time();
+        time.set(0, 0, 0, 0, 0, 2015);
+
+        String month = String.valueOf(time.month + 1);
+        String day = String.valueOf(time.monthDay + 1);
+        String hour = String.valueOf(time.hour);
+        String minute = String.valueOf(time.minute);
+        String year = String.valueOf(time.year);
+
+        if (month.length() == 1) month = "0" + month;
+        if (day.length() == 1) day = "0" + day;
+        if (hour.length() == 1) hour = "0" + hour;
+        if (minute.length() == 1) minute = "0" + minute;
+
+        String formattedDate =  year + "-" + month + "-"
+                + day + "T" + hour + ":" + minute;
+        Assert.assertEquals("2000-01-01T00:00", formattedDate);
+    }
+
+    @Test
+    public void testGetSlavesList() {
+        String response = "11;1;0;&;2;0;&;3;0;0;*";
         ArrayList<HashMap<String,String>> data = BluetoothProtocol.getSlavesList(response);
         HashMap<String,String> b = data.get(0);
         String id = b.get(Slave.ID);
@@ -56,7 +79,8 @@ public class ProtocolTest {
 
     @Test
     public void testGetPermissionsSizeTwo(){
-        String fullMessage = "05;1234;0;0;FECHAINICIO1;FECHATERMINO1;&;1234;1;2;FECHAINICIO2;FECHATERMINO2;0;*";
+        String fullMessage =
+                "05;1234;0;0;FECHAINICIO1;FECHATERMINO1;&;1234;1;2;FECHAINICIO2;FECHATERMINO2;0;*";
         String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
         ArrayList<HashMap<String, String>> permissions = new ArrayList<>();
 
@@ -174,7 +198,6 @@ public class ProtocolTest {
         Assert.assertEquals("2015-12-18T10:00", parts[8]); // fecha inicio
         Assert.assertEquals(BluetoothProtocol.EMPTY, parts[9]); // fecha termino
     }
-
 
     @Test
     public void testBuildNewAdminPermissionMessage(){

@@ -47,7 +47,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int ADMIN_ALREADY_ASSIGNED = 5;
     public static final int ADMIN_ASSIGNED = 6;
 
-
     public static final int TIMEOUT = 101;
     public static final int RESPONSE_INCORRECT = 102;
     public static final int CANT_OPEN = 103;
@@ -151,7 +150,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
      * @return true if its enabled, false otherwise
      */
     public boolean isEnabled(){
-        if (!mBluetoothAdapter.isEnabled()){
+        if (!mBluetoothAdapter.isEnabled()) {
             return false;
         }
         return true;
@@ -243,13 +242,15 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
+    public void executePairSlaves(String adminKey){
+        mPermissionKey = adminKey;
+    }
 
     private void startScan(int time){
         mScanning = true;
         if (mMode == SCAN_MODE){
             mBluetoothAdapter.startLeScan(this);
-
-        } else{
+        } else {
             mBluetoothAdapter.startLeScan(new UUID[]
                     {UUID.fromString(BluetoothProtocol.DOOR_SERVICE_UUID)}, this);
         }
@@ -270,8 +271,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             mListener.deviceNotFound();
         }
     }
-
-
 
     /*
         Called when a devices is found.
@@ -383,7 +382,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
             String response = new String(characteristic.getValue());
 
-
             if (mReceivedMessageParts == null) mReceivedMessageParts = new LinkedList<>();
             mReceivedMessageParts.offer(response);
 
@@ -393,7 +391,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             }
 
             String fullMessage = joinMessageParts(mReceivedMessageParts);
-            String responseCode = BluetoothProtocol.getResponseCode(response);
+            String responseCode = BluetoothProtocol.getResponseCode(fullMessage);
 
             switch (responseCode){
                 case BluetoothProtocol.DOOR_OPENED_RESPONSE_CODE:

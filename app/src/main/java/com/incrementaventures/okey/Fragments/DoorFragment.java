@@ -105,18 +105,14 @@ public class DoorFragment extends Fragment{
         });
     }
 
-
-
     private Master getMaster(){
         if (mScannedDoor){
             String name = getActivity().getIntent().getExtras().getString(MainActivity.MASTER_NAME_EXTRA);
             return Master.create(name, "");
         }
-
         ParseQuery query = new ParseQuery(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
         query.whereEqualTo(Master.UUID, getActivity().getIntent().getExtras().getString(Master.UUID));
-
         try {
             ParseObject doorParse = query.getFirst();
             return Master.create(doorParse);
@@ -130,9 +126,6 @@ public class DoorFragment extends Fragment{
         mPermission = mMaster.getPermission();
     }
 
-    public void createPermission(User user, String key, int type){
-
-    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -144,32 +137,28 @@ public class DoorFragment extends Fragment{
         }
     }
 
-    public void addSlave(ArrayList<HashMap<String,String>> slavesData){
-        if (mSlaves == null) {
-            mSlaves = new ArrayList<>();
-        }
-        if (slavesData.size() != 0){
-            mNoSlavesView.setVisibility(TextView.GONE);
-        }
-        for (HashMap<String, String> slaveData : slavesData){
-            final Slave s = Slave.create(mMaster.getUUID(),
-                                        slaveData.get(Slave.ID),
-                                        Integer.valueOf(slaveData.get(Slave.TYPE)),
-                                        Integer.valueOf(slaveData.get(Slave.ID)));
-            s.save();
-            mSlaves.add(s);
-        }
-
+    public void addSlave(final ArrayList<HashMap<String,String>> slavesData){
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (mSlaves == null) {
+                    mSlaves = new ArrayList<>();
+                }
+                if (slavesData.size() != 0){
+                    mNoSlavesView.setVisibility(TextView.GONE);
+                }
+                for (HashMap<String, String> slaveData : slavesData){
+                    final Slave slave = Slave.create(mMaster.getUUID(),
+                            slaveData.get(Slave.ID),
+                            Integer.valueOf(slaveData.get(Slave.TYPE)),
+                            Integer.valueOf(slaveData.get(Slave.ID)));
+                    slave.save();
+                    mSlaves.add(slave);
+                }
                 mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves, mMaster);
                 ((BaseAdapter) mSlavesListView.getAdapter()).notifyDataSetChanged();
             }
         });
 
     }
-
-
-
 }

@@ -166,11 +166,10 @@ public class BluetoothProtocol {
         builder.append(type);
         builder.append(SEPARATOR);
 
-        if (type == TEMPORAL_PERMISSION){
+        if (type == TEMPORAL_PERMISSION) {
             // "02;date;key;0;0;slaveid;0;permissionType;startDateTstartHour;"
             builder.append(startDate + "T" + startHour);
             builder.append(SEPARATOR);
-
             // "02;date;key;0;0;slaveid;0;permissionType;startDateTstartHour;endDateTendHour;"
             builder.append(endDate + "T" + endHour);
             builder.append(SEPARATOR);
@@ -321,20 +320,20 @@ public class BluetoothProtocol {
         }
     }
 
-
     public static String formatDate(Time now){
-        String month = String.valueOf(now.month);
-        String day = String.valueOf(now.month);
-        String hour = String.valueOf(now.month);
-        String minute = String.valueOf(now.month);
+        String month = String.valueOf(now.month + 1);
+        String day = String.valueOf(now.monthDay + 1);
+        String hour = String.valueOf(now.hour);
+        String minute = String.valueOf(now.minute);
+        String year = String.valueOf(now.year);
 
         if (month.length() == 1) month = "0" + month;
         if (day.length() == 1) day = "0" + day;
         if (hour.length() == 1) hour = "0" + hour;
         if (minute.length() == 1) minute = "0" + minute;
 
-        return now.year + "-" + month + "-" + day + "T" + hour + ":" + minute;
-
+        return year + "-" + month + "-"
+                + day + "T" + hour + ":" + minute;
     }
 
     public static LinkedList<byte[]> separateMessage(String message){
@@ -347,7 +346,7 @@ public class BluetoothProtocol {
                 System.arraycopy(fullMessage, i*20, part, 0, fullMessage.length - 20*i);
                 parts.offer(part);
             }
-            else{
+            else {
                 byte[] part = new byte[20];
                 System.arraycopy(fullMessage, i*20, part, 0, 20);
                 parts.offer(part);
@@ -356,26 +355,25 @@ public class BluetoothProtocol {
         return parts;
     }
 
-    /*
-        Process the incomming permission created response.
-        Returns the key if succeeded and null otherwise.
+    /**
+     *  Process the incomming permission created response.
+     *  Returns the key if succeeded and null otherwise.
      */
-    public static String getNewPermissionKey(String response){
+    public static String getNewPermissionKey(String response) {
         String[] parts = response.split(SEPARATOR);
-
         String resultCode = parts[1];
-        if (resultCode.equals(String.valueOf(ERROR))){
+        if (resultCode.equals(String.valueOf(ERROR))) {
             return null;
         }
-        else if (resultCode.equals(String.valueOf(SUCCESS))){
+        else if (resultCode.equals(String.valueOf(SUCCESS))) {
             return parts[2];
         }
-        else{
+        else {
             return null;
         }
     }
 
-    public static HashMap<String,String> getPermissionData(String permissionPart){
+    public static HashMap<String,String> getPermissionData(String permissionPart) {
         String[] parts = permissionPart.split(SEPARATOR);
         HashMap<String,String> data = new HashMap<>();
         data.put(Permission.KEY, parts[1]);
@@ -386,22 +384,22 @@ public class BluetoothProtocol {
         return data;
     }
 
-    public static String getErrorCode(String response){
+    public static String getErrorCode(String response) {
         String[] messageParts = response.split(SEPARATOR);
         // the error code is always the part previous to the MESSAGE_END part
         return messageParts[messageParts.length-2];
     }
 
-    public static boolean isDoorOpened(String response){
+    public static boolean isDoorOpened(String response) {
         String[] parts = response.split(SEPARATOR);
         String resultCode = parts[1];
-        if (resultCode.equals(String.valueOf(ERROR))){
+        if (resultCode.equals(String.valueOf(ERROR))) {
             return false;
         }
-        else if (resultCode.equals(String.valueOf(SUCCESS))){
+        else if (resultCode.equals(String.valueOf(SUCCESS))) {
             return true;
         }
-        else{
+        else {
             return false;
         }
     }
@@ -409,7 +407,6 @@ public class BluetoothProtocol {
     public static String getResponseCode(String response){
         return response.substring(0, 2);
     }
-
 
     public static boolean isLastMessagePart(String message){
         if (message.lastIndexOf(MESSAGE_END) >= 0){
@@ -434,6 +431,4 @@ public class BluetoothProtocol {
         }
         return data;
     }
-
-
 }

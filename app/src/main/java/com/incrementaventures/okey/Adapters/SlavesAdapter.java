@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.incrementaventures.okey.Fragments.DoorFragment;
 import com.incrementaventures.okey.Models.Master;
@@ -85,7 +86,7 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
                 mListener.openWhenCloseSelected(mMaster, mSelectedSlave, mPermission.getKey());
                 return true;
             case R.id.action_edit_slave:
-
+                Toast.makeText(getContext(), "Not implemented yet", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return false;
