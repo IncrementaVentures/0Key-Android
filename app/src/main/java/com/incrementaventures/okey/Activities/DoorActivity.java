@@ -296,7 +296,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             Toast.makeText(this, "No slaves configured yet.", Toast.LENGTH_SHORT).show();
             return;
         }
-        ArrayList<String> permissionsDataAsString = new ArrayList<>();
+        final ArrayList<String> permissionsDataAsString = new ArrayList<>();
         for (HashMap<String, String> permission : permissionsData){
             permissionsDataAsString.add(permission.get(Permission.KEY) +
                     permission.get(Slave.ID) +
@@ -304,31 +304,38 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                     permission.get(Permission.START_DATE) +
                     permission.get(Permission.END_DATE));
         }
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(DoorActivity.this);
-        LayoutInflater inflater = getLayoutInflater();
-        View convertView = inflater.inflate(R.layout.permissions_dialog, null);
-        alertDialog.setView(convertView);
-        alertDialog.setTitle(R.string.permissions);
-        ListView lv = (ListView) convertView.findViewById(R.id.list_permissions);
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter(this,android.R.layout.simple_list_item_1, permissionsDataAsString);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HashMap<String, String> p = permissionsData.get(position);
-                Intent intent = new Intent(DoorActivity.this, CreateEditPermissionActivity.class);
-                intent.putExtra(Permission.KEY, p.get(Permission.KEY));
-                intent.putExtra(Permission.START_DATE, p.get(Permission.START_DATE));
-                intent.putExtra(Permission.END_DATE, p.get(Permission.END_DATE));
-                intent.putExtra(Permission.TYPE, p.get(Permission.TYPE));
-                intent.putExtra(Slave.ID, p.get(Slave.ID));
-                intent.putExtra(REQUEST_CODE, EDIT_PERMISSION_REQUEST);
-                mSelectedSlaveId = p.get(Slave.ID);
-                startActivityForResult(intent, EDIT_PERMISSION_REQUEST);
+            public void run() {
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(DoorActivity.this);
+                alertBuilder.setTitle(R.string.permissions);
+                AlertDialog alertDialog = alertBuilder.create();
+                LayoutInflater inflater = alertDialog.getLayoutInflater();
+                View convertView = inflater.inflate(R.layout.permissions_dialog, null);
+                alertDialog.setView(convertView);
+                ListView lv = (ListView) convertView.findViewById(R.id.list_permissions);
+                ArrayAdapter<String> adapter =
+                        new ArrayAdapter(DoorActivity.this, android.R.layout.simple_list_item_1, permissionsDataAsString);
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        HashMap<String, String> p = permissionsData.get(position);
+                        Intent intent = new Intent(DoorActivity.this, CreateEditPermissionActivity.class);
+                        intent.putExtra(Permission.KEY, p.get(Permission.KEY));
+                        intent.putExtra(Permission.START_DATE, p.get(Permission.START_DATE));
+                        intent.putExtra(Permission.END_DATE, p.get(Permission.END_DATE));
+                        intent.putExtra(Permission.TYPE, p.get(Permission.TYPE));
+                        intent.putExtra(Slave.ID, p.get(Slave.ID));
+                        intent.putExtra(REQUEST_CODE, EDIT_PERMISSION_REQUEST);
+                        mSelectedSlaveId = p.get(Slave.ID);
+                        startActivityForResult(intent, EDIT_PERMISSION_REQUEST);
+                    }
+                });
+                lv.setAdapter(adapter);
+                alertDialog.show();
             }
         });
-        lv.setAdapter(adapter);
-        alertDialog.show();
+
     }
 
     @Override

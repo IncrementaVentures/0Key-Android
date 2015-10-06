@@ -306,7 +306,6 @@ public class BluetoothProtocol {
         return builder.toString();
     }
 
-
     public static int getPermissionType(String p){
         switch (p){
             case "Temporal":
@@ -356,7 +355,7 @@ public class BluetoothProtocol {
     }
 
     /**
-     *  Process the incomming permission created response.
+     *  Process the incoming permission created response.
      *  Returns the key if succeeded and null otherwise.
      */
     public static String getNewPermissionKey(String response) {
@@ -416,19 +415,18 @@ public class BluetoothProtocol {
     }
 
     public static ArrayList<HashMap<String,String>> getSlavesList(String response){
-        ArrayList<HashMap<String,String>> data = new ArrayList<>();
+        ArrayList<HashMap<String,String>> slavesData = new ArrayList<>();
         response = response.substring(2, response.length()-3);
         String[] parts = response.split(ITEM_SEPARATOR);
-        HashMap<String,String> m ;
-        if (response.equals(SEPARATOR)) return data;
+        HashMap<String,String> slaveData ;
+        if (response.equals(SEPARATOR)) return slavesData;
         for (String part : parts){
-            m = new HashMap<>();
+            slaveData = new HashMap<>();
             part = part.substring(1, part.length()-1);
-            String[] slaveData = part.split(SEPARATOR);
-            m.put(Slave.ID, slaveData[0]);
-            m.put(Slave.TYPE, slaveData[1]);
-            data.add(m);
+            slaveData.put(Slave.ID, part.split(SEPARATOR)[0]);
+            slaveData.put(Slave.TYPE, part.split(SEPARATOR)[1]);
+            slavesData.add(slaveData);
         }
-        return data;
+        return slavesData;
     }
 }
