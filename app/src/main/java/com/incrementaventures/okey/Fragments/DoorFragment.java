@@ -1,8 +1,8 @@
 package com.incrementaventures.okey.Fragments;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -35,7 +35,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DoorFragment extends Fragment{
+public class DoorFragment extends Fragment {
 
     @Bind(R.id.slaves_door_fragment)
     ListView mSlavesListView;

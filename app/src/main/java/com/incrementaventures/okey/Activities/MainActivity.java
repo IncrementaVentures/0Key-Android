@@ -44,7 +44,6 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     public static final String MASTER_NAME_EXTRA = "doorname";
     public static final String SCANNED_DOOR_EXTRA = "scanneddoor";
 
-
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
     @Bind(R.id.left_drawer)
@@ -53,29 +52,20 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     private String[] mDrawerItems;
     private ActionBarDrawerToggle mDrawerToggle;
     private ProgressDialog mProgressDialog;
-
     private ScanDevicesFragment mScanDevicesFragment;
-
     private User mCurrentUser;
     private boolean mScanning;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
         authenticateUser();
-
         drawerSetup();
-
         checkPreferences();
-
         checkBluetoothLeSupport();
     }
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

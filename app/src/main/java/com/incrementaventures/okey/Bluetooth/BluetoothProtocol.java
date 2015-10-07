@@ -1,7 +1,5 @@
 package com.incrementaventures.okey.Bluetooth;
 
-
-import android.os.Bundle;
 import android.text.format.Time;
 
 import com.incrementaventures.okey.Models.Permission;
@@ -321,7 +319,7 @@ public class BluetoothProtocol {
 
     public static String formatDate(Time now){
         String month = String.valueOf(now.month + 1);
-        String day = String.valueOf(now.monthDay + 1);
+        String day = String.valueOf(now.monthDay);
         String hour = String.valueOf(now.hour);
         String minute = String.valueOf(now.minute);
         String year = String.valueOf(now.year);

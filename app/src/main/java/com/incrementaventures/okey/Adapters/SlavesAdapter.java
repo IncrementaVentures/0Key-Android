@@ -47,8 +47,8 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
             view = mLayoutInflater.inflate(R.layout.slave_list_item, parent, false);
         }
 
-        TextView doorNameView = (TextView) view.findViewById(R.id.slave_name);
-        doorNameView.setText(slave.getName());
+        TextView slaveNameView = (TextView) view.findViewById(R.id.slave_name);
+        slaveNameView.setText(slave.getName());
 
         ImageButton moreOptionsButton = (ImageButton) view.findViewById(R.id.more_options_button);
         moreOptionsButton.setOnClickListener(new View.OnClickListener() {

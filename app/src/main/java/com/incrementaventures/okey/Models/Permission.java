@@ -1,5 +1,7 @@
 package com.incrementaventures.okey.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.format.Time;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
@@ -40,8 +42,8 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
 
     private Permission(User user, Master master, int type, String key, String startDate, String endDate) {
         mParsePermission = ParseObject.create(PERMISSION_CLASS_NAME);
-        mParsePermission.put(USER_UUID, user.getUUID());
-        mParsePermission.put(MASTER_UUID, master.getUUID());
+        if (user != null) mParsePermission.put(USER_UUID, user.getUUID());
+        if (master != null) mParsePermission.put(MASTER_UUID, master.getUUID());
         mParsePermission.put(TYPE, type);
         mParsePermission.put(KEY, key);
         mParsePermission.put(START_DATE, startDate);

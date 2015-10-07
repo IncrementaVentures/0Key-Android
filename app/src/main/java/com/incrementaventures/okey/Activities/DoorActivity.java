@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
 import com.incrementaventures.okey.Fragments.DoorFragment;
+import com.incrementaventures.okey.Fragments.PermissionsFragment;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
@@ -55,10 +56,14 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_door);
         setTitle(getIntent().getExtras().getString(MainActivity.MASTER_NAME_EXTRA));
+        mDoorFragment = new DoorFragment();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.activity_door_container, mDoorFragment)
+                .addToBackStack(null)
+                .commit();
         mMaster = getDoor();
         mCurrentUser = User.getLoggedUser(this);
         mScannedDoor = getIntent().getExtras().getBoolean(MainActivity.SCANNED_DOOR_EXTRA);
-        mDoorFragment = (DoorFragment) getSupportFragmentManager().findFragmentById(R.id.door_fragment);
     }
 
 
@@ -298,13 +303,22 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         }
         final ArrayList<String> permissionsDataAsString = new ArrayList<>();
         for (HashMap<String, String> permission : permissionsData){
-            permissionsDataAsString.add(permission.get(Permission.KEY) +
-                    permission.get(Slave.ID) +
-                    permission.get(Permission.TYPE) +
-                    permission.get(Permission.START_DATE) +
+            permissionsDataAsString.add(permission.get(Permission.KEY) + " " +
+                    permission.get(Slave.ID) + " " +
+                    permission.get(Permission.TYPE) + " " +
+                    permission.get(Permission.START_DATE) + " " +
                     permission.get(Permission.END_DATE));
         }
-        runOnUiThread(new Runnable() {
+        Bundle data = new Bundle();
+        data.putStringArrayList(PermissionsFragment.PERMISSIONS_DATA_EXTRA,
+                permissionsDataAsString);
+        PermissionsFragment permissionsFragment = new PermissionsFragment();
+        permissionsFragment.setArguments(data);
+        getFragmentManager().beginTransaction()
+                .replace(R.id.activity_door_container, permissionsFragment)
+                .addToBackStack(null)
+                .commit();
+        /**runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(DoorActivity.this);
@@ -315,7 +329,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 alertDialog.setView(convertView);
                 ListView lv = (ListView) convertView.findViewById(R.id.list_permissions);
                 ArrayAdapter<String> adapter =
-                        new ArrayAdapter(DoorActivity.this, android.R.layout.simple_list_item_1, permissionsDataAsString);
+                        new ArrayAdapter(DoorActivity.this, android.R.layout.simple_list_item_1,
+                                permissionsDataAsString);
                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -334,19 +349,25 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 lv.setAdapter(adapter);
                 alertDialog.show();
             }
-        });
-
+        });*/
     }
 
     @Override
-    public void permissionReceived(int type, String key, String start, String end) {
+    public void permissionReceived(final int type, final String key, final String start
+            , final String end) {
+
         if (mProgressDialog != null) mProgressDialog.dismiss();
-        Toast.makeText(this, "Permission received and saved", Toast.LENGTH_SHORT).show();
-        Permission p = mMaster.getPermission();
-        p.setType(type);
-        p.setStartDate(start);
-        p.setEndDate(end);
-        p.save();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(DoorActivity.this, "Permission received and saved", Toast.LENGTH_SHORT).show();
+                Permission p = mMaster.getPermission();
+                p.setType(type);
+                p.setStartDate(start);
+                p.setEndDate(end);
+                p.save();
+            }
+        });
     }
 
     @Override

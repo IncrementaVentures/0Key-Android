@@ -160,9 +160,15 @@ public class CreateEditPermissionFragment extends Fragment {
                 DialogFragment newFragment = new DatePickerFragment(){
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
-                        mEndDate = String.valueOf(year) + "-"
-                                + "0" + String.valueOf(month)
-                                + "-" + "0" + String.valueOf(day);
+                        String yearString = String.valueOf(year);
+                        String monthString = String.valueOf(month + 1);
+                        String dayString = String.valueOf(day);
+
+                        if (monthString.length() == 1 ) monthString = "0" + monthString;
+                        if (dayString.length() == 1 ) dayString = "0" + dayString;
+                        mEndDate = yearString + "-"
+                                + monthString + "-"
+                                + dayString;
                         mEndDateView.setText(mEndDate);
                     }
                 };
@@ -176,9 +182,15 @@ public class CreateEditPermissionFragment extends Fragment {
                 DialogFragment newFragment = new DatePickerFragment(){
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
-                        mStartDate = String.valueOf(year) + "-"
-                                + "0" + String.valueOf(month)
-                                + "-" + "0" + String.valueOf(day);
+                        String yearString = String.valueOf(year);
+                        String monthString = String.valueOf(month + 1);
+                        String dayString = String.valueOf(day);
+
+                        if (monthString.length() == 1 ) monthString = "0" + monthString;
+                        if (dayString.length() == 1 ) dayString = "0" + dayString;
+                        mStartDate = yearString + "-"
+                                + monthString + "-"
+                                + dayString;
                         mStartDateView.setText(mStartDate);
                     }
                 };

@@ -11,6 +11,7 @@
     <string name="edit_permission">Edit permission</string>
     <string name="editing_permission">Editing permission</string>
     <string name="edit_slave_name">Edit slave name</string>
+    <string name="pair_slaves">Pair slaves</string>
 
     <string name="not_implemented_code_on_result">Not implemented code onResult()</string>
     <string name="ble_not_supported">Bluetooth LE not supported</string>
@@ -94,6 +95,7 @@
     <string name="master_with_no_slaves"> Master with no slaves </string>
     <string name="permission_edited"> Permission edited </string>
     <string name="permissions"> Permissions</string>
+    <string name="delete_permission"> Delete</string>
 
 
 
