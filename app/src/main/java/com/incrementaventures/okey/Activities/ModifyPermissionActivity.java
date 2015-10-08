@@ -17,7 +17,8 @@ public class ModifyPermissionActivity extends ActionBarActivity {
     public static final String PERMISSION_END_DATE = "permission_end_date";
     public static final String PERMISSION_END_HOUR = "permission_end_hour";
     public static final String PERMISSION_KEY = "permission_key";
-    public static final String PERMISSION_SLAVE = "permission_slave";
+    public static final String PERMISSION_NEW_SLAVE = "permission_new_slave";
+    public static final String PERMISSION_OLD_SLAVE = "permission_old_slave";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

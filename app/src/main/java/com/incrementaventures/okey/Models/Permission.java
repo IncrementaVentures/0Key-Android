@@ -39,7 +39,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     }
 
     private Permission(User user, Master master, int type, String key, String startDate,
-                       String endDate, int slaveId) {
+                       String endDate, String slaveId) {
         mParsePermission = ParseObject.create(PERMISSION_CLASS_NAME);
         if (user != null) mParsePermission.put(USER_UUID, user.getUUID());
         if (master != null) mParsePermission.put(MASTER_UUID, master.getUUID());
@@ -52,7 +52,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     }
 
     public static Permission create(User user, Master master, int type, String key,
-                                    String startDate, String endDate, int slaveId) {
+                                    String startDate, String endDate, String slaveId) {
         return new Permission(user, master, type, key, startDate, endDate, slaveId);
     }
 
@@ -198,6 +198,10 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         if (mParsePermission.getInt(TYPE) == ADMIN_PERMISSION)
             return true;
         return false;
+    }
+
+    public String getSlaveId() {
+        return mParsePermission.getString(SLAVE_ID);
     }
 
 }

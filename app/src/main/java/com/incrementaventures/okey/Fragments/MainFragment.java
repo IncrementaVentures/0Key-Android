@@ -122,8 +122,10 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
             mMasters.add(m2);
             Time now = new Time();
             now.setToNow();
-            Permission p1 = Permission.create(mCurrentUser, m1, 0, "1234", BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE);
-            Permission p2 = Permission.create(mCurrentUser, m2, 0, "1234", BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE);
+            Permission p1 = Permission.create(mCurrentUser, m1, 0, "1234",
+                    BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE, "0");
+            Permission p2 = Permission.create(mCurrentUser, m2, 0, "1234",
+                    BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE, "0");
             p1.save();
             p2.save();
 

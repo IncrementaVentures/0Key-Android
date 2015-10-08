@@ -72,6 +72,7 @@ public class ModifyPermissionFragment extends Fragment {
     private String mEndHour;
     private String mStartHour;
     private String mKey;
+    private int mOldSlaveId;
 
     public ModifyPermissionFragment() {
     }
@@ -82,6 +83,8 @@ public class ModifyPermissionFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_new_permission, container, false);
         ButterKnife.bind(this, v);
         mKey = getActivity().getIntent().getStringExtra(Permission.KEY);
+        mOldSlaveId = Integer.valueOf(getActivity().getIntent()
+                .getStringExtra(ModifyPermissionActivity.PERMISSION_OLD_SLAVE));
         setListeners();
 
         mPermissionTypes =  new CharSequence[]{
@@ -207,7 +210,8 @@ public class ModifyPermissionFragment extends Fragment {
                 data.putExtra(ModifyPermissionActivity.PERMISSION_END_DATE, mEndDateView.getText().toString());
                 data.putExtra(ModifyPermissionActivity.PERMISSION_END_HOUR, mEndHourView.getText().toString());
                 data.putExtra(ModifyPermissionActivity.PERMISSION_KEY, mKey);
-                data.putExtra(ModifyPermissionActivity.PERMISSION_SLAVE, mPermissionSlave.getText().toString());
+                data.putExtra(ModifyPermissionActivity.PERMISSION_OLD_SLAVE, mOldSlaveId);
+                data.putExtra(ModifyPermissionActivity.PERMISSION_NEW_SLAVE, mPermissionSlave.getText().toString());
                 data.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
                 getActivity().setResult(Activity.RESULT_OK, data);
                 getActivity().finish();
