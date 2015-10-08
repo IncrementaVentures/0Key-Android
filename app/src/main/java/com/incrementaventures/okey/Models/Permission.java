@@ -1,7 +1,5 @@
 package com.incrementaventures.okey.Models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.format.Time;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
@@ -27,7 +25,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public static final String PERMISSION_CLASS_NAME = "Permission";
     public static final String USER_UUID = "user_uuid";
     public static final String MASTER_UUID = "master_uuid";
-    public static final String SLAVE_UUID = "master_uuid";
+    public static final String SLAVE_ID = "slave_id";
     public static final String UUID = "uuid";
     public static final String TYPE = "type";
     public static final String KEY = "key";
@@ -40,10 +38,12 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         mParsePermission = parsePermission;
     }
 
-    private Permission(User user, Master master, int type, String key, String startDate, String endDate) {
+    private Permission(User user, Master master, int type, String key, String startDate,
+                       String endDate, int slaveId) {
         mParsePermission = ParseObject.create(PERMISSION_CLASS_NAME);
         if (user != null) mParsePermission.put(USER_UUID, user.getUUID());
         if (master != null) mParsePermission.put(MASTER_UUID, master.getUUID());
+        mParsePermission.put(SLAVE_ID, slaveId);
         mParsePermission.put(TYPE, type);
         mParsePermission.put(KEY, key);
         mParsePermission.put(START_DATE, startDate);
@@ -51,8 +51,9 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         mParsePermission.put(UUID, java.util.UUID.randomUUID().toString());
     }
 
-    public static Permission create(User user, Master master, int type, String key, String startDate, String endDate){
-        return new Permission(user, master, type, key, startDate, endDate);
+    public static Permission create(User user, Master master, int type, String key,
+                                    String startDate, String endDate, int slaveId) {
+        return new Permission(user, master, type, key, startDate, endDate, slaveId);
     }
 
     public static Permission create(ParseObject parsePermission){
@@ -146,6 +147,9 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
             return true;
         }
         else if (mParsePermission.getInt(TYPE) == TEMPORAL_PERMISSION && started(time) && !finished(time)){
+            return true;
+        }
+        else if (mParsePermission.getInt(TYPE) == UNKNOWN_PERMISSION){
             return true;
         }
         return false;

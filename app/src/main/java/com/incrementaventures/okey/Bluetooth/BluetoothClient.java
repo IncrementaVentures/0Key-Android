@@ -562,7 +562,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         switch (errorCode){
             case BluetoothProtocol.OK_ERROR_CODE:
                 HashMap<String, String> data = BluetoothProtocol.getPermissionData(fullMessage);
-                int type = BluetoothProtocol.getPermissionType(data.get(Permission.TYPE));
+                int type = Integer.valueOf(data.get(Permission.TYPE));
                 mListener.permissionReceived(type,
                                              data.get(Permission.KEY),
                                              data.get(Permission.START_DATE),
@@ -583,6 +583,10 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 String onlyPermissionData = fullMessage.substring(2, fullMessage.length()-3);
                 String[] permissionData = onlyPermissionData.split(BluetoothProtocol.ITEM_SEPARATOR);
                 ArrayList<HashMap<String, String>> permissions = new ArrayList<>();
+                if (onlyPermissionData.equals(";")){
+                    mListener.permissionsReceived(permissions);
+                    return;
+                }
                 for (String p : permissionData){
                    permissions.add(BluetoothProtocol.getPermissionData(p));
                 }

@@ -155,7 +155,9 @@ public class DoorFragment extends Fragment {
                     slave.save();
                     mSlaves.add(slave);
                 }
-                mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves, mMaster);
+                mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves,
+                        mMaster);
+                mSlavesListView.setAdapter(mSlavesAdapter);
                 ((BaseAdapter) mSlavesListView.getAdapter()).notifyDataSetChanged();
             }
         });

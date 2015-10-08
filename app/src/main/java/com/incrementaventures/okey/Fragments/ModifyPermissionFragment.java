@@ -18,8 +18,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.incrementaventures.okey.Activities.MainActivity;
-import com.incrementaventures.okey.Activities.CreateEditPermissionActivity;
-import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
+import com.incrementaventures.okey.Activities.ModifyPermissionActivity;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.R;
 
@@ -29,7 +28,7 @@ import butterknife.ButterKnife;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class CreateEditPermissionFragment extends Fragment {
+public class ModifyPermissionFragment extends Fragment {
 
     @Bind(R.id.permission_type_layout)
     LinearLayout mPermissionTypeLayout;
@@ -74,7 +73,7 @@ public class CreateEditPermissionFragment extends Fragment {
     private String mStartHour;
     private String mKey;
 
-    public CreateEditPermissionFragment() {
+    public ModifyPermissionFragment() {
     }
 
     @Override
@@ -202,13 +201,13 @@ public class CreateEditPermissionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent data = new Intent();
-                data.putExtra(CreateEditPermissionActivity.PERMISSION_TYPE, mPermissionTypeView.getText().toString());
-                data.putExtra(CreateEditPermissionActivity.PERMISSION_START_DATE, mStartDateView.getText().toString());
-                data.putExtra(CreateEditPermissionActivity.PERMISSION_START_HOUR, mStartHourView.getText().toString());
-                data.putExtra(CreateEditPermissionActivity.PERMISSION_END_DATE, mEndDateView.getText().toString());
-                data.putExtra(CreateEditPermissionActivity.PERMISSION_END_HOUR, mEndHourView.getText().toString());
-                data.putExtra(CreateEditPermissionActivity.PERMISSION_KEY, mKey);
-                data.putExtra(CreateEditPermissionActivity.PERMISSION_SLAVE, mPermissionSlave.getText().toString());
+                data.putExtra(ModifyPermissionActivity.PERMISSION_TYPE, mPermissionTypeView.getText().toString());
+                data.putExtra(ModifyPermissionActivity.PERMISSION_START_DATE, mStartDateView.getText().toString());
+                data.putExtra(ModifyPermissionActivity.PERMISSION_START_HOUR, mStartHourView.getText().toString());
+                data.putExtra(ModifyPermissionActivity.PERMISSION_END_DATE, mEndDateView.getText().toString());
+                data.putExtra(ModifyPermissionActivity.PERMISSION_END_HOUR, mEndHourView.getText().toString());
+                data.putExtra(ModifyPermissionActivity.PERMISSION_KEY, mKey);
+                data.putExtra(ModifyPermissionActivity.PERMISSION_SLAVE, mPermissionSlave.getText().toString());
                 data.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
                 getActivity().setResult(Activity.RESULT_OK, data);
                 getActivity().finish();

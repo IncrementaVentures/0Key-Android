@@ -245,10 +245,10 @@ public class BluetoothProtocol {
         builder.append(permissionKey);
         builder.append(SEPARATOR);
 
-        builder.append(EMPTY);
+        builder.append(slaveId);
         builder.append(SEPARATOR);
 
-        // "08;date;key;0;*"
+        // "08;date;key;slaveId;*"
         builder.append(MESSAGE_END);
 
         return builder.toString();
@@ -271,11 +271,11 @@ public class BluetoothProtocol {
         builder.append(permissionKey);
         builder.append(SEPARATOR);
 
-        // "09;date;key;0;"
-        builder.append(EMPTY);
+        // "09;date;key;slaveId;"
+        builder.append(slaveId);
         builder.append(SEPARATOR);
 
-        // "09;date;key;0;*"
+        // "09;date;key;slaveId;*"
         builder.append(MESSAGE_END);
 
         return builder.toString();

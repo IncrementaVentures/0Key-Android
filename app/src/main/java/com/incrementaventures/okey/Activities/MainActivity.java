@@ -36,7 +36,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener, User.OnUserBluetoothToActivityResponse, User.OnActionMasterResponse, User.OnPermissionsResponse {
+public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener,
+        User.OnUserBluetoothToActivityResponse,
+        User.OnActionMasterResponse,
+        User.OnPermissionsResponse {
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
     public static final String DEFAULT_KEY_EXTRA = "defaultkey";
@@ -133,7 +136,6 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         return super.onOptionsItemSelected(item);
     }
 
-
     /**
      * Gets the current user, and if it's null, starts AuthActivity and finishes this activity
      */
@@ -145,7 +147,6 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             finish();
         }
     }
-
 
     /*
         Configure the side drawer navigation menu
@@ -226,7 +227,6 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             finish();
         }
     }
-
 
     /*
         OnBluetoothUserResponse callbacks
@@ -372,12 +372,10 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
                         mScanDevicesFragment.stopScanning();
                     }
                 }
-
                 break;
             case FIRST_CONFIG:
                 if (resultCode == RESULT_OK){
                     Bundle extras = data.getExtras();
-
                     mCurrentUser.makeFirstAdminConnection(extras.getString(DEFAULT_KEY_EXTRA),
                                                           extras.getString(NEW_KEY_EXTRA),
                                                           extras.getString(MASTER_NAME_EXTRA));
@@ -402,5 +400,4 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     public void onPinDialogNegativeClick() {
         finish();
     }
-
 }

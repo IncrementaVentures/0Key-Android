@@ -75,6 +75,7 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        mPermission = mMaster.getPermission();
         switch (item.getItemId()) {
             case R.id.action_read_my_permission:
                 mListener.readMyPermissionSelected(mMaster, mSelectedSlave, mPermission.getKey());

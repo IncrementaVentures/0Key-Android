@@ -9,7 +9,7 @@ import android.view.MenuItem;
 
 import com.incrementaventures.okey.R;
 
-public class CreateEditPermissionActivity extends ActionBarActivity {
+public class ModifyPermissionActivity extends ActionBarActivity {
 
     public static final String PERMISSION_TYPE = "permission_type";
     public static final String PERMISSION_START_DATE = "permission_start_date";
@@ -22,7 +22,7 @@ public class CreateEditPermissionActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_permission);
+        setContentView(R.layout.activity_modify_permission);
         if (getIntent().getIntExtra(DoorActivity.REQUEST_CODE,
                 DoorActivity.NEW_PERMISSION_REQUEST) == DoorActivity.EDIT_PERMISSION_REQUEST){
             setTitle(R.string.edit_permission);
