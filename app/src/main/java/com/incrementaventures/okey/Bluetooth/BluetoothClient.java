@@ -41,6 +41,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int READ_MY_PERMISSION_MODE = 9;
     public static final int READ_ALL_PERMISSIONS_MODE = 10;
     public static final int EDIT_PERMISSION_MODE = 11;
+    public static final int DELETE_PERMISSION_MODE = 12;
 
     public static final int DOOR_ALREADY_CLOSED = 2;
     public static final int DOOR_ALREADY_OPENED = 3;
@@ -124,6 +125,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         void doorOpened(int state);
         void permissionCreated(String key, int type);
         void permissionEdited(String key, int type);
+        void permissionDeleted(String key);
         void permissionReceived(int type, String key, String start, String end);
         void permissionsReceived(ArrayList<HashMap<String, String>> permisionsData);
         void stopScanning();
@@ -219,6 +221,16 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
+    public void executeDeletePermission(String masterName, String adminKey, String permissionKey,
+                                        int slave) {
+        mMasterName = masterName;
+        mMode = DELETE_PERMISSION_MODE;
+        mPermissionKey = adminKey;
+        mToEditPermissionKey = permissionKey;
+        mSlaveId = slave;
+        startScan(NORMAL_SCAN_TIME);
+    }
+
     public void executeReadUserPermission(String masterName, int slaveId, String permissionKey){
         mMasterName = masterName;
         mPermissionKey = permissionKey;
@@ -284,6 +296,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 || (mMode == READ_MY_PERMISSION_MODE && device.getName().equals(mMasterName))
                 || (mMode == READ_ALL_PERMISSIONS_MODE && device.getName().equals(mMasterName))
                 || (mMode == GET_SLAVES_MODE && device.getName().equals(mMasterName))
+                || (mMode == DELETE_PERMISSION_MODE && device.getName().equals(mMasterName))
                 || (mMode == EDIT_PERMISSION_MODE && device.getName().endsWith(mMasterName))){
 
             mDevices.put(device.hashCode(), device);
@@ -345,6 +358,10 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     message = BluetoothProtocol.buildEditPermissionMessage(mPermissionType,
                             mSlaveId, mNewSlaveId, mStartDate, mStartHour, mEndDate, mEndHour,
                             mPermissionKey, mToEditPermissionKey);
+                    break;
+                case DELETE_PERMISSION_MODE:
+                    message = BluetoothProtocol.buildDeletePermissionMessage(mPermissionKey,
+                            mToEditPermissionKey, mSlaveId);
                     break;
                 case GET_SLAVES_MODE:
                     message = BluetoothProtocol.buildGetSlavesMessage(mPermissionKey);
@@ -525,6 +542,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 case EDIT_PERMISSION_MODE:
                     mListener.permissionEdited(key,
                             BluetoothProtocol.getPermissionType(mPermissionType));
+                    break;
+                case DELETE_PERMISSION_MODE:
+                    mListener.permissionDeleted(key);
                     break;
                 default:
                     mListener.error(RESPONSE_INCORRECT);

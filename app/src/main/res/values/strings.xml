@@ -95,6 +95,7 @@
     <string name="door_not_configured"> Configure master or set key first. </string>
     <string name="master_with_no_slaves"> Master with no slaves </string>
     <string name="permission_edited"> Permission edited </string>
+    <string name="permission_deleted"> Permission deleted </string>
     <string name="permissions"> Permissions</string>
     <string name="delete_permission"> Delete</string>
 

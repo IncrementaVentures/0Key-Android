@@ -227,6 +227,37 @@ public class BluetoothProtocol {
         return builder.toString();
     }
 
+    public static String buildDeletePermissionMessage(String adminKey, String permissionKey,
+                                                      int slaveId) {
+        StringBuilder builder = new StringBuilder();
+        Time time = new Time();
+        time.setToNow();
+
+        // "02;"
+        builder.append(MODIFY_PERMISSIONS_MESSAGE_CODE).append(SEPARATOR);
+        // "02;date;"
+        builder.append(formatDate(time)).append(SEPARATOR);
+        // "02;date;adminKey;"
+        builder.append(adminKey).append(SEPARATOR);
+        // "02;date;adminKey;permissionKey;"
+        builder.append(permissionKey).append(SEPARATOR);
+        // "02;date;adminKey;permissionKey;"
+        builder.append(slaveId).append(SEPARATOR);
+        // "02;date;adminKey;permissionKey;0"
+        builder.append(EMPTY).append(SEPARATOR);
+        // "02;date;adminKey;permissionKey;0;2"
+        builder.append(DELETE_PERMISSION_CODE).append(SEPARATOR);
+        // "02;date;adminKey;permissionKey;0;2;0;"
+        builder.append(EMPTY).append(SEPARATOR);
+        // "02;date;adminKey;permissionKey;0;2;0;0;"
+        builder.append(EMPTY).append(SEPARATOR);
+        // "02;date;adminKey;permissionKey;0;2;0;0;0;"
+        builder.append(EMPTY).append(SEPARATOR);
+        // "02;date;adminKey;permissionKey;0;2;0;0;0;*"
+        builder.append(MESSAGE_END).append(SEPARATOR);
+
+        return builder.toString();
+    }
 
     public static String buildGetUserPermissionMessage(int slaveId, String permissionKey) {
         StringBuilder builder = new StringBuilder();

@@ -206,6 +206,13 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         Toast.makeText(DoorActivity.this, R.string.permission_key_setted, Toast.LENGTH_SHORT).show();
     }
 
+    public void deletePermission(Permission permission){
+        mProgressDialog = ProgressDialog.show(this, null, "Eliminating permission");
+        mCurrentUser.deletePermission(mMaster.getName(), mMaster.getPermission().getKey(),
+                permission.getKey(), Integer.valueOf(permission.getSlaveId()));
+    }
+
+    @Override
     public void doorOpened(final int state) {
         runOnUiThread(new Runnable() {
             @Override
@@ -298,6 +305,18 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     }
 
     @Override
+    public void permissionDeleted(String key) {
+        if (mProgressDialog != null) mProgressDialog.dismiss();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(DoorActivity.this, R.string.permission_deleted, Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+    }
+
+    @Override
     public void permissionsReceived(final ArrayList<HashMap<String, String>> permissionsData) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
         if (permissionsData.size() == 0){
@@ -332,7 +351,6 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     @Override
     public void permissionReceived(final int type, final String key, final String start
             , final String end) {
-
         if (mProgressDialog != null) mProgressDialog.dismiss();
         runOnUiThread(new Runnable() {
             @Override
@@ -402,9 +420,6 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         });
     }
 
-    /*
-        OnBluetoothUserResponse callbacks
-     */
     @Override
     public void enableBluetooth() {
         if (mProgressDialog != null) mProgressDialog.dismiss();

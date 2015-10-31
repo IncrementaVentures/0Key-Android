@@ -83,6 +83,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     public interface OnPermissionsResponse{
         void permissionCreated(String key, int type);
         void permissionEdited(String key, int type);
+        void permissionDeleted(String key);
         void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData);
         void permissionReceived(int type, String key, String start, String end);
         void error(int code);
@@ -116,6 +117,11 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     @Override
     public void permissionEdited(String key, int type) {
         mPermissionsListener.permissionEdited(key, type);
+    }
+
+    @Override
+    public void permissionDeleted(String key) {
+        mPermissionsListener.permissionDeleted(key);
     }
 
     @Override
@@ -371,6 +377,19 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         }
         mBluetoothClient.executeEditPermission(type, oldSlaveId, newSlaveId, startDate, startHour,
                 endDate, endHour, adminKey, toEditPermissionKey, doorName);
+    }
+
+    public void deletePermission(String masterName, String adminKey, String permissionKey,
+                                 int slave){
+        mBluetoothClient = new BluetoothClient(mContext, this);
+        if (!mBluetoothClient.isSupported()){
+            mBluetoothListener.bluetoothNotSupported();
+            return;
+        }else if (!mBluetoothClient.isEnabled()){
+            mBluetoothListener.enableBluetooth();
+            return;
+        }
+        mBluetoothClient.executeDeletePermission(masterName, adminKey, permissionKey, slave);
     }
 
     public void readMyPermission(Master master, Slave slave, String permissionKey){

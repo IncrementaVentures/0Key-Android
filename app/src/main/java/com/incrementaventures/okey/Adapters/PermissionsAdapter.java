@@ -53,7 +53,7 @@ public class PermissionsAdapter extends ArrayAdapter<Permission> {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mDoorActivity.deletePermission(permission);
             }
         });
         Button editButton = (Button) view.findViewById(R.id.edit_permission_button);

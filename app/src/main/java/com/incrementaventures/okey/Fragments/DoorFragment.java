@@ -152,8 +152,10 @@ public class DoorFragment extends Fragment {
                             slaveData.get(Slave.ID),
                             Integer.valueOf(slaveData.get(Slave.TYPE)),
                             Integer.valueOf(slaveData.get(Slave.ID)));
-                    slave.save();
-                    mSlaves.add(slave);
+                    if (!mSlaves.contains(slave)){
+                        slave.save();
+                        mSlaves.add(slave);
+                    }
                 }
                 mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves,
                         mMaster);

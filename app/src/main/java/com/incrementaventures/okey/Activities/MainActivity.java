@@ -314,6 +314,11 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     }
 
     @Override
+    public void permissionDeleted(String key) {
+
+    }
+
+    @Override
     public void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData) {
 
     }

@@ -69,4 +69,8 @@ public class Slave implements ParseObject{
         return mParseSlave.getString(UUID_MASTER);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return ((Slave)o).getId() == this.getId();
+    }
 }
