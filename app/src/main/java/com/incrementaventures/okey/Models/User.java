@@ -428,7 +428,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         mBluetoothClient.executeGetSlaves(master.getName(), permissionKey);
     }
 
-    public void pairSlaves(String adminKey){
+    public void pairSlaves(String masterName, String adminKey){
         mBluetoothClient = new BluetoothClient(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
@@ -437,7 +437,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             mBluetoothListener.enableBluetooth();
             return;
         }
-        mBluetoothClient.executePairSlaves(adminKey);
+        mBluetoothClient.executePairSlaves(masterName, adminKey);
     }
 
     public boolean hasPermission(Master master){

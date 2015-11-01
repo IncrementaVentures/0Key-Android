@@ -13,7 +13,7 @@
     <string name="edit_slave_name">Edit slave name</string>
     <string name="pair_slaves">Pair slaves</string>
     <string name="no_permissions_for_this_slave">This slave doesn\'t have permissions.</string>
-
+    <string name="pairing_will_start">Requesting pairing</string>
     <string name="not_implemented_code_on_result">Not implemented code onResult()</string>
     <string name="ble_not_supported">Bluetooth LE not supported</string>
     <string name="device_found">Device found</string>

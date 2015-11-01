@@ -100,4 +100,7 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
         return 1;
     }
 
+    public Slave getSelectedSlave(){
+        return mSelectedSlave;
+    }
 }

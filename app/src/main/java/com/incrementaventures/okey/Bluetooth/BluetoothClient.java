@@ -31,6 +31,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     private final int NORMAL_SCAN_TIME = 7000;
     private final int LONG_SCAN_TIME = 120000;
+    private final int MEDIUM_SCAN_TIME = 12000;
 
     public static final int CLOSE_MODE = 0;
     public static final int OPEN_MODE = 1;
@@ -42,6 +43,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int READ_ALL_PERMISSIONS_MODE = 10;
     public static final int EDIT_PERMISSION_MODE = 11;
     public static final int DELETE_PERMISSION_MODE = 12;
+    public static final int PAIR_SLAVES_MODE = 13;
 
     public static final int DOOR_ALREADY_CLOSED = 2;
     public static final int DOOR_ALREADY_OPENED = 3;
@@ -254,8 +256,11 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executePairSlaves(String adminKey){
+    public void executePairSlaves(String masterName, String adminKey){
         mPermissionKey = adminKey;
+        mMasterName = masterName;
+        mMode = PAIR_SLAVES_MODE;
+        startScan(MEDIUM_SCAN_TIME);
     }
 
     private void startScan(int time){
@@ -289,7 +294,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
      */
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-        printScanRecord(scanRecord);
         if ((mMode == OPEN_MODE && device.getName().equals(mMasterName))
                 || (mMode == CREATE_NEW_PERMISSION_MODE && device.getName().equals(mMasterName))
                 |  (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(Master.FACTORY_NAME))
@@ -297,7 +301,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 || (mMode == READ_ALL_PERMISSIONS_MODE && device.getName().equals(mMasterName))
                 || (mMode == GET_SLAVES_MODE && device.getName().equals(mMasterName))
                 || (mMode == DELETE_PERMISSION_MODE && device.getName().equals(mMasterName))
-                || (mMode == EDIT_PERMISSION_MODE && device.getName().endsWith(mMasterName))){
+                || (mMode == EDIT_PERMISSION_MODE && device.getName().endsWith(mMasterName))
+                || (mMode == PAIR_SLAVES_MODE && device.getName().equals(mMasterName))){
 
             mDevices.put(device.hashCode(), device);
             device.connectGatt(mContext, true, mGattCallback);
@@ -374,6 +379,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     message = BluetoothProtocol.
                             buildGetAllPermissionsMessage(mSlaveId, mPermissionKey);
                     break;
+                case PAIR_SLAVES_MODE:
+                    message = BluetoothProtocol.buildPairSlavesMessage(mPermissionKey);
+                    break;
                 default:
                     return;
             }
@@ -381,7 +389,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             mSending = true;
             sendMessage(gatt, mWriteCharacteristic, mToSendMessageParts.poll());
         }
-
 
         @Override
         public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor,
@@ -438,7 +445,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         @Override
         public void onCharacteristicWrite(final BluetoothGatt gatt,
                                           BluetoothGattCharacteristic characteristic, int status) {
-                       /*
+            /*
                 Disconnect after 8 seconds
              */
             if (mToSendMessageParts.size() == 0){
@@ -456,8 +463,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 }, 8000);
                 return;
             }
-
-
             // Sends the message until is finished
             sendMessage(gatt, characteristic, mToSendMessageParts.poll());
         }
@@ -662,78 +667,4 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         }
         return e;
     }
-
-    public void printScanRecord (byte[] scanRecord) {
-
-        // Simply print all raw bytes
-        try {
-            String decodedRecord = new String(scanRecord,"UTF-8");
-            Log.d("DEBUG","decoded String : " + ByteArrayToString(scanRecord));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        // Parse data bytes into individual records
-        List<AdRecord> records = AdRecord.parseScanRecord(scanRecord);
-
-
-        // Print individual records
-        if (records.size() == 0) {
-            Log.i("DEBUG", "Scan Record Empty");
-        } else {
-            Log.i("DEBUG", "Scan Record: " + TextUtils.join(",", records));
-        }
-
-    }
-
-
-    public static String ByteArrayToString(byte[] ba)
-    {
-        StringBuilder hex = new StringBuilder(ba.length * 2);
-        for (byte b : ba)
-            hex.append(b + " ");
-
-        return hex.toString();
-    }
-
-
-    public static class AdRecord {
-
-        public AdRecord(int length, int type, byte[] data) {
-            String decodedRecord = "";
-            try {
-                decodedRecord = new String(data,"UTF-8");
-
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-
-            Log.d("DEBUG", "Length: " + length + " Type : " + type + " Data : " + decodedRecord);
-        }
-
-        public static List<AdRecord> parseScanRecord(byte[] scanRecord) {
-            List<AdRecord> records = new ArrayList<>();
-            int index = 0;
-            while (index < scanRecord.length) {
-                int length = scanRecord[index++];
-                //Done once we run out of records
-                if (length == 0) break;
-
-                int type = scanRecord[index];
-                //Done if our record isn't a valid type
-                if (type == 0) break;
-
-                byte[] data = Arrays.copyOfRange(scanRecord, index + 1, index + length);
-
-                records.add(new AdRecord(length, type, data));
-                //Advance
-                index += length;
-            }
-
-            return records;
-        }
-
-        // ...
-    }
-
 }

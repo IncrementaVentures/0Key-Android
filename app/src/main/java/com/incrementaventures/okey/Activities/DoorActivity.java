@@ -133,7 +133,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             return true;
         }
         else if (id == R.id.action_pair_slaves) {
-            mCurrentUser.pairSlaves(mMaster.getPermission().getKey());
+            Toast.makeText(this, R.string.pairing_will_start, Toast.LENGTH_SHORT).show();
+            mCurrentUser.pairSlaves(mMaster.getName(), mMaster.getPermission().getKey());
         }
         else if (id == R.id.action_get_slaves){
             if (!mScannedDoor){
@@ -357,11 +358,12 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             public void run() {
                 Toast.makeText(DoorActivity.this, "Permission received and saved",
                         Toast.LENGTH_SHORT).show();
-                Permission p = mMaster.getPermission();
-                p.setType(type);
-                p.setStartDate(start);
-                p.setEndDate(end);
-                p.save();
+                Permission permission = mMaster.getPermission();
+                permission.setType(type);
+                permission.setStartDate(start);
+                permission.setEndDate(end);
+                permission.save();
+                mDoorFragment.refreshPermissionView(permission);
             }
         });
     }

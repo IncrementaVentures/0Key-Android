@@ -44,15 +44,10 @@ public class DoorFragment extends Fragment {
 
     private Master mMaster;
     private Permission mPermission;
-
     private List<Slave> mSlaves;
     private SlavesAdapter mSlavesAdapter;
-
     private boolean mScannedDoor;
-
     private OnSlaveSelectedListener mListener;
-
-
 
     public interface OnSlaveSelectedListener{
         void openDoorSelected(Master master, Slave slave);
@@ -64,26 +59,20 @@ public class DoorFragment extends Fragment {
     public DoorFragment() {
     }
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_door, container, false);
         ButterKnife.bind(this, v);
-
         mScannedDoor = getActivity().getIntent().getExtras().getBoolean(MainActivity.SCANNED_DOOR_EXTRA);
-
         mMaster = getMaster();
         setPermission();
-
-        setUI(inflater);
+        setUI();
         setListeners();
-
         return v;
     }
 
-    private void setUI(final LayoutInflater inflater){
+    private void setUI(){
         if (mPermission != null){
             mSlaves = mMaster.getSlaves();
             if (mSlaves == null || mSlaves.size() == 0) {
@@ -126,7 +115,6 @@ public class DoorFragment extends Fragment {
         mPermission = mMaster.getPermission();
     }
 
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -144,15 +132,15 @@ public class DoorFragment extends Fragment {
                 if (mSlaves == null) {
                     mSlaves = new ArrayList<>();
                 }
-                if (slavesData.size() != 0){
+                if (slavesData.size() != 0) {
                     mNoSlavesView.setVisibility(TextView.GONE);
                 }
-                for (HashMap<String, String> slaveData : slavesData){
+                for (HashMap<String, String> slaveData : slavesData) {
                     final Slave slave = Slave.create(mMaster.getUUID(),
                             slaveData.get(Slave.ID),
                             Integer.valueOf(slaveData.get(Slave.TYPE)),
                             Integer.valueOf(slaveData.get(Slave.ID)));
-                    if (!mSlaves.contains(slave)){
+                    if (!mSlaves.contains(slave)) {
                         slave.save();
                         mSlaves.add(slave);
                     }
@@ -163,6 +151,11 @@ public class DoorFragment extends Fragment {
                 ((BaseAdapter) mSlavesListView.getAdapter()).notifyDataSetChanged();
             }
         });
+    }
+
+    public void refreshPermissionView(Permission permission) {
+        // TODO: 31-10-2015 Refresh slaves ListView with new information
+        // mSlavesAdapter.getSelectedSlave();
 
     }
 }

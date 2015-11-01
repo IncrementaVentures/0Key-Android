@@ -31,6 +31,7 @@ public class BluetoothProtocol {
     public static final String GET_ALL_PERMISSIONS_MESSAGE_CODE = "09";
     public static final String GET_SLAVES_MESSAGE_CODE = "10";
     public static final String GET_SLAVES_RESPONSE_CODE = "11";
+    public static final String PAIR_SLAVES_MESSAGE_CODE = "12";
 
     public static final String OK_ERROR_CODE = "0";
     public static final String NO_PERMISSION_ERROR_CODE = "1";
@@ -319,6 +320,29 @@ public class BluetoothProtocol {
 
         // "10;"
         builder.append(GET_SLAVES_MESSAGE_CODE);
+        builder.append(SEPARATOR);
+
+        // "10;date;"
+        builder.append(formatDate(time));
+        builder.append(SEPARATOR);
+
+        // "10;date;key;"
+        builder.append(permissionKey);
+        builder.append(SEPARATOR);
+
+        // "10;date;key;*"
+        builder.append(MESSAGE_END);
+
+        return builder.toString();
+    }
+
+    public static String buildPairSlavesMessage(String permissionKey) {
+        StringBuilder builder = new StringBuilder();
+        Time time = new Time();
+        time.setToNow();
+
+        // "10;"
+        builder.append(PAIR_SLAVES_MESSAGE_CODE);
         builder.append(SEPARATOR);
 
         // "10;date;"
