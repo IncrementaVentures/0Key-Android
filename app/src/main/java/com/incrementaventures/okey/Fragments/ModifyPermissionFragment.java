@@ -83,8 +83,11 @@ public class ModifyPermissionFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_new_permission, container, false);
         ButterKnife.bind(this, v);
         mKey = getActivity().getIntent().getStringExtra(Permission.KEY);
-        mOldSlaveId = Integer.valueOf(getActivity().getIntent()
-                .getStringExtra(ModifyPermissionActivity.PERMISSION_OLD_SLAVE));
+        String oldSlave = getActivity().getIntent()
+                .getStringExtra(ModifyPermissionActivity.PERMISSION_OLD_SLAVE);
+        if (oldSlave != null) {
+            mOldSlaveId = Integer.valueOf(oldSlave);
+        }
         setListeners();
 
         mPermissionTypes =  new CharSequence[]{

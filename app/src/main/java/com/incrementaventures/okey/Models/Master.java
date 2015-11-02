@@ -24,7 +24,7 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject {
     private List<Slave> mSlaves;
 
     public interface OnMasterDataListener {
-        void masterFinded(Master master);
+        void masterFound(Master master);
     }
 
 
@@ -69,11 +69,11 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (list == null || list.size() == 0) {
-                    listener.masterFinded(null);
+                    listener.masterFound(null);
                     return;
                 }
                 for (ParseObject object : list){
-                    listener.masterFinded(Master.create(object));
+                    listener.masterFound(Master.create(object));
                 }
             }
         });

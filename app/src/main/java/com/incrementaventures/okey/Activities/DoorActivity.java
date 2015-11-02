@@ -262,10 +262,10 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 if (mProgressDialog != null) mProgressDialog.dismiss();
                 if (mConfiguring){
                     mMaster = getMaster();
-                    Permission p = Permission.create(mCurrentUser, mMaster, type, key,
+                    Permission permission = Permission.create(mCurrentUser, mMaster, type, key,
                             Permission.PERMANENT_DATE, Permission.PERMANENT_DATE, "0");
                     mMaster.save();
-                    p.save();
+                    permission.save();
                     Toast.makeText(DoorActivity.this, "Success. Your private key is saved.",
                             Toast.LENGTH_SHORT).show();
                     mConfiguring = false;

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
@@ -31,10 +32,8 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
 
     @Bind(R.id.master_list_main)
     ListView mMasterList;
-
     ArrayList<Master> mMasters;
     MastersAdapter mAdapter;
-
     User mCurrentUser;
 
     public MainFragment() {
@@ -48,17 +47,12 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, v);
-
         authenticateUser();
         setListeners();
         setUp();
         setDoorList();
-
-
         return v;
-
     }
-
 
     private void authenticateUser(){
         mCurrentUser = User.getLoggedUser((MainActivity) getActivity());
@@ -79,14 +73,13 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
     }
 
 
-    private void setUp(){
+    private void setUp() {
         mMasters = new ArrayList<>();
-        if (mCurrentUser != null){
+        if (mCurrentUser != null) {
             //Master.deleteAll();
             //Permission.deleteAll();
             Master.getMasters(this);
         }
-
     }
 
     private void setDoorList(){
@@ -94,16 +87,36 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
         mMasterList.setAdapter(mAdapter);
     }
 
-
     @Override
-    public void masterFinded(Master master) {
+    public void masterFound(Master master) {
         if (master == null ){
-            createFakeData();
-        } else{
-            mMasters.add(master);
-            mAdapter = new MastersAdapter(getActivity(), R.layout.master_list_item, mMasters);
-            mMasterList.setAdapter(mAdapter);
+            //createFakeData();
+        } else {
+            if (mMasters.size()>0)
+                mMasters.add(0, master);
+            else
+                mMasters.add(master);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
         }
+    }
+
+    public void masterNetworkFound(Master master) {
+        if (mMasters.size()>0)
+            mMasters.add(0, master);
+        else
+            mMasters.add(master);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+                Toast.makeText(getActivity(),"You have new permissions", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void createFakeData(){

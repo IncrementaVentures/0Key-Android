@@ -9,6 +9,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -19,7 +21,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public static final int TEMPORAL_PERMISSION = 2;
     public static final int UNKNOWN_PERMISSION = 3;
 
-    public static final String PERMANENT_DATE = "Permanent";
+    public static final String PERMANENT_DATE = "00/00/3000";
     public static final String UNKNOWN_DATE = "Unknown";
 
     public static final String PERMISSION_CLASS_NAME = "Permission";
@@ -33,6 +35,10 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public static final String END_DATE = "end_date";
 
     private ParseObject mParsePermission;
+
+    public interface OnNetworkResponseListener {
+        void onNewPermissions(HashMap<Master, Permission> permissions);
+    }
 
     private Permission(ParseObject parsePermission){
         mParsePermission = parsePermission;
@@ -182,7 +188,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-                for (ParseObject o : list){
+                for (ParseObject o : list) {
                     try {
                         o.deleteEventually();
                         o.unpin();
@@ -204,4 +210,41 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         return mParsePermission.getString(SLAVE_ID);
     }
 
+    public static void getNewPermissions(final OnNetworkResponseListener listener, User user) {
+        ParseQuery<ParseObject> query = new ParseQuery<>(Permission.PERMISSION_CLASS_NAME);
+        query.orderByDescending("createdAt");
+        query.whereEqualTo(Permission.USER_UUID, user.getUUID());
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parsePermissions, ParseException e) {
+                HashMap<Master, Permission> permissionHashMap = new HashMap<>();
+                for (ParseObject parsePermission : parsePermissions) {
+                    Permission permission = Permission.create(parsePermission);
+                    try {
+                        if (!existsLocal(permission)) {
+                            Master master = permission.getMaster();
+                            if (master != null) {
+                                permissionHashMap.put(permission.getMaster(), permission);
+                            }
+                        }
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+                listener.onNewPermissions(permissionHashMap);
+            }
+        });
+    }
+
+    private static boolean existsLocal(Permission permission) throws ParseException {
+        ParseQuery<ParseObject> query = new ParseQuery<>(Permission.PERMISSION_CLASS_NAME);
+        query.fromLocalDatastore();
+        query.whereEqualTo(UUID, permission.getUUID());
+        List<ParseObject> list = query.find();
+        if (list == null || list.size() == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

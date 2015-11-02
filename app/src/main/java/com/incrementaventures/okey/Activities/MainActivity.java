@@ -26,11 +26,13 @@ import com.incrementaventures.okey.Fragments.InsertPinFragment;
 import com.incrementaventures.okey.Fragments.MainFragment;
 import com.incrementaventures.okey.Fragments.ScanDevicesFragment;
 import com.incrementaventures.okey.Models.Master;
+import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +41,8 @@ import butterknife.ButterKnife;
 public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener,
         User.OnUserBluetoothToActivityResponse,
         User.OnActionMasterResponse,
-        User.OnPermissionsResponse {
+        User.OnPermissionsResponse,
+        Permission.OnNetworkResponseListener {
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
     public static final String DEFAULT_KEY_EXTRA = "defaultkey";
@@ -65,6 +68,8 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         authenticateUser();
+        if (mCurrentUser == null) return;
+        checkNewPermissions();
         drawerSetup();
         checkPreferences();
         checkBluetoothLeSupport();
@@ -81,6 +86,10 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    private void checkNewPermissions() {
+        Permission.getNewPermissions(this, mCurrentUser);
     }
 
     private void checkPreferences(){
@@ -299,34 +308,23 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     }
 
     @Override
-    public void masterWithNoSlaves() {
-    }
+    public void masterWithNoSlaves() {  }
 
 
     @Override
-    public void permissionCreated(String key, int type) {
-
-    }
+    public void permissionCreated(String key, int type) { }
 
     @Override
-    public void permissionEdited(String key, int type) {
-
-    }
+    public void permissionEdited(String key, int type) { }
 
     @Override
-    public void permissionDeleted(String key) {
-
-    }
+    public void permissionDeleted(String key) { }
 
     @Override
-    public void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData) {
-
-    }
+    public void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData) { }
 
     @Override
-    public void permissionReceived(int type, String key, String start, String end) {
-
-    }
+    public void permissionReceived(int type, String key, String start, String end) { }
 
     @Override
     public void error(final int code) {
@@ -404,5 +402,21 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     @Override
     public void onPinDialogNegativeClick() {
         finish();
+    }
+
+    @Override
+    public void onNewPermissions(HashMap<Master, Permission> permissions) {
+        for (Map.Entry<Master, Permission> pair : permissions.entrySet()) {
+            Permission permission = pair.getValue();
+            Master master = pair.getKey();
+            if (permission == null || master == null) {
+                continue;
+            }
+            permission.save();
+            master.save();
+            MainFragment mainFragment = (MainFragment)
+                    getFragmentManager().findFragmentById(R.id.content_frame);
+            mainFragment.masterNetworkFound(master);
+        }
     }
 }
