@@ -4,6 +4,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,11 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject {
     }
 
     public static Master create(ParseObject parseObject){
-        return new Master(parseObject);
+        if (parseObject == null) {
+            return null;
+        } else {
+            return new Master(parseObject);
+        }
     }
 
     public ParseObject getParseMaster(){
@@ -162,6 +167,19 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject {
     public void addSlave(Slave slave){
         if (mSlaves == null) mSlaves = getSlaves();
         mSlaves.add(slave);
+    }
+
+    public static Master getMaster(String uuid) {
+        ParseQuery<ParseObject> query =
+                new ParseQuery<>(MASTER_CLASS_NAME);
+        query.whereEqualTo(UUID, uuid);
+        try {
+            ParseObject parseObject = query.getFirst();
+            return Master.create(parseObject);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

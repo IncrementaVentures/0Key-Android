@@ -5,26 +5,29 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
+import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ShareKeyActivity extends ActionBarActivity {
-    @Bind(R.id.key_view)
-    TextView mKeyView;
+    @Bind(R.id.share_key_email)
+    EditText mEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_key);
         ButterKnife.bind(this);
-
-        mKeyView.setText(getIntent().getExtras().getString(Permission.KEY));
-
     }
 
     @Override
@@ -46,13 +49,24 @@ public class ShareKeyActivity extends ActionBarActivity {
             return true;
         }
         else if (id == R.id.action_share){
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, mKeyView.getText().toString());
-            sendIntent.setType("text/plain");
-            startActivity(sendIntent);
+            User user = User.getUser(mEmail.getText().toString());
+            if (user == null) {
+                Toast.makeText(this, R.string.user_doesnt_exist, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            Master master = Master.getMaster(getIntent().getStringExtra(Master.UUID));
+            Permission permission =
+                    Permission.create(
+                            user,
+                            master,
+                            getIntent().getIntExtra(Permission.TYPE, 0),
+                            getIntent().getStringExtra(Permission.KEY),
+                            getIntent().getStringExtra(Permission.START_DATE),
+                            getIntent().getStringExtra(Permission.END_DATE),
+                            getIntent().getStringExtra(Permission.SLAVE_ID));
+            permission.save();
+            Toast.makeText(this, R.string.key_will_be_shared, Toast.LENGTH_SHORT).show();
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

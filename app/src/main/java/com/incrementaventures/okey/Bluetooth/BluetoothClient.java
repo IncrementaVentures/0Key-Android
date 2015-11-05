@@ -303,7 +303,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 || (mMode == DELETE_PERMISSION_MODE && device.getName().equals(mMasterName))
                 || (mMode == EDIT_PERMISSION_MODE && device.getName().endsWith(mMasterName))
                 || (mMode == PAIR_SLAVES_MODE && device.getName().equals(mMasterName))){
-
             mDevices.put(device.hashCode(), device);
             device.connectGatt(mContext, true, mGattCallback);
         } else if (mMode == SCAN_MODE) {

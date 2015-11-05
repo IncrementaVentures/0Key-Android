@@ -28,6 +28,7 @@
     <string name="open_door">Open door</string>
     <string name="open">Open</string>
     <string name="close_door">Close door</string>
+    <string name="email">Email</string>
 
     <string name="door_already_opened"> Already opened </string>
     <string name="door_already_closed"> Already closed </string>
@@ -68,7 +69,7 @@
     <string name="start_date">Start date</string>
     <string name="start_hour">Start hour</string>
     <string name="scan_devices">Scan devices</string>
-    <string name="share">Share</string>
+    <string name="share_permission">Share</string>
     <string name="creating_permission">Creating permission</string>
     <string name="permission_not_created">Permission not created</string>
     <string name="permission_not_edited">Permission not edited</string>
@@ -98,6 +99,8 @@
     <string name="permission_deleted"> Permission deleted </string>
     <string name="permissions"> Permissions</string>
     <string name="delete_permission"> Delete</string>
+    <string name="user_doesnt_exist"> User doesn\'t exist.</string>
+    <string name="key_will_be_shared"> Key will be shared.</string>
 
 
 
@@ -105,7 +108,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_door">Door</string>
     <string name="title_activity_new_permission">New permission</string>
-    <string name="title_activity_share_key">Share key</string>
+    <string name="title_activity_share_key">Share permission</string>
     <string name="title_activity_first_admin_config">Door configuration</string>
+    <string name="sucess_private_key_saved">Success. Your private key is saved.</string>
+    <string name="permission_added_succesfully">Permission added successfully</string>
+    <string name="eliminating_permission">Eliminating permission</string>
+    <string name="share_the_permission_with_someone">Share the permission with someone.</string>
+    <string name="sorry_device_does_not_support_bluetooth">Sorry, your device doesn\'t support bluetooth</string>
 
 </resources>

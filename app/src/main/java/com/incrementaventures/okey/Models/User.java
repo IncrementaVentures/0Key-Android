@@ -9,6 +9,7 @@ import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -18,8 +19,9 @@ import java.util.HashMap;
 public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incrementaventures.okey.Models.ParseObject {
 
     public static final String USER_CLASS_NAME = "User";
-    private final String NAME = "name";
-    private final String PHONE = "phone";
+    private static final String NAME = "name";
+    private static final String EMAIL = "email";
+    private static final String PHONE = "phone";
     public static final String UUID = "uuid";
 
     private ParseUser mParseUser;
@@ -252,7 +254,11 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
 
 
     protected static User create(ParseUser user){
-        return new User(user);
+        if (user == null) {
+            return null;
+        } else {
+            return new User(user);
+        }
     }
 
     protected ParseUser getParseUser(){
@@ -438,6 +444,19 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             return;
         }
         mBluetoothClient.executePairSlaves(masterName, adminKey);
+    }
+
+    public static User getUser(String email) {
+        ParseQuery<ParseUser> query =
+                new ParseQuery<>(USER_CLASS_NAME);
+        query.whereEqualTo(EMAIL, email);
+        try {
+            ParseUser parseUser = query.getFirst();
+            return User.create(parseUser);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public boolean hasPermission(Master master){

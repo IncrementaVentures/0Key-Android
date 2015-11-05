@@ -208,7 +208,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     }
 
     public void deletePermission(Permission permission){
-        mProgressDialog = ProgressDialog.show(this, null, "Eliminating permission");
+        mProgressDialog = ProgressDialog.show(this, null, getString(R.string.eliminating_permission));
         mCurrentUser.deletePermission(mMaster.getName(), mMaster.getPermission().getKey(),
                 permission.getKey(), Integer.valueOf(permission.getSlaveId()));
     }
@@ -260,21 +260,23 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             @Override
             public void run() {
                 if (mProgressDialog != null) mProgressDialog.dismiss();
-                if (mConfiguring){
+                if (mConfiguring) {
                     mMaster = getMaster();
                     Permission permission = Permission.create(mCurrentUser, mMaster, type, key,
                             Permission.PERMANENT_DATE, Permission.PERMANENT_DATE, "0");
                     mMaster.save();
                     permission.save();
-                    Toast.makeText(DoorActivity.this, "Success. Your private key is saved.",
+                    Toast.makeText(DoorActivity.this, R.string.sucess_private_key_saved,
                             Toast.LENGTH_SHORT).show();
                     mConfiguring = false;
                     mScannedDoor = false;
                 } else {
-                    Toast.makeText(DoorActivity.this, "Permission added successfully",
+                    Toast.makeText(DoorActivity.this, R.string.permission_added_succesfully,
                             Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getBaseContext(), ShareKeyActivity.class);
+                    Intent intent = new Intent(DoorActivity.this, ShareKeyActivity.class);
                     intent.putExtra(Permission.KEY, key);
+                    intent.putExtra(Permission.MASTER_UUID, mMaster.getUUID());
+                    intent.putExtra(Permission.TYPE, type);
                     startActivity(intent);
                 }
             }
@@ -350,8 +352,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     }
 
     @Override
-    public void permissionReceived(final int type, final String key, final String start
-            , final String end) {
+    public void permissionReceived(final int type, final String key, final String start,
+                                   final String end) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
         runOnUiThread(new Runnable() {
             @Override
@@ -431,7 +433,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
 
     @Override
     public void bluetoothNotSupported() {
-        Toast.makeText(this, "Sorry, your device doesn't support bluetooth",
+        Toast.makeText(this, R.string.sorry_device_does_not_support_bluetooth,
                 Toast.LENGTH_LONG).show();
     }
 
