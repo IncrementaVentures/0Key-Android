@@ -277,7 +277,13 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                     intent.putExtra(Permission.KEY, key);
                     intent.putExtra(Permission.MASTER_UUID, mMaster.getUUID());
                     intent.putExtra(Permission.TYPE, type);
-                    startActivity(intent);
+                    String startDate = mPermissionData.getString(ModifyPermissionActivity.PERMISSION_START_DATE);
+                    String startHour = mPermissionData.getString(ModifyPermissionActivity.PERMISSION_START_HOUR);
+                    String endDate = mPermissionData.getString(ModifyPermissionActivity.PERMISSION_END_DATE);
+                    String endHour = mPermissionData.getString(ModifyPermissionActivity.PERMISSION_END_HOUR);
+                    intent.putExtra(Permission.START_DATE, startDate + "T" + startHour);
+                    intent.putExtra(Permission.END_DATE, endDate + "T" + endHour);
+                     startActivity(intent);
                 }
             }
         });

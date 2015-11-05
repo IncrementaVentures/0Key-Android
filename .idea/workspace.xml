@@ -7,15 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c94a639-52fd-4186-8ff6-9b935094b95f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Bluetooth/BluetoothClient.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Bluetooth/BluetoothClient.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/DoorActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/DoorActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/Master.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/Master.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/ShareKeyActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/ShareKeyActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/User.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/User.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_share_key.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_share_key.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/menu_share_key.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_share_key.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Okey.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -47,12 +39,12 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/DoorActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="282" column="11" selection-start-line="282" selection-start-column="11" selection-end-line="282" selection-end-column="11" />
+              <caret line="285" column="20" selection-start-line="285" selection-start-column="20" selection-end-line="285" selection-end-column="20" />
               <folding>
                 <element signature="e#8576#8618#0" expanded="true" />
                 <element signature="e#10880#10913#0" expanded="true" />
                 <element signature="e#11134#11171#0" expanded="true" />
-                <element signature="e#18452#18500#0" expanded="true" />
+                <element signature="e#19073#19121#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -61,8 +53,8 @@
       <file leaf-file-name="ShareKeyActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/ShareKeyActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8211091">
-              <caret line="68" column="9" selection-start-line="68" selection-start-column="9" selection-end-line="68" selection-end-column="9" />
+            <state vertical-scroll-proportion="0.51699466">
+              <caret line="61" column="41" selection-start-line="61" selection-start-column="41" selection-end-line="61" selection-end-column="41" />
               <folding>
                 <element signature="e#1787#1813#0" expanded="true" />
                 <element signature="e#2561#2588#0" expanded="true" />
@@ -1611,13 +1603,13 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Bluetooth/BluetoothClient.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/DoorActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/menu/menu_share_key.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_share_key.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/User.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/Master.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/ShareKeyActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/DoorActivity.java" />
       </list>
     </option>
   </component>
@@ -2188,19 +2180,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/DoorActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="282" column="11" selection-start-line="282" selection-start-column="11" selection-end-line="282" selection-end-column="11" />
-          <folding>
-            <element signature="e#8576#8618#0" expanded="true" />
-            <element signature="e#10880#10913#0" expanded="true" />
-            <element signature="e#11134#11171#0" expanded="true" />
-            <element signature="e#18452#18500#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_share_key.xml">
       <provider selected="true" editor-type-id="android-designer">
         <state />
@@ -2271,10 +2250,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/DoorActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="285" column="20" selection-start-line="285" selection-start-column="20" selection-end-line="285" selection-end-column="20" />
+          <folding>
+            <element signature="e#8576#8618#0" expanded="true" />
+            <element signature="e#10880#10913#0" expanded="true" />
+            <element signature="e#11134#11171#0" expanded="true" />
+            <element signature="e#19073#19121#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/ShareKeyActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8211091">
-          <caret line="68" column="9" selection-start-line="68" selection-start-column="9" selection-end-line="68" selection-end-column="9" />
+        <state vertical-scroll-proportion="0.51699466">
+          <caret line="61" column="41" selection-start-line="61" selection-start-column="41" selection-end-line="61" selection-end-column="41" />
           <folding>
             <element signature="e#1787#1813#0" expanded="true" />
             <element signature="e#2561#2588#0" expanded="true" />
