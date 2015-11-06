@@ -36,7 +36,7 @@ public class MastersAdapter extends ArrayAdapter<Master> {
             Picasso.with(mLayoutInflater.getContext()).load(R.drawable.house).into(imageView);
         }
         TextView doorName = (TextView) view.findViewById(R.id.door_name_list_item);
-        doorName.setText(master.getName());
+        doorName.setText(master.getDescription());
         return view;
     }
 

@@ -73,6 +73,7 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserR
         if (mProgressDialog != null) mProgressDialog.dismiss();
         Intent intent = new Intent(getActivity(), MainActivity.class);
         startActivity(intent);
+        getActivity().finish();
     }
 
     @Override

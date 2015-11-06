@@ -66,7 +66,8 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
                 String doorUuid = mMasters.get(position).getUUID();
                 Intent intent = new Intent(getActivity(), DoorActivity.class);
                 intent.putExtra(Master.UUID, doorUuid);
-                intent.putExtra(MainActivity.MASTER_NAME_EXTRA, mMasters.get(position).getName());
+                intent.putExtra(MainActivity.MASTER_NAME_EXTRA,
+                        mMasters.get(position).getDescription());
                 intent.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
                 startActivity(intent);
             }
@@ -91,7 +92,7 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
     @Override
     public void masterFound(Master master) {
         if (master == null ){
-            //createFakeData();
+            createFakeData();
         } else {
             if (mMasters.size()>0)
                 mMasters.add(0, master);
@@ -122,8 +123,9 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
 
     private void createFakeData(){
         if (mMasters.size() == 0){
-            Master m1 = Master.create("Fake master first", "This is a fake master.");
-            Master m2 = Master.create("Fake master second", "This is a fake master too.");
+            Master m1 = Master.create("PSN"
+                    , "Casa "+ User.getLoggedUser((MainActivity)getActivity()).getName());
+            Master m2 = Master.create("PSN", "Oficina");
             m1.save();
             m2.save();
             for (int i = 1; i<6; i++){

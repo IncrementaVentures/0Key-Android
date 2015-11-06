@@ -5,8 +5,6 @@
     tools:context="com.incrementaventures.okey.Fragments.DoorFragment">
 
 
-
-
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
