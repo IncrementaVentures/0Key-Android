@@ -161,7 +161,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         Configure the side drawer navigation menu
      */
     public void drawerSetup(){
-        mDrawerItems = new String[] {"Main page", "Doors", "Permissions", "Log"};
+        mDrawerItems = new String[] {"Home", "Add new 0key", "Buy 0key", "Settings", "Logout"};
         // Set the adapter for the list view
         mDrawerList.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, mDrawerItems));
         // Set the list's click listener
@@ -170,23 +170,20 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selected = mDrawerItems[position];
                 switch (selected){
-                    case "Doors":
-                        /*DoorsFragment doorsFragment = new DoorsFragment();
-                        getFragmentManager().beginTransaction()
-                                .replace(R.id.content_frame, doorsFragment)
-                                .addToBackStack(null)
-                                .commit();*/
-                        break;
-                    case "Main page":
+                    case "Home":
                         MainFragment mainFragment = new MainFragment();
                         getFragmentManager().beginTransaction()
                             .replace(R.id.content_frame, mainFragment)
                             .addToBackStack(null)
                             .commit();
                         break;
-                    case "Permissions":
+                    case "Add new 0key":
                         break;
-                    case "Log":
+                    case "Buy 0key":
+                        break;
+                    case "Settings":
+                        break;
+                    case "Logout":
                         break;
                     default:
                         break;

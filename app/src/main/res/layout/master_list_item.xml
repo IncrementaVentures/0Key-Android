@@ -1,35 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/card_view"
     android:padding="16dp"
     >
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/door_name_list_item"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/master_image"/>
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
-        android:id="@+id/door_description_list_item"
-        android:layout_below="@+id/door_name_list_item"
-        android:layout_alignParentStart="true" />
+        android:layout_gravity="center_horizontal"
+        android:text="Medium Text"
+        android:id="@+id/door_name_list_item" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
 
-        android:src="@drawable/ic_action_chevron_right"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignBottom="@+id/door_description_list_item" />
-</RelativeLayout>
+</LinearLayout>

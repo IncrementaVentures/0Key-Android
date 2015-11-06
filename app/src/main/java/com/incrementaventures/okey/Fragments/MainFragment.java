@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -31,7 +32,7 @@ import butterknife.ButterKnife;
 public class MainFragment extends Fragment implements Master.OnMasterDataListener {
 
     @Bind(R.id.master_list_main)
-    ListView mMasterList;
+    GridView mMasterList;
     ArrayList<Master> mMasters;
     MastersAdapter mAdapter;
     User mCurrentUser;

@@ -1,5 +1,6 @@
 package com.incrementaventures.okey.Models;
 
+import android.os.AsyncTask;
 import android.text.format.Time;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
@@ -211,27 +212,14 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     }
 
     public static void getNewPermissions(final OnNetworkResponseListener listener, User user) {
+
         ParseQuery<ParseObject> query = new ParseQuery<>(Permission.PERMISSION_CLASS_NAME);
         query.orderByDescending("createdAt");
         query.whereEqualTo(Permission.USER_UUID, user.getUUID());
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parsePermissions, ParseException e) {
-                HashMap<Master, Permission> permissionHashMap = new HashMap<>();
-                for (ParseObject parsePermission : parsePermissions) {
-                    Permission permission = Permission.create(parsePermission);
-                    try {
-                        if (!existsLocal(permission)) {
-                            Master master = permission.getMaster();
-                            if (master != null) {
-                                permissionHashMap.put(permission.getMaster(), permission);
-                            }
-                        }
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-                listener.onNewPermissions(permissionHashMap);
+                new ProcessNetworkPermissionsTask(listener).execute(parsePermissions);
             }
         });
     }
@@ -245,6 +233,40 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
             return false;
         } else {
             return true;
+        }
+    }
+
+    public static class ProcessNetworkPermissionsTask extends
+            AsyncTask<List<ParseObject>, Void, HashMap<Master, Permission>> {
+
+        OnNetworkResponseListener mListener;
+
+        public ProcessNetworkPermissionsTask(OnNetworkResponseListener listener) {
+            mListener =listener;
+        }
+
+        @Override
+        protected HashMap<Master, Permission> doInBackground(List<ParseObject>... params) {
+            HashMap<Master, Permission> permissionHashMap = new HashMap<>();
+            for (ParseObject parsePermission : params[0]) {
+                Permission permission = Permission.create(parsePermission);
+                try {
+                    if (!existsLocal(permission)) {
+                        Master master = permission.getMaster();
+                        if (master != null) {
+                            permissionHashMap.put(permission.getMaster(), permission);
+                        }
+                    }
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            return permissionHashMap;
+        }
+
+        @Override
+        protected void onPostExecute(HashMap<Master, Permission> masterPermissionHashMap) {
+            mListener.onNewPermissions(masterPermissionHashMap);
         }
     }
 }
