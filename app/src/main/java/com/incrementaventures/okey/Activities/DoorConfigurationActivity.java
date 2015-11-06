@@ -30,8 +30,7 @@ public class DoorConfigurationActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_admin_config);
         ButterKnife.bind(this);
-        setTitle(R.string.title_activity_first_admin_config);
-
+        setUpActionBar();
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,6 +48,11 @@ public class DoorConfigurationActivity extends ActionBarActivity {
             }
         });
 
+    }
+
+    private void setUpActionBar() {
+        setTitle(R.string.title_activity_first_admin_config);
+        getSupportActionBar().setElevation(0);
     }
 
     @Override

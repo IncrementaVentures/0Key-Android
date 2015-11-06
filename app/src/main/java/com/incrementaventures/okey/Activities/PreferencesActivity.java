@@ -13,7 +13,13 @@ public class PreferencesActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
+        setUpActionBar();
     }
+
+    private void setUpActionBar() {
+        getSupportActionBar().setElevation(0);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

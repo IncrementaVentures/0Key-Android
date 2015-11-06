@@ -15,7 +15,7 @@ public class AuthActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
-
+        setUpActionBar();
         LoginFragment newFragment = new LoginFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -29,6 +29,9 @@ public class AuthActivity extends ActionBarActivity {
 
     }
 
+    private void setUpActionBar() {
+        getSupportActionBar().setElevation(0);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -2,6 +2,8 @@ package com.incrementaventures.okey.Fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
@@ -16,8 +18,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
+import com.incrementaventures.okey.Activities.ModifyPermissionActivity;
 import com.incrementaventures.okey.Adapters.SlavesAdapter;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
@@ -41,6 +46,8 @@ public class DoorFragment extends Fragment {
     ListView mSlavesListView;
     @Bind(R.id.no_slaves_yet)
     TextView mNoSlavesView;
+    @Bind(R.id.add_permission_button)
+    ImageButton mAddPermissionButton;
 
     private Master mMaster;
     private Permission mPermission;
@@ -90,6 +97,22 @@ public class DoorFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mListener.openDoorSelected(mMaster, mSlaves.get(position));
+            }
+        });
+        mAddPermissionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMaster != null && mMaster.getPermission() != null
+                        && mMaster.getPermission().isAdmin()) {
+                    Intent intent = new Intent(getActivity(), ModifyPermissionActivity.class);
+                    intent.putExtra(DoorActivity.REQUEST_CODE, DoorActivity.NEW_PERMISSION_REQUEST);
+                    intent.putExtra(Permission.KEY, mMaster.getPermission().getKey());
+                    startActivityForResult(intent, DoorActivity.NEW_PERMISSION_REQUEST);
+                }
+                else {
+                    Toast.makeText(getActivity(), R.string.you_are_not_admin, Toast.LENGTH_SHORT)
+                            .show();
+                }
             }
         });
     }

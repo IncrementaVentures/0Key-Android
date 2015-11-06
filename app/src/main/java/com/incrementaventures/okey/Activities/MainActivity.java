@@ -66,6 +66,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setUpActionBar();
         ButterKnife.bind(this);
         authenticateUser();
         if (mCurrentUser == null) return;
@@ -155,6 +156,10 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             startActivity(intent);
             finish();
         }
+    }
+
+    private void setUpActionBar() {
+        getSupportActionBar().setElevation(0);
     }
 
     /*

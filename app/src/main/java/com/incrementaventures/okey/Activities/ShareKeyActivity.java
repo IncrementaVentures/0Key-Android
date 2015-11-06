@@ -27,7 +27,12 @@ public class ShareKeyActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_key);
+        setUpActionBar();
         ButterKnife.bind(this);
+    }
+
+    private void setUpActionBar() {
+        getSupportActionBar().setElevation(0);
     }
 
     @Override

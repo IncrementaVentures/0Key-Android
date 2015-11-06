@@ -51,7 +51,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_door);
-        setTitle(getIntent().getExtras().getString(MainActivity.MASTER_NAME_EXTRA));
+        setUpActionBar();
         mDoorFragment = new DoorFragment();
         getFragmentManager().beginTransaction()
                 .replace(R.id.activity_door_container, mDoorFragment)
@@ -158,6 +158,11 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         Intent intent = new Intent(this, DoorConfigurationActivity.class);
         startActivityForResult(intent, MainActivity.FIRST_CONFIG);
         mConfiguring = true;
+    }
+
+    private void setUpActionBar() {
+        setTitle(getIntent().getExtras().getString(MainActivity.MASTER_NAME_EXTRA));
+        getSupportActionBar().setElevation(0);
     }
 
     private void getSlaves(){

@@ -24,12 +24,17 @@ public class ModifyPermissionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_permission);
+        setUpActionBar();
         if (getIntent().getIntExtra(DoorActivity.REQUEST_CODE,
                 DoorActivity.NEW_PERMISSION_REQUEST) == DoorActivity.EDIT_PERMISSION_REQUEST){
             setTitle(R.string.edit_permission);
         } else{
             setTitle(R.string.title_activity_new_permission);
         }
+    }
+
+    private void setUpActionBar() {
+        getSupportActionBar().setElevation(0);
     }
 
     @Override
