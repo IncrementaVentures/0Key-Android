@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
-import com.incrementaventures.okey.Fragments.DoorFragment;
+import com.incrementaventures.okey.Fragments.MasterFragment;
 import com.incrementaventures.okey.Fragments.PermissionsFragment;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
@@ -33,7 +33,7 @@ import java.util.HashMap;
 
 public class DoorActivity extends ActionBarActivity implements User.OnActionMasterResponse,
         User.OnPermissionsResponse, User.OnUserBluetoothToActivityResponse,
-        DoorFragment.OnSlaveSelectedListener {
+        MasterFragment.OnSlaveSelectedListener {
 
     public static final int NEW_PERMISSION_REQUEST = 40;
     public static final int EDIT_PERMISSION_REQUEST = 41;
@@ -41,7 +41,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     private Master mMaster;
     private ProgressDialog mProgressDialog;
     private User mCurrentUser;
-    private DoorFragment mDoorFragment;
+    private MasterFragment mMasterFragment;
     private boolean mScannedDoor;
     private boolean mConfiguring;
     private String mPermissionKey;
@@ -52,9 +52,9 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_door);
         setUpActionBar();
-        mDoorFragment = new DoorFragment();
-        getFragmentManager().beginTransaction()
-                .replace(R.id.activity_door_container, mDoorFragment)
+        mMasterFragment = new MasterFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_door_container, mMasterFragment)
                 .addToBackStack(null)
                 .commit();
         mMaster = getMaster();
@@ -250,7 +250,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     @Override
     public void slavesFound(ArrayList<HashMap<String,String>> slavesData) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
-        mDoorFragment.addSlave(slavesData);
+        mMasterFragment.addSlave(slavesData);
     }
 
     @Override
@@ -376,7 +376,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 permission.setStartDate(start);
                 permission.setEndDate(end);
                 permission.save();
-                mDoorFragment.refreshPermissionView(permission);
+                mMasterFragment.refreshPermissionView(permission);
             }
         });
     }

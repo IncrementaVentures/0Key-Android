@@ -24,10 +24,6 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject {
 
     private List<Slave> mSlaves;
 
-    public interface OnMasterDataListener {
-        void masterFound(Master master);
-    }
-
 
     private Master(String name, String description){
         mParseMaster = ParseObject.create(MASTER_CLASS_NAME);
@@ -66,22 +62,20 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject {
 
 
 
-    public static void getMasters(final OnMasterDataListener listener){
+    public static ArrayList<Master> getMasters() {
         ParseQuery<ParseObject> query = new ParseQuery<>(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
         query.orderByDescending(CREATED_AT);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (list == null || list.size() == 0) {
-                    listener.masterFound(null);
-                    return;
-                }
-                for (ParseObject object : list){
-                    listener.masterFound(Master.create(object));
-                }
+        ArrayList<Master> masters = new ArrayList<>();
+        try {
+            List<ParseObject> list  = query.find();
+            for (ParseObject object : list){
+                masters.add(Master.create(object));
             }
-        });
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return masters;
     }
 
     public String getObjectId(){

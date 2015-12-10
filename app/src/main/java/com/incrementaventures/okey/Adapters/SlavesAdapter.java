@@ -1,8 +1,6 @@
 package com.incrementaventures.okey.Adapters;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -10,13 +8,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.incrementaventures.okey.Fragments.DoorFragment;
+import com.incrementaventures.okey.Fragments.MasterFragment;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
@@ -29,14 +26,14 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
     private Slave mSelectedSlave;
     private Master mMaster;
     private Permission mPermission;
-    private DoorFragment.OnSlaveSelectedListener mListener;
+    private MasterFragment.OnSlaveSelectedListener mListener;
 
     public SlavesAdapter(Context context, int resource, List<Slave> objects, Master master){
         super(context, resource, objects);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMaster = master;
         mPermission = mMaster.getPermission();
-        mListener = (DoorFragment.OnSlaveSelectedListener) context;
+        mListener = (MasterFragment.OnSlaveSelectedListener) context;
     }
 
     @Override

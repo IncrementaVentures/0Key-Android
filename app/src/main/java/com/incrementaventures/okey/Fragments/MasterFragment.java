@@ -1,10 +1,10 @@
 package com.incrementaventures.okey.Fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -27,7 +27,6 @@ import com.incrementaventures.okey.Adapters.SlavesAdapter;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
-import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -40,7 +39,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DoorFragment extends Fragment {
+public class MasterFragment extends Fragment {
 
     @Bind(R.id.slaves_door_fragment)
     ListView mSlavesListView;
@@ -63,7 +62,7 @@ public class DoorFragment extends Fragment {
         void openWhenCloseSelected(Master master, Slave slave, String permissionKey);
     }
 
-    public DoorFragment() {
+    public MasterFragment() {
     }
 
     @Override
@@ -71,7 +70,7 @@ public class DoorFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_door, container, false);
         ButterKnife.bind(this, v);
-        mScannedDoor = getActivity().getIntent().getExtras().getBoolean(MainActivity.SCANNED_DOOR_EXTRA);
+        mScannedDoor = getArguments().getBoolean(MainActivity.SCANNED_DOOR_EXTRA);
         mMaster = getMaster();
         setPermission();
         setUI();
@@ -79,7 +78,7 @@ public class DoorFragment extends Fragment {
         return v;
     }
 
-    private void setUI(){
+    private void setUI() {
         if (mPermission != null){
             mSlaves = mMaster.getSlaves();
             if (mSlaves == null || mSlaves.size() == 0) {
@@ -119,12 +118,12 @@ public class DoorFragment extends Fragment {
 
     private Master getMaster(){
         if (mScannedDoor){
-            String name = getActivity().getIntent().getExtras().getString(MainActivity.MASTER_NAME_EXTRA);
+            String name = getArguments().getString(MainActivity.MASTER_NAME_EXTRA);
             return Master.create(name, "");
         }
         ParseQuery query = new ParseQuery(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
-        query.whereEqualTo(Master.UUID, getActivity().getIntent().getExtras().getString(Master.UUID));
+        query.whereEqualTo(Master.UUID, getArguments().getString(Master.UUID));
         try {
             ParseObject doorParse = query.getFirst();
             return Master.create(doorParse);

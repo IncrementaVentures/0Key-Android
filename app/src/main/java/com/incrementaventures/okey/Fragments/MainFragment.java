@@ -29,7 +29,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainFragment extends Fragment implements Master.OnMasterDataListener {
+public class MainFragment extends Fragment {
 
     @Bind(R.id.master_list_main)
     GridView mMasterList;
@@ -76,12 +76,8 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
 
 
     private void setUp() {
-        mMasters = new ArrayList<>();
-        if (mCurrentUser != null) {
-            //Master.deleteAll();
-            //Permission.deleteAll();
-            Master.getMasters(this);
-        }
+        mMasters = Master.getMasters();
+        mAdapter.notifyDataSetChanged();
     }
 
     private void setDoorList(){
@@ -89,23 +85,6 @@ public class MainFragment extends Fragment implements Master.OnMasterDataListene
         mMasterList.setAdapter(mAdapter);
     }
 
-    @Override
-    public void masterFound(Master master) {
-        if (master == null ){
-            createFakeData();
-        } else {
-            if (mMasters.size()>0)
-                mMasters.add(0, master);
-            else
-                mMasters.add(master);
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.notifyDataSetChanged();
-                }
-            });
-        }
-    }
 
     public void masterNetworkFound(Master master) {
         if (mMasters.size()>0)

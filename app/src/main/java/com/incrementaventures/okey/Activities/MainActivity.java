@@ -1,6 +1,5 @@
 package com.incrementaventures.okey.Activities;
 
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,6 +9,10 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,11 +25,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
+import com.incrementaventures.okey.Fragments.MasterFragment;
 import com.incrementaventures.okey.Fragments.InsertPinFragment;
-import com.incrementaventures.okey.Fragments.MainFragment;
 import com.incrementaventures.okey.Fragments.ScanDevicesFragment;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
+import com.incrementaventures.okey.Models.Slave;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
@@ -42,7 +46,9 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         User.OnUserBluetoothToActivityResponse,
         User.OnActionMasterResponse,
         User.OnPermissionsResponse,
-        Permission.OnNetworkResponseListener {
+        Permission.OnNetworkResponseListener,
+        MasterFragment.OnSlaveSelectedListener {
+
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
     public static final String DEFAULT_KEY_EXTRA = "defaultkey";
@@ -54,6 +60,9 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     DrawerLayout mDrawerLayout;
     @Bind(R.id.left_drawer)
     ListView mDrawerList;
+    @Bind(R.id.master_fragment_container)
+    ViewPager mViewPager;
+    CustomPagerAdapter mPagerAdapter;
 
     private String[] mDrawerItems;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -61,6 +70,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     private ScanDevicesFragment mScanDevicesFragment;
     private User mCurrentUser;
     private boolean mScanning;
+    private ArrayList<Master> mMasters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +84,9 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         drawerSetup();
         checkPreferences();
         checkBluetoothLeSupport();
+        getMasters();
+        mPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mPagerAdapter);
     }
 
     @Override
@@ -134,12 +147,13 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             return true;
         }
         else if (id == R.id.scan_devices_action){
-            mScanDevicesFragment = new ScanDevicesFragment();
+            // TODO: 10-12-2015 Make new activity for result for scanning. Put scanFragment inside.
+            /*mScanDevicesFragment = new ScanDevicesFragment();
             getFragmentManager().beginTransaction()
                     .replace(R.id.content_frame, mScanDevicesFragment)
                     .addToBackStack(null)
                     .commit();
-            mScanning = true;
+            mScanning = true;*/
             return true;
         }
 
@@ -156,6 +170,10 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             startActivity(intent);
             finish();
         }
+    }
+
+    private void getMasters() {
+        mMasters = Master.getMasters();
     }
 
     private void setUpActionBar() {
@@ -176,11 +194,6 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
                 String selected = mDrawerItems[position];
                 switch (selected){
                     case "Home":
-                        MainFragment mainFragment = new MainFragment();
-                        getFragmentManager().beginTransaction()
-                            .replace(R.id.content_frame, mainFragment)
-                            .addToBackStack(null)
-                            .commit();
                         break;
                     case "Add new 0key":
                         break;
@@ -218,18 +231,6 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-
-
-        MainFragment newFragment = new MainFragment();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack if needed
-        transaction.replace(R.id.content_frame, newFragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
     }
 
     private void checkBluetoothLeSupport(){
@@ -366,7 +367,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         switch (requestCode){
             case REQUEST_ENABLE_BT:
                 if (mScanning){
-                    if(resultCode == RESULT_OK){
+                    /* if(resultCode == RESULT_OK){
                         mScanDevicesFragment = new ScanDevicesFragment();
                         getFragmentManager().beginTransaction()
                                 .replace(R.id.content_frame, mScanDevicesFragment)
@@ -375,7 +376,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
                         mScanning = false;
                     } else {
                         mScanDevicesFragment.stopScanning();
-                    }
+                    }*/
                 }
                 break;
             case FIRST_CONFIG:
@@ -416,9 +417,61 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             }
             permission.save();
             master.save();
-            MainFragment mainFragment = (MainFragment)
+            // TODO: 10-12-2015 Determine what to do here
+            /*MainFragment mainFragment = (MainFragment)
                     getFragmentManager().findFragmentById(R.id.content_frame);
-            mainFragment.masterNetworkFound(master);
+            mainFragment.masterNetworkFound(master);*/
         }
     }
+
+    @Override
+    public void openDoorSelected(Master master, Slave slave) {
+
+    }
+
+    @Override
+    public void readMyPermissionSelected(Master master, Slave slave, String permissionKey) {
+
+    }
+
+    @Override
+    public void readAllPermissionsSelected(Master master, Slave slave, String permissionKey) {
+
+    }
+
+    @Override
+    public void openWhenCloseSelected(Master master, Slave slave, String permissionKey) {
+
+    }
+
+    public class CustomPagerAdapter extends FragmentPagerAdapter {
+
+        public CustomPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        /**
+         * Return the Fragment associated with a specified position.
+         *
+         * @param position
+         */
+        @Override
+        public Fragment getItem(int position) {
+            MasterFragment masterFragment = new MasterFragment();
+            Bundle data = new Bundle();
+            data.putString(Master.FACTORY_NAME, mMasters.get(position).getName());
+            data.putString(Master.UUID, mMasters.get(position).getUUID());
+            masterFragment.setArguments(data);
+            return masterFragment;
+        }
+
+        /**
+         * Return the number of views available.
+         */
+        @Override
+        public int getCount() {
+            return mMasters.size();
+        }
+    }
+
 }
