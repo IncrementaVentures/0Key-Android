@@ -115,5 +115,8 @@
     <string name="eliminating_permission">Eliminating permission</string>
     <string name="share_the_permission_with_someone">Share the permission with someone.</string>
     <string name="sorry_device_does_not_support_bluetooth">Sorry, your device doesn\'t support bluetooth</string>
+    <string name="birthday">Birthday</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
 
 </resources>

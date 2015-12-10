@@ -66,8 +66,6 @@ public class MainFragment extends Fragment {
                 String doorUuid = mMasters.get(position).getUUID();
                 Intent intent = new Intent(getActivity(), DoorActivity.class);
                 intent.putExtra(Master.UUID, doorUuid);
-                intent.putExtra(MainActivity.MASTER_NAME_EXTRA,
-                        mMasters.get(position).getDescription());
                 intent.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
                 startActivity(intent);
             }
@@ -118,9 +116,9 @@ public class MainFragment extends Fragment {
             Time now = new Time();
             now.setToNow();
             Permission p1 = Permission.create(mCurrentUser, m1, 0, "1234",
-                    BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE, "0");
+                    BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE, 0);
             Permission p2 = Permission.create(mCurrentUser, m2, 0, "1234",
-                    BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE, "0");
+                    BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE, 0);
             p1.save();
             p2.save();
 

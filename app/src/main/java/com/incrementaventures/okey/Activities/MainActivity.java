@@ -47,7 +47,8 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         User.OnActionMasterResponse,
         User.OnPermissionsResponse,
         Permission.OnNetworkResponseListener,
-        MasterFragment.OnSlaveSelectedListener {
+        MasterFragment.OnSlaveSelectedListener,
+        MasterFragment.OnChangeMasterListener {
 
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
@@ -214,7 +215,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(R.string.masters);
+                getSupportActionBar().setTitle(R.string.app_name);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
@@ -417,6 +418,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             }
             permission.save();
             master.save();
+            mMasters.add(master);
             // TODO: 10-12-2015 Determine what to do here
             /*MainFragment mainFragment = (MainFragment)
                     getFragmentManager().findFragmentById(R.id.content_frame);
@@ -444,6 +446,24 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
     }
 
+    @Override
+    public void onMoveRight() {
+        int currentItem = mViewPager.getCurrentItem();
+        int nextItem = currentItem + 1;
+        if (currentItem != mMasters.size() - 1) {
+            mViewPager.setCurrentItem(nextItem);
+        }
+    }
+
+    @Override
+    public void onMoveLeft() {
+        int currentItem = mViewPager.getCurrentItem();
+        int previousItem = currentItem - 1;
+        if (currentItem != 0) {
+            mViewPager.setCurrentItem(previousItem);
+        }
+    }
+
     public class CustomPagerAdapter extends FragmentPagerAdapter {
 
         public CustomPagerAdapter(FragmentManager fm) {
@@ -459,7 +479,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         public Fragment getItem(int position) {
             MasterFragment masterFragment = new MasterFragment();
             Bundle data = new Bundle();
-            data.putString(Master.FACTORY_NAME, mMasters.get(position).getName());
+            data.putString(Master.NAME, mMasters.get(position).getName());
             data.putString(Master.UUID, mMasters.get(position).getUUID());
             masterFragment.setArguments(data);
             return masterFragment;
@@ -473,5 +493,4 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             return mMasters.size();
         }
     }
-
 }

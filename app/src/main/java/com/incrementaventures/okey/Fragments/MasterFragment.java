@@ -2,21 +2,12 @@ package com.incrementaventures.okey.Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +18,7 @@ import com.incrementaventures.okey.Adapters.SlavesAdapter;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
+import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -41,25 +33,36 @@ import butterknife.ButterKnife;
 
 public class MasterFragment extends Fragment {
 
-    @Bind(R.id.slaves_door_fragment)
-    ListView mSlavesListView;
     @Bind(R.id.no_slaves_yet)
     TextView mNoSlavesView;
     @Bind(R.id.add_permission_button)
     ImageButton mAddPermissionButton;
+    @Bind(R.id.right_arrow_master)
+    ImageButton mRightArrowMaster;
+    @Bind(R.id.left_arrow_master)
+    ImageButton mLeftArrowMaster;
+    @Bind(R.id.master_name)
+    TextView mNameMasterView;
 
     private Master mMaster;
-    private Permission mPermission;
+    private HashMap<Integer, Permission> mPermissions;
     private List<Slave> mSlaves;
     private SlavesAdapter mSlavesAdapter;
     private boolean mScannedDoor;
-    private OnSlaveSelectedListener mListener;
+    private OnSlaveSelectedListener mSlaveSelectionListener;
+    private OnChangeMasterListener mChangeMasterListener;
+    private Slave mSelectedSlave;
 
-    public interface OnSlaveSelectedListener{
+    public interface OnSlaveSelectedListener {
         void openDoorSelected(Master master, Slave slave);
         void readMyPermissionSelected(Master master, Slave slave, String permissionKey);
         void readAllPermissionsSelected(Master master, Slave slave, String permissionKey);
         void openWhenCloseSelected(Master master, Slave slave, String permissionKey);
+    }
+
+    public interface OnChangeMasterListener {
+        void onMoveRight();
+        void onMoveLeft();
     }
 
     public MasterFragment() {
@@ -68,50 +71,65 @@ public class MasterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_door, container, false);
+        View v = inflater.inflate(R.layout.fragment_master, container, false);
         ButterKnife.bind(this, v);
         mScannedDoor = getArguments().getBoolean(MainActivity.SCANNED_DOOR_EXTRA);
         mMaster = getMaster();
-        setPermission();
+        setPermissions();
         setUI();
         setListeners();
         return v;
     }
 
     private void setUI() {
-        if (mPermission != null){
+        mNameMasterView.setText(mMaster.getName());
+        if (mPermissions != null){
             mSlaves = mMaster.getSlaves();
             if (mSlaves == null || mSlaves.size() == 0) {
                 mSlaves = new ArrayList<>();
                 mNoSlavesView.setVisibility(TextView.VISIBLE);
             } else mNoSlavesView.setVisibility(TextView.GONE);
 
-            mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves, mMaster);
-            mSlavesListView.setAdapter(mSlavesAdapter);
         }
     }
 
     private void setListeners(){
-        mSlavesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mListener.openDoorSelected(mMaster, mSlaves.get(position));
-            }
-        });
         mAddPermissionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMaster != null && mMaster.getPermission() != null
-                        && mMaster.getPermission().isAdmin()) {
+                Permission permission =
+                        mSelectedSlave.getPermission(User.getLoggedUser());
+                if (mMaster != null && mMaster.getPermissions() != null && permission.isAdmin()) {
                     Intent intent = new Intent(getActivity(), ModifyPermissionActivity.class);
                     intent.putExtra(DoorActivity.REQUEST_CODE, DoorActivity.NEW_PERMISSION_REQUEST);
-                    intent.putExtra(Permission.KEY, mMaster.getPermission().getKey());
+                    intent.putExtra(Permission.KEY, permission.getKey());
                     startActivityForResult(intent, DoorActivity.NEW_PERMISSION_REQUEST);
                 }
                 else {
                     Toast.makeText(getActivity(), R.string.you_are_not_admin, Toast.LENGTH_SHORT)
                             .show();
                 }
+            }
+        });
+
+        mLeftArrowMaster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mChangeMasterListener.onMoveLeft();
+            }
+        });
+
+        mRightArrowMaster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mChangeMasterListener.onMoveRight();
+            }
+        });
+
+        mNameMasterView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mChangeMasterListener.onMoveRight();
             }
         });
     }
@@ -133,17 +151,22 @@ public class MasterFragment extends Fragment {
         return null;
     }
 
-    private void setPermission(){
-        mPermission = mMaster.getPermission();
+    private void setPermissions(){
+        mPermissions = mMaster.getPermissions();
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-             mListener = (OnSlaveSelectedListener) activity;
+            mSlaveSelectionListener = (OnSlaveSelectedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement OnSlaveSelectedListener");
+        }
+        try {
+            mChangeMasterListener = (OnChangeMasterListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnChangeMasterListener");
         }
     }
 
@@ -167,10 +190,6 @@ public class MasterFragment extends Fragment {
                         mSlaves.add(slave);
                     }
                 }
-                mSlavesAdapter = new SlavesAdapter(getActivity(), R.layout.slave_list_item, mSlaves,
-                        mMaster);
-                mSlavesListView.setAdapter(mSlavesAdapter);
-                ((BaseAdapter) mSlavesListView.getAdapter()).notifyDataSetChanged();
             }
         });
     }

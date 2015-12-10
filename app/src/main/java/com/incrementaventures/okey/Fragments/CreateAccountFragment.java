@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Activities.MainActivity;
@@ -32,8 +34,12 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserR
     EditText mPhone;
     @Bind(R.id.create_account_button)
     Button mCreateButton;
+    @Bind(R.id.create_account_birthday)
+    EditText mBirthday;
+    @Bind(R.id.create_account_radio_group)
+    RadioGroup mRadioGroupSex;
 
-
+    View view;
     CreateAccountFragment thisFragment = this;
 
     private ProgressDialog mProgressDialog;
@@ -44,12 +50,10 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_create_account, container, false);
-        ButterKnife.bind(this, v);
-
+        view = inflater.inflate(R.layout.fragment_create_account, container, false);
+        ButterKnife.bind(this, view);
         setListeners();
-
-        return v;
+        return view;
     }
 
 
@@ -61,7 +65,20 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserR
                 String password = mPassword.getText().toString();
                 String email = mEmail.getText().toString();
                 String phone = mPhone.getText().toString();
-                User.signUp(thisFragment, name, password, email, phone);
+                String birthday = mBirthday.getText().toString();
+                int selectedId = mRadioGroupSex.getCheckedRadioButtonId();
+                String sex = "m";
+                switch (selectedId) {
+                    case R.id.create_account_male:
+                        sex = "m";
+                        break;
+                    case R.id.create_account_female:
+                        sex = "f";
+                        break;
+                    default:
+                        sex = "m";
+                }
+                User.signUp(thisFragment, name, password, email, phone, sex, birthday);
                 mProgressDialog = ProgressDialog.show(getActivity(), null, getResources().getString(R.string.logging));
 
             }

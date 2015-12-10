@@ -60,7 +60,7 @@ public class PermissionsFragment extends Fragment {
                                                 data[0],
                                                 data[3],
                                                 data[4],
-                                                data[1]));
+                                                Integer.valueOf(data[1])));
         }
     }
 }

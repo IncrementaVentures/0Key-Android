@@ -1,10 +1,13 @@
 package com.incrementaventures.okey.Models;
 
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+
 public class Slave implements ParseObject{
     public static final String SLAVE_CLASS_NAME = "Slave";
     public static final String UUID = "uuid";
     public static final String ID = "id";
-    public static final String UUID_MASTER = "uuid_master";
+    public static final String MASTER_UUID = "master_uuid";
     public static final String NAME = "name";
     public static final String TYPE = "type";
 
@@ -14,7 +17,7 @@ public class Slave implements ParseObject{
     private Slave(String uuidMaster, String name, int type, int id){
         mParseSlave = com.parse.ParseObject.create(SLAVE_CLASS_NAME);
         mParseSlave.put(UUID, java.util.UUID.randomUUID().toString());
-        mParseSlave.put(UUID_MASTER, uuidMaster);
+        mParseSlave.put(MASTER_UUID, uuidMaster);
         mParseSlave.put(NAME, name);
         mParseSlave.put(TYPE, type);
         mParseSlave.put(ID, id);
@@ -66,7 +69,20 @@ public class Slave implements ParseObject{
     }
 
     public String getUuidMaster(){
-        return mParseSlave.getString(UUID_MASTER);
+        return mParseSlave.getString(MASTER_UUID);
+    }
+
+    public Permission getPermission(User user) {
+        ParseQuery query =
+                ParseQuery.getQuery(Permission.PERMISSION_CLASS_NAME);
+        query.whereEqualTo(Permission.MASTER_UUID, getUuidMaster());
+        query.whereEqualTo(Permission.USER_UUID, user.getUUID());
+        try {
+            return Permission.create(query.getFirst());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

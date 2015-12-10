@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="second_grey">#ff999999</color>
-    <color name="action_bar_color">#fbfbf8</color>
+    <color name="action_bar_color">#5DC1B9</color>
     <color name="card_white">#ffffffff</color>
     <color name="turquoise">#5DC1B9</color>
     <color name="card_shadow">#8c666666</color>

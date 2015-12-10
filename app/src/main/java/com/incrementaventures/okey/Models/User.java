@@ -21,6 +21,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     public static final String USER_CLASS_NAME = "User";
     private static final String NAME = "name";
     private static final String EMAIL = "email";
+    private static final String BIRTHDAY = "birthday";
+    private static final String SEX = "sex";
     private static final String PHONE = "phone";
     public static final String UUID = "uuid";
 
@@ -32,6 +34,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     private OnPermissionsResponse mPermissionsListener;
 
     private Context mContext;
+
+    private static User sLoggedUser;
 
     @Override
     public String getObjectId() {
@@ -155,11 +159,14 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     }
 
 
-    public User(String name, String password, String email, String phone){
+    public User(String name, String password, String email, String phone, String sex,
+                String birthday) {
         mParseUser = new ParseUser();
         mParseUser.put(NAME, name);
         mParseUser.put(PHONE, phone);
         mParseUser.setUsername(email);
+        mParseUser.put(SEX, sex);
+        mParseUser.put(BIRTHDAY, birthday);
         mParseUser.setEmail(email);
         mParseUser.setPassword(password);
         mParseUser.put(UUID, java.util.UUID.randomUUID().toString());
@@ -178,9 +185,10 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
      * @param email User email, the de username too
      * @param phone Device phone
      */
-    public static void signUp(final OnParseUserResponse listener, String name, String pass, String email, String phone){
+    public static void signUp(final OnParseUserResponse listener, String name, String pass,
+                              String email, String phone, String sex, String birthday) {
 
-        final User user = new User(name, pass, email, phone);
+        final User user = new User(name, pass, email, phone, sex, birthday);
 
         // Try yo save
         user.mParseUser.signUpInBackground(new SignUpCallback() {
@@ -235,6 +243,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         user.mMasterListener = activity;
         user.mPermissionsListener = activity;
         user.mContext = activity;
+        sLoggedUser = user;
         return user;
     }
 
@@ -243,13 +252,18 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         if (current == null){
             return null;
         }
-
         User user = new User(current);
         user.mBluetoothListener =  activity;
         user.mMasterListener = activity;
         user.mPermissionsListener = activity;
         user.mContext = activity;
+        sLoggedUser = user;
         return user;
+    }
+
+
+    public static User getLoggedUser(){
+        return sLoggedUser;
     }
 
 
@@ -289,7 +303,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         // filter devices
         // and try to open.
 
-        Permission p = master.getPermission();
+        Permission p = slave.getPermission(this);
 
         if (p == null || !p.isValid()){
             mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
@@ -349,11 +363,12 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             return;
         }
 
-        mBluetoothClient.executeCreateNewPermission(type, slave, startDate, startHour, endDate, endHour, permissionKey, doorName);
+        mBluetoothClient.executeCreateNewPermission(type, slave, startDate, startHour, endDate,
+                endHour, permissionKey, doorName);
     }
 
     public void openWhenClose(Master master, Slave slave, String key){
-        Permission p = master.getPermission();
+        Permission p = slave.getPermission(this);
         if (p == null || !p.isValid()){
             mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
             return;

@@ -1,6 +1,7 @@
 package com.incrementaventures.okey.Models;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.format.Time;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
@@ -22,18 +23,20 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public static final int TEMPORAL_PERMISSION = 2;
     public static final int UNKNOWN_PERMISSION = 3;
 
-    public static final String PERMANENT_DATE = "00/00/3000";
+    public static final String PERMANENT_DATE = "01/01/3000";
     public static final String UNKNOWN_DATE = "Unknown";
 
     public static final String PERMISSION_CLASS_NAME = "Permission";
     public static final String USER_UUID = "user_uuid";
     public static final String MASTER_UUID = "master_uuid";
+    public static final String MASTER_ID = "master_id";
     public static final String SLAVE_ID = "slave_id";
     public static final String UUID = "uuid";
     public static final String TYPE = "type";
     public static final String KEY = "key";
     public static final String START_DATE = "start_date";
     public static final String END_DATE = "end_date";
+    public static final String CREATED_AT = "createdAt";
 
     private ParseObject mParsePermission;
 
@@ -46,10 +49,13 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     }
 
     private Permission(User user, Master master, int type, String key, String startDate,
-                       String endDate, String slaveId) {
+                       String endDate, int slaveId) {
         mParsePermission = ParseObject.create(PERMISSION_CLASS_NAME);
         if (user != null) mParsePermission.put(USER_UUID, user.getUUID());
-        if (master != null) mParsePermission.put(MASTER_UUID, master.getUUID());
+        if (master != null) {
+            mParsePermission.put(MASTER_UUID, master.getUUID());
+            mParsePermission.put(MASTER_ID, master.getId());
+        }
         mParsePermission.put(SLAVE_ID, slaveId);
         mParsePermission.put(TYPE, type);
         mParsePermission.put(KEY, key);
@@ -59,12 +65,65 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     }
 
     public static Permission create(User user, Master master, int type, String key,
-                                    String startDate, String endDate, String slaveId) {
+                                    String startDate, String endDate, int slaveId) {
         return new Permission(user, master, type, key, startDate, endDate, slaveId);
     }
 
     public static Permission create(ParseObject parsePermission){
         return new Permission(parsePermission);
+    }
+
+    public class Builder {
+        private User mUser;
+        private Master mMaster;
+        private int mSlaveId;
+        private int mType;
+        private String mKey;
+        private String mStartDate;
+        private String mEndDate;
+
+        public Builder() {
+
+        }
+
+        public Builder setUser(User user) {
+            mUser = user;
+            return this;
+        }
+
+        public Builder setMaster(Master master) {
+            mMaster = master;
+            return this;
+        }
+
+        public Builder setType(int type) {
+            mType = type;
+            return this;
+        }
+
+        public Builder setKey(String key) {
+            mKey = key;
+            return this;
+        }
+
+        public Builder setStartDate(String startDate) {
+            mStartDate = startDate;
+            return this;
+        }
+
+        public Builder setEndDate(String endDate) {
+            mEndDate = endDate;
+            return this;
+        }
+
+        public Builder setSlaveId(int slaveId) {
+            mSlaveId = slaveId;
+            return this;
+        }
+
+        public Permission build() {
+            return new Permission(mUser, mMaster, mType, mKey, mStartDate, mEndDate, mSlaveId);
+        }
     }
 
     @Override
@@ -214,7 +273,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public static void getNewPermissions(final OnNetworkResponseListener listener, User user) {
 
         ParseQuery<ParseObject> query = new ParseQuery<>(Permission.PERMISSION_CLASS_NAME);
-        query.orderByDescending("createdAt");
+        query.orderByDescending(Permission.CREATED_AT);
         query.whereEqualTo(Permission.USER_UUID, user.getUUID());
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override

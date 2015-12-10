@@ -31,8 +31,10 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DoorActivity extends ActionBarActivity implements User.OnActionMasterResponse,
-        User.OnPermissionsResponse, User.OnUserBluetoothToActivityResponse,
+public class DoorActivity extends ActionBarActivity implements
+        User.OnActionMasterResponse,
+        User.OnPermissionsResponse,
+        User.OnUserBluetoothToActivityResponse,
         MasterFragment.OnSlaveSelectedListener {
 
     public static final int NEW_PERMISSION_REQUEST = 40;
@@ -99,13 +101,14 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             return true;
         }
         else if (id == R.id.action_new_permission){
-            if (mMaster != null && mMaster.getPermission() != null
-                    && mMaster.getPermission().isAdmin()) {
+            // TODO: 10-12-2015 Pasar esto a MainActivity
+           /* if (mMaster != null && mMaster.getPermissions() != null
+                    && mMaster.getPermissions().isAdmin()) {
                 openCreateEditPermissionActivity(NEW_PERMISSION_REQUEST);
             }
             else {
                 Toast.makeText(this, R.string.you_are_not_admin, Toast.LENGTH_SHORT).show();
-            }
+            }*/
             return true;
         }
         else if (id == R.id.set_permission_key){
@@ -113,15 +116,17 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             return true;
         }
         else if( id == R.id.edit_permission){
-            Intent intent = new Intent(DoorActivity.this, ModifyPermissionActivity.class);
-            Permission p = mMaster.getPermission();
+            // TODO: 10-12-2015 Pasar esto a MainActivity
+
+           /* Intent intent = new Intent(DoorActivity.this, ModifyPermissionActivity.class);
+            Permission p = mMaster.getPermissions();
             intent.putExtra(Permission.KEY, p.getKey());
             intent.putExtra(Permission.START_DATE,  p.getStartDate());
             intent.putExtra(Permission.END_DATE,  p.getEndDate());
             intent.putExtra(Permission.TYPE, BluetoothProtocol.getPermissionType(p.getType()));
             intent.putExtra(ModifyPermissionActivity.PERMISSION_OLD_SLAVE, 0);
             intent.putExtra(REQUEST_CODE, EDIT_PERMISSION_REQUEST);
-            startActivityForResult(intent, EDIT_PERMISSION_REQUEST);
+            startActivityForResult(intent, EDIT_PERMISSION_REQUEST); */
         }
         else if (id == R.id.first_config_action) {
             if (mScannedDoor) {
@@ -133,8 +138,10 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             return true;
         }
         else if (id == R.id.action_pair_slaves) {
+            // TODO: 10-12-2015 Pasar esto a MainActivity
+            /*
             Toast.makeText(this, R.string.pairing_will_start, Toast.LENGTH_SHORT).show();
-            mCurrentUser.pairSlaves(mMaster.getName(), mMaster.getPermission().getKey());
+            mCurrentUser.pairSlaves(mMaster.getName(), mMaster.getPermissions().getKey());*/
         }
         else if (id == R.id.action_get_slaves){
             if (!mScannedDoor){
@@ -145,13 +152,6 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void openCreateEditPermissionActivity(int mode){
-        Intent intent = new Intent(this, ModifyPermissionActivity.class);
-        intent.putExtra(REQUEST_CODE, mode);
-        intent.putExtra(Permission.KEY, mMaster.getPermission().getKey());
-        startActivityForResult(intent, mode);
     }
 
     private void openFirstConfigurationActivity(){
@@ -166,9 +166,10 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     }
 
     private void getSlaves(){
-        mProgressDialog = ProgressDialog.show(this, null,
+        // TODO: 10-12-2015 Pasar esto a MainActivity
+        /*mProgressDialog = ProgressDialog.show(this, null,
                 getResources().getString(R.string.getting_slaves));
-        mCurrentUser.getSlaves(mMaster, mMaster.getPermission().getKey());
+        mCurrentUser.getSlaves(mMaster, mMaster.getPermissions().getKey());*/
     }
 
     private void showSetKeyDialog(){
@@ -195,11 +196,12 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
         mMaster = getMaster();
         Permission permission = null;
         if (mMaster != null) {
-            permission = mMaster.getPermission();
+            // TODO: 10-12-2015 Pasar esto a MainActivity
+            // permission = mMaster.getPermissions();
         }
         if (permission == null){
             permission = Permission.create(mCurrentUser, mMaster, Permission.UNKNOWN_PERMISSION,
-                    mPermissionKey, Permission.UNKNOWN_DATE, Permission.UNKNOWN_DATE, "0");
+                    mPermissionKey, Permission.UNKNOWN_DATE, Permission.UNKNOWN_DATE, 0);
         } else {
             permission.setKey(mPermissionKey);
             permission.setStartDate(Permission.UNKNOWN_DATE);
@@ -213,9 +215,11 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     }
 
     public void deletePermission(Permission permission){
+        // TODO: 10-12-2015 Pasar esto a MainActivity
+        /*
         mProgressDialog = ProgressDialog.show(this, null, getString(R.string.eliminating_permission));
-        mCurrentUser.deletePermission(mMaster.getName(), mMaster.getPermission().getKey(),
-                permission.getKey(), Integer.valueOf(permission.getSlaveId()));
+        mCurrentUser.deletePermission(mMaster.getName(), mMaster.getPermissions().getKey(),
+                permission.getKey(), Integer.valueOf(permission.getSlaveId()));*/
     }
 
     @Override
@@ -268,7 +272,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 if (mConfiguring) {
                     mMaster = getMaster();
                     Permission permission = Permission.create(mCurrentUser, mMaster, type, key,
-                            Permission.PERMANENT_DATE, Permission.PERMANENT_DATE, "0");
+                            Permission.PERMANENT_DATE, Permission.PERMANENT_DATE, 0);
                     mMaster.save();
                     permission.save();
                     Toast.makeText(DoorActivity.this, R.string.sucess_private_key_saved,
@@ -297,6 +301,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     @Override
     public void permissionEdited(String key, int type) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
+        // TODO: 10-12-2015 Pasar esto a MainActivity
+        /*
         String startHour = mPermissionData.
                 getString(ModifyPermissionActivity.PERMISSION_START_HOUR);
         String startDate = mPermissionData.
@@ -305,7 +311,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 getString(ModifyPermissionActivity.PERMISSION_END_HOUR);
         String endDate = mPermissionData.
                 getString(ModifyPermissionActivity.PERMISSION_END_DATE);
-        Permission permission = mMaster.getPermission();
+        Permission permission = mMaster.getPermissions();
         permission.setStartDate(startDate + "T" + startHour);
         permission.setEndDate(endDate + "T" + endHour);
         permission.setType(type);
@@ -315,7 +321,7 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
             public void run() {
                 Toast.makeText(DoorActivity.this, R.string.permission_edited, Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     @Override
@@ -366,19 +372,22 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
     public void permissionReceived(final int type, final String key, final String start,
                                    final String end) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
+        // TODO: 10-12-2015 Pasar esto a MainActivity
+
+        /*
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(DoorActivity.this, "Permission received and saved",
                         Toast.LENGTH_SHORT).show();
-                Permission permission = mMaster.getPermission();
+                Permission permission = mMaster.getPermissions();
                 permission.setType(type);
                 permission.setStartDate(start);
                 permission.setEndDate(end);
                 permission.save();
                 mMasterFragment.refreshPermissionView(permission);
             }
-        });
+        });*/
     }
 
     @Override
@@ -492,6 +501,8 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                 break;
             case DoorActivity.NEW_PERMISSION_REQUEST:
                 if (resultCode == RESULT_OK){
+                    // TODO: 10-12-2015 Pasar esto a MainActivity
+                    /*
                     mProgressDialog = ProgressDialog.show(this, null,
                             getResources().getString(R.string.creating_permission));
                     mPermissionData = data.getExtras();
@@ -508,11 +519,14 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                     String slave = mPermissionData.
                             getString(ModifyPermissionActivity.PERMISSION_NEW_SLAVE);
                     mCurrentUser.createNewPermission(type, slave, startDate, startHour, endDate,
-                            endHour, mMaster.getPermission().getKey(), mMaster.getName());
+                            endHour, mMaster.getPermissions().getKey(), mMaster.getName());
+                    */
                 }
                 break;
             case DoorActivity.EDIT_PERMISSION_REQUEST:
                 if (resultCode == RESULT_OK){
+                    // TODO: 10-12-2015 Pasar esto a MainActivity
+                    /*
                     mProgressDialog = ProgressDialog.show(this, null,
                             getResources().getString(R.string.editing_permission));
                     Bundle extras = data.getExtras();
@@ -534,8 +548,9 @@ public class DoorActivity extends ActionBarActivity implements User.OnActionMast
                     int oldSlaveId =
                                     extras.getInt(ModifyPermissionActivity.PERMISSION_OLD_SLAVE);
                     mCurrentUser.editPermission(type, oldSlaveId, newSlaveId,
-                            startDate, startHour, endDate, endHour,mMaster.getPermission().getKey(),
+                            startDate, startHour, endDate, endHour,mMaster.getPermissions().getKey(),
                             key, mMaster.getName());
+                    */
                 }
                 break;
             default:

@@ -20,7 +20,6 @@ import com.parse.ParseException;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-
 public class LoginFragment extends Fragment implements User.OnParseUserResponse{
 
     @Bind(R.id.create_account_in_login_button)
@@ -42,7 +41,6 @@ public class LoginFragment extends Fragment implements User.OnParseUserResponse{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -51,9 +49,7 @@ public class LoginFragment extends Fragment implements User.OnParseUserResponse{
 
         View v = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.bind(this, v);
-
         setListeners();
-
         return v;
     }
 
@@ -86,15 +82,10 @@ public class LoginFragment extends Fragment implements User.OnParseUserResponse{
                 mProgressDialog = ProgressDialog.show(getActivity(), null, getResources().getString(R.string.logging));
             }
         });
-
-
     }
-
 
     @Override
-    public void userSignedUp() {
-
-    }
+    public void userSignedUp() {  }
 
     @Override
     public void userLoggedIn() {

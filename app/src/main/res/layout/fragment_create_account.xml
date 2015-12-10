@@ -67,12 +67,6 @@
             android:layout_alignParentEnd="true"
             android:hint="Phone number"/>
 
-        CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/gonna_be_admin"
-            android:id="@+id/gonna_be_admin"
-            android:layout_gravity="center_horizontal" />
 
 
     </LinearLayout>
@@ -95,5 +89,41 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/create_account_birthday"
+        android:hint="@string/birthday"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/linearLayout" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignEnd="@+id/create_account_birthday"
+        android:orientation="horizontal"
+        android:layout_above="@+id/create_account_button"
+        android:layout_below="@+id/create_account_birthday"
+        android:weightSum="1"
+        android:id="@+id/create-account_radio_group">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/male"
+            android:id="@+id/create_account_male"
+            android:layout_gravity="right"
+            android:layout_weight="0.79"
+            android:checked="true" />
+
+        <RadioButton
+            android:layout_width="164dp"
+            android:layout_height="wrap_content"
+            android:text="@string/female"
+            android:id="@+id/create_account_female"
+            android:checked="false" />
+    </RadioGroup>
 
 </RelativeLayout>

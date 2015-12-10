@@ -32,7 +32,7 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
         super(context, resource, objects);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMaster = master;
-        mPermission = mMaster.getPermission();
+        mPermission = mMaster.getPermissions();
         mListener = (MasterFragment.OnSlaveSelectedListener) context;
     }
 
@@ -73,7 +73,7 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        mPermission = mMaster.getPermission();
+        mPermission = mMaster.getPermissions();
         switch (item.getItemId()) {
             case R.id.action_read_my_permission:
                 mListener.readMyPermissionSelected(mMaster, mSelectedSlave, mPermission.getKey());
