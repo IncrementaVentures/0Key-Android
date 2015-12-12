@@ -17,6 +17,7 @@ import com.incrementaventures.okey.Fragments.MasterFragment;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
+import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
 import java.util.List;
@@ -32,7 +33,6 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
         super(context, resource, objects);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMaster = master;
-        mPermission = mMaster.getPermissions();
         mListener = (MasterFragment.OnSlaveSelectedListener) context;
     }
 
@@ -40,6 +40,7 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         final Slave slave = getItem(position);
+        mPermission = slave.getPermission(User.getLoggedUser());
 
         if (view == null){
             view = mLayoutInflater.inflate(R.layout.slave_list_item, parent, false);
@@ -73,7 +74,7 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        mPermission = mMaster.getPermissions();
+        mPermission = mSelectedSlave.getPermission(User.getLoggedUser());
         switch (item.getItemId()) {
             case R.id.action_read_my_permission:
                 mListener.readMyPermissionSelected(mMaster, mSelectedSlave, mPermission.getKey());

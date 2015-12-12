@@ -68,7 +68,7 @@ public class ShareKeyActivity extends ActionBarActivity {
                             getIntent().getStringExtra(Permission.KEY),
                             getIntent().getStringExtra(Permission.START_DATE),
                             getIntent().getStringExtra(Permission.END_DATE),
-                            getIntent().getStringExtra(Permission.SLAVE_ID));
+                            getIntent().getIntExtra(Permission.SLAVE_ID, 0));
             permission.save();
             Toast.makeText(this, R.string.key_will_be_shared, Toast.LENGTH_SHORT).show();
         }

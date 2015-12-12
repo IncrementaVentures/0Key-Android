@@ -279,6 +279,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
             @Override
             public void done(List<ParseObject> parsePermissions, ParseException e) {
                 new ProcessNetworkPermissionsTask(listener).execute(parsePermissions);
+
             }
         });
     }
@@ -307,17 +308,19 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         @Override
         protected HashMap<Master, Permission> doInBackground(List<ParseObject>... params) {
             HashMap<Master, Permission> permissionHashMap = new HashMap<>();
-            for (ParseObject parsePermission : params[0]) {
-                Permission permission = Permission.create(parsePermission);
-                try {
-                    if (!existsLocal(permission)) {
-                        Master master = permission.getMaster();
-                        if (master != null) {
-                            permissionHashMap.put(permission.getMaster(), permission);
+            if (params[0] != null) {
+                for (ParseObject parsePermission : params[0]) {
+                    Permission permission = Permission.create(parsePermission);
+                    try {
+                        if (!existsLocal(permission)) {
+                            Master master = permission.getMaster();
+                            if (master != null) {
+                                permissionHashMap.put(permission.getMaster(), permission);
+                            }
                         }
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
                     }
-                } catch (ParseException e1) {
-                    e1.printStackTrace();
                 }
             }
             return permissionHashMap;
