@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -47,8 +48,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         User.OnActionMasterResponse,
         User.OnPermissionsResponse,
         Permission.OnNetworkResponseListener,
-        MasterFragment.OnSlaveSelectedListener,
-        MasterFragment.OnChangeMasterListener {
+        MasterFragment.OnSlaveSelectedListener {
 
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
@@ -61,9 +61,6 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     DrawerLayout mDrawerLayout;
     @Bind(R.id.left_drawer)
     ListView mDrawerList;
-    @Bind(R.id.master_fragment_container)
-    ViewPager mViewPager;
-    CustomPagerAdapter mPagerAdapter;
 
     private String[] mDrawerItems;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -71,7 +68,7 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     private ScanDevicesFragment mScanDevicesFragment;
     private User mCurrentUser;
     private boolean mScanning;
-    private ArrayList<Master> mMasters;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +82,9 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         drawerSetup();
         checkPreferences();
         checkBluetoothLeSupport();
-        getMasters();
-        mPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(mPagerAdapter);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container, new MasterFragment())
+                .commit();
     }
 
     @Override
@@ -142,12 +139,12 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             Intent intent = new Intent(this, PreferencesActivity.class);
             startActivity(intent);
             return true;
-        }
-        else if (id == R.id.scan_devices_action){
+        }*/
+        if (id == R.id.scan_devices_action){
             // TODO: 10-12-2015 Make new activity for result for scanning. Put scanFragment inside.
             /*mScanDevicesFragment = new ScanDevicesFragment();
             getFragmentManager().beginTransaction()
@@ -171,10 +168,6 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             startActivity(intent);
             finish();
         }
-    }
-
-    private void getMasters() {
-        mMasters = Master.getMasters();
     }
 
     private void setUpActionBar() {
@@ -418,11 +411,9 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
             }
             permission.save();
             master.save();
-            mMasters.add(master);
-            // TODO: 10-12-2015 Determine what to do here
-            /*MainFragment mainFragment = (MainFragment)
-                    getFragmentManager().findFragmentById(R.id.content_frame);
-            mainFragment.masterNetworkFound(master);*/
+            MasterFragment masterFragment = (MasterFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.container);
+            masterFragment.masterNetworkFound(master);
         }
     }
 
@@ -444,53 +435,5 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     @Override
     public void openWhenCloseSelected(Master master, Slave slave, String permissionKey) {
 
-    }
-
-    @Override
-    public void onMoveRight() {
-        int currentItem = mViewPager.getCurrentItem();
-        int nextItem = currentItem + 1;
-        if (currentItem != mMasters.size() - 1) {
-            mViewPager.setCurrentItem(nextItem);
-        }
-    }
-
-    @Override
-    public void onMoveLeft() {
-        int currentItem = mViewPager.getCurrentItem();
-        int previousItem = currentItem - 1;
-        if (currentItem != 0) {
-            mViewPager.setCurrentItem(previousItem);
-        }
-    }
-
-    public class CustomPagerAdapter extends FragmentPagerAdapter {
-
-        public CustomPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        /**
-         * Return the Fragment associated with a specified position.
-         *
-         * @param position
-         */
-        @Override
-        public Fragment getItem(int position) {
-            MasterFragment masterFragment = new MasterFragment();
-            Bundle data = new Bundle();
-            data.putString(Master.NAME, mMasters.get(position).getName());
-            data.putString(Master.UUID, mMasters.get(position).getUUID());
-            masterFragment.setArguments(data);
-            return masterFragment;
-        }
-
-        /**
-         * Return the number of views available.
-         */
-        @Override
-        public int getCount() {
-            return mMasters.size();
-        }
     }
 }

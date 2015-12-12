@@ -3,7 +3,7 @@ package com.incrementaventures.okey.Models;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
-public class Slave implements ParseObject{
+public class Slave implements ParseObject, Nameable {
     public static final String SLAVE_CLASS_NAME = "Slave";
     public static final String UUID = "uuid";
     public static final String ID = "id";
@@ -60,6 +60,7 @@ public class Slave implements ParseObject{
         return mParseSlave.getInt(ID);
     }
 
+    @Override
     public String getName(){
         return mParseSlave.getString(NAME);
     }

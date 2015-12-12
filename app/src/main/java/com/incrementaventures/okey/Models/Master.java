@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Master implements com.incrementaventures.okey.Models.ParseObject {
+public class Master implements com.incrementaventures.okey.Models.ParseObject, Nameable {
     public static final String MASTER_CLASS_NAME = "Master";
     public static final String ID = "id";
     public static final String UUID = "uuid";
@@ -47,6 +47,7 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject {
         return mParseMaster;
     }
 
+    @Override
     public String getName(){
         return mParseMaster.getString(NAME);
     }
