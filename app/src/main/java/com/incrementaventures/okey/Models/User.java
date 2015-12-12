@@ -25,6 +25,9 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     private static final String SEX = "sex";
     private static final String PHONE = "phone";
     public static final String UUID = "uuid";
+    public static final String MALE = "m";
+    public static final String FEMALE = "f";
+
 
     private ParseUser mParseUser;
     private BluetoothClient mBluetoothClient;

@@ -67,16 +67,16 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserR
                 String phone = mPhone.getText().toString();
                 String birthday = mBirthday.getText().toString();
                 int selectedId = mRadioGroupSex.getCheckedRadioButtonId();
-                String sex = "m";
+                String sex;
                 switch (selectedId) {
                     case R.id.create_account_male:
-                        sex = "m";
+                        sex = User.MALE;
                         break;
                     case R.id.create_account_female:
-                        sex = "f";
+                        sex = User.FEMALE;
                         break;
                     default:
-                        sex = "m";
+                        sex = User.MALE;
                 }
                 User.signUp(thisFragment, name, password, email, phone, sex, birthday);
                 mProgressDialog = ProgressDialog.show(getActivity(), null, getResources().getString(R.string.logging));
