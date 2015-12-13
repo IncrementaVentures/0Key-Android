@@ -1,0 +1,106 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_menu"
+    android:padding="25dp"
+    tools:context="com.incrementaventures.okey.Fragments.MenuFragment">
+
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/profile_picture"
+        android:src="@drawable/no_profile_picture"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/user_email" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="User name"
+        android:textColor="@color/white"
+        android:id="@+id/user_name"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/profile_picture" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:text="user@email.com"
+        android:textColor="@color/white"
+        android:id="@+id/user_email"
+        android:layout_below="@+id/user_name"
+        android:layout_toEndOf="@+id/profile_picture" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/home"
+        android:onClick="onGoHomeClicked"
+        android:padding="10dp"
+        android:id="@+id/go_home"
+        android:textColor="@color/white"
+        android:layout_marginTop="60dp"
+        android:layout_below="@+id/profile_picture"
+        android:layout_alignStart="@+id/profile_picture"
+        android:layout_marginStart="50dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:onClick="onAddNew0keyClicked"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/white"
+        android:text="@string/add_new_0key"
+        android:id="@+id/add_new_0key"
+        android:layout_below="@+id/go_home"
+        android:layout_alignStart="@+id/go_home" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:onClick="onAddNewDoorClicked"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/add_new_door"
+        android:id="@+id/add_new_door"
+        android:textColor="@color/white"
+        android:layout_below="@+id/add_new_0key"
+        android:layout_alignStart="@+id/add_new_0key" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:onClick="onAddNewPermissionClicked"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/add_new_permission"
+        android:id="@+id/add_new_permission"
+        android:textColor="@color/white"
+        android:layout_below="@+id/add_new_door"
+        android:layout_alignStart="@+id/add_new_door" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:onClick="onSettingsClicked"
+        android:layout_marginTop="30dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/settings"
+        android:id="@+id/settings"
+        android:textColor="@color/white"
+        android:layout_below="@+id/add_new_permission"
+        android:layout_alignStart="@+id/add_new_permission" />
+
+</RelativeLayout>

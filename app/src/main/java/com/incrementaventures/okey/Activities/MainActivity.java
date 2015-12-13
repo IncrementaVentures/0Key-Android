@@ -6,28 +6,23 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
+import com.incrementaventures.okey.Fragments.DoorsFragment;
 import com.incrementaventures.okey.Fragments.MasterFragment;
 import com.incrementaventures.okey.Fragments.InsertPinFragment;
+import com.incrementaventures.okey.Fragments.MenuFragment;
 import com.incrementaventures.okey.Fragments.ScanDevicesFragment;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
@@ -41,9 +36,10 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
-public class MainActivity extends ActionBarActivity implements InsertPinFragment.PinDialogListener,
+public class MainActivity extends AppCompatActivity implements InsertPinFragment.PinDialogListener,
         User.OnUserBluetoothToActivityResponse,
         User.OnActionMasterResponse,
         User.OnPermissionsResponse,
@@ -57,25 +53,20 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     public static final String MASTER_NAME_EXTRA = "doorname";
     public static final String SCANNED_DOOR_EXTRA = "scanneddoor";
 
-    @Bind(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
-    @Bind(R.id.left_drawer)
-    ListView mDrawerList;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
 
-    private String[] mDrawerItems;
-    private ActionBarDrawerToggle mDrawerToggle;
     private ProgressDialog mProgressDialog;
     private ScanDevicesFragment mScanDevicesFragment;
     private User mCurrentUser;
     private boolean mScanning;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setUpActionBar();
         ButterKnife.bind(this);
+        setUpToolbar();
         authenticateUser();
         if (mCurrentUser == null) return;
         checkNewPermissions();
@@ -83,21 +74,24 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         checkPreferences();
         checkBluetoothLeSupport();
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, new MasterFragment())
+                .add(R.id.container, new MasterFragment(), MasterFragment.TAG)
                 .commit();
+        setUpToolbar();
+
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
+    private void setUpToolbar() {
+        mToolbar.setNavigationIcon(R.drawable.ic_action_menu);
+        setSupportActionBar(mToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+    private void showToolbar() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().show();
+        }
     }
 
     private void checkNewPermissions() {
@@ -113,11 +107,18 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-
-        return super.onPrepareOptionsMenu(menu);
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            finish();
+        } else {
+            super.onBackPressed();
+            getSupportFragmentManager().popBackStack();
+            MasterFragment masterFragment = (MasterFragment)
+                    getSupportFragmentManager().findFragmentByTag(MasterFragment.TAG);
+            if (masterFragment != null && masterFragment.isVisible()) {
+                showToolbar();
+            }
+        }
     }
 
     @Override
@@ -133,18 +134,20 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
         int id = item.getItemId();
 
+        if (id == android.R.id.home) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace( R.id.container, new MenuFragment())
+                    .addToBackStack(MenuFragment.TAG).commit();
+            return true;
+        }
         /*if (id == R.id.action_settings) {
             Intent intent = new Intent(this, PreferencesActivity.class);
             startActivity(intent);
             return true;
         }*/
-        if (id == R.id.scan_devices_action){
+        else if (id == R.id.scan_devices_action){
             // TODO: 10-12-2015 Make new activity for result for scanning. Put scanFragment inside.
             /*mScanDevicesFragment = new ScanDevicesFragment();
             getFragmentManager().beginTransaction()
@@ -170,60 +173,10 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
         }
     }
 
-    private void setUpActionBar() {
-        getSupportActionBar().setElevation(0);
-    }
-
     /*
         Configure the side drawer navigation menu
      */
     public void drawerSetup(){
-        mDrawerItems = new String[] {"Home", "Add new 0key", "Buy 0key", "Settings", "Logout"};
-        // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, mDrawerItems));
-        // Set the list's click listener
-        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selected = mDrawerItems[position];
-                switch (selected){
-                    case "Home":
-                        break;
-                    case "Add new 0key":
-                        break;
-                    case "Buy 0key":
-                        break;
-                    case "Settings":
-                        break;
-                    case "Logout":
-                        break;
-                    default:
-                        break;
-                }
-                mDrawerLayout.closeDrawers();
-            }
-        });
-
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.app_name, R.string.app_name){
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(R.string.app_name);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle(R.string.app_name);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
 
     }
 
@@ -434,6 +387,38 @@ public class MainActivity extends ActionBarActivity implements InsertPinFragment
 
     @Override
     public void openWhenCloseSelected(Master master, Slave slave, String permissionKey) {
+
+    }
+
+
+    public void onGoHomeClicked(View view) {
+        getSupportFragmentManager().popBackStack();
+        MasterFragment masterFragment = (MasterFragment)
+                getSupportFragmentManager().findFragmentByTag(MasterFragment.TAG);
+        if (masterFragment == null || !masterFragment.isVisible()) {
+            getSupportFragmentManager().popBackStack(MasterFragment.TAG,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        showToolbar();
+    }
+
+    public void onAddNew0keyClicked(View view) {
+        getSupportFragmentManager().popBackStack();
+
+    }
+
+    public void onAddNewDoorClicked(View view) {
+        getSupportFragmentManager().popBackStack();
+
+    }
+
+    public void onAddNewPermissionClicked(View view) {
+        getSupportFragmentManager().popBackStack();
+
+    }
+
+    public void onSettingsClicked(View view) {
+        getSupportFragmentManager().popBackStack();
 
     }
 }

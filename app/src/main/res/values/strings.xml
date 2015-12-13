@@ -118,5 +118,10 @@
     <string name="birthday">Birthday</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
+    <string name="home">Home</string>
+    <string name="add_new_0key">Add new 0key</string>
+    <string name="add_new_door">Add new door</string>
+    <string name="add_new_permission">New permission</string>
+    <string name="settings">Settings</string>
 
 </resources>

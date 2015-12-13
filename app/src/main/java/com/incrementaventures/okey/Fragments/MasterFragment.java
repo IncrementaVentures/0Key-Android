@@ -31,6 +31,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class MasterFragment extends Fragment {
+    public static final String TAG = "master_fragment_tag";
 
     @Bind(R.id.right_arrow_master)
     ImageButton mRightArrowMaster;
@@ -84,6 +85,7 @@ public class MasterFragment extends Fragment {
         return v;
     }
 
+
     private void setSlaves() {
         mSlaves = new ArrayList<>(mSelectedMaster.getSlaves());
         if (mSlaves.size() > 0) {
@@ -99,11 +101,11 @@ public class MasterFragment extends Fragment {
     }
 
     private void setNameableHolderAdapters() {
-        mMasterNameAdapter = new TextViewPagerAdapter(getActivity().getSupportFragmentManager(),
+        mMasterNameAdapter = new TextViewPagerAdapter(getChildFragmentManager(),
                 mMasters);
         mMasterNameContainer.setAdapter(mMasterNameAdapter);
 
-        mSlaveNameAdapter = new TextViewPagerAdapter(getActivity().getSupportFragmentManager(),
+        mSlaveNameAdapter = new TextViewPagerAdapter(getChildFragmentManager(),
                 mSlaves);
         mSlaveNameContainer.setAdapter(mSlaveNameAdapter);
     }

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -57,8 +58,8 @@ public class ModifyPermissionFragment extends Fragment {
     @Bind(R.id.start_hour_new)
     TextView mStartHourView;
 
-    @Bind(R.id.new_permission_button)
-    Button mNewPermissionButton;
+    @Bind(R.id.ok_button)
+    ImageButton mNewPermissionButton;
 
     @Bind(R.id.permission_type_new)
     TextView mPermissionTypeView;
