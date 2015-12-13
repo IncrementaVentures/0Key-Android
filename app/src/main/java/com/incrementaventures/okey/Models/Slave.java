@@ -1,5 +1,7 @@
 package com.incrementaventures.okey.Models;
 
+import android.text.TextUtils;
+
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
@@ -86,8 +88,26 @@ public class Slave implements ParseObject, Nameable {
         return null;
     }
 
+    public static Slave getSlave(String uuid) {
+        if (TextUtils.isEmpty(uuid)) return null;
+        ParseQuery<com.parse.ParseObject> query = new ParseQuery<>(SLAVE_CLASS_NAME);
+        query.whereEqualTo(UUID, uuid);
+        try {
+            com.parse.ParseObject parseObject = query.getFirst();
+            return Slave.create(parseObject);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         return ((Slave)o).getId() == this.getId();
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

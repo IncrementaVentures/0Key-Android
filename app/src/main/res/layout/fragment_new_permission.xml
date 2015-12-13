@@ -1,7 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.incrementaventures.okey.Fragments.ModifyPermissionFragment">
+    tools:context="com.incrementaventures.okey.Fragments.ModifyPermissionFragment"
+    android:background="@color/white"
+    >
 
     <ImageButton
         android:layout_width="50dp"
@@ -33,10 +35,67 @@
         android:layout_gravity="right"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
-        android:layout_above="@+id/permission_type_layout"
         android:background="@android:color/transparent"
+        android:src="@drawable/ok_icon"
+        android:layout_alignEnd="@+id/permission_name" />
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/permission_name"
+        android:layout_below="@+id/textView6"
+        android:background="@android:color/transparent"
+        android:padding="5dp"
         android:layout_alignEnd="@+id/view1"
-        android:src="@drawable/ok_icon" />
+        android:layout_alignStart="@+id/cancel_button" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="#cdcdcd"
+        android:id="@+id/view4"
+        android:layout_alignTop="@+id/textView7"
+        android:layout_alignParentEnd="true" />
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/location"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_horizontal_margin"
+
+        android:id="@+id/textView7"
+        android:layout_below="@+id/permission_name"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_master"
+        android:background="@android:color/transparent"
+        android:padding="5dp"
+        android:layout_below="@+id/textView7"
+        android:layout_alignStart="@+id/view4"
+        android:layout_alignEnd="@+id/view4" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="#cdcdcd"
+        android:id="@+id/view3"
+        android:layout_below="@+id/permission_slave"
+        android:layout_alignParentStart="true" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,7 +107,7 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:background="?android:attr/selectableItemBackground"
-        android:layout_below="@+id/cancel_button"
+        android:layout_below="@+id/view3"
         android:layout_alignParentStart="true">
 
 
@@ -56,10 +115,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/permission_type"/>
+            android:text="@string/permission_type"
+            android:id="@+id/permission_type_text_view" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:id="@+id/permission_type_new"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/permission_type_temporal"/>
@@ -71,11 +133,10 @@
         android:layout_height="1dp"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
-
-        android:background="#B8B8B8"
+        android:background="#cdcdcd"
+        android:id="@+id/view1"
         android:layout_below="@+id/permission_type_layout"
-        android:layout_alignParentStart="true"
-        android:id="@+id/view1" />
+        android:layout_alignParentEnd="true" />
 
     <LinearLayout
         android:background="?android:attr/selectableItemBackground"
@@ -88,8 +149,8 @@
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:orientation="vertical"
         android:visibility="visible"
-        android:layout_below="@+id/view2"
-        android:layout_alignStart="@+id/view2">
+        android:layout_alignTop="@+id/view2"
+        android:layout_alignParentStart="true">
 
 
         <TextView
@@ -120,8 +181,9 @@
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:orientation="vertical"
         android:visibility="visible"
-        android:layout_alignTop="@+id/due_date_layout"
-        android:layout_toEndOf="@+id/due_date_layout">
+        android:layout_alignTop="@+id/view2"
+        android:layout_alignStart="@+id/start_hour_layout"
+        android:layout_alignParentEnd="true">
 
         <TextView
             android:layout_width="wrap_content"
@@ -145,12 +207,20 @@
         android:layout_height="1dp"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
-
-        android:background="#B8B8B8"
+        android:background="#cdcdcd"
         android:layout_below="@+id/start_date_layout"
         android:layout_alignParentStart="true"
         android:id="@+id/view2" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="#cdcdcd"
+        android:id="@+id/view5"
+        android:layout_below="@+id/selected_master"
+        android:layout_alignParentStart="true" />
 
     <LinearLayout
         android:background="?android:attr/selectableItemBackground"
@@ -164,7 +234,7 @@
         android:orientation="vertical"
         android:visibility="visible"
         android:layout_alignTop="@+id/start_hour_layout"
-        android:layout_alignStart="@+id/view1">
+        android:layout_alignParentStart="true">
 
 
         <TextView
@@ -195,14 +265,15 @@
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:orientation="vertical"
         android:visibility="visible"
-        android:layout_below="@+id/permission_type_layout"
-        android:layout_toEndOf="@+id/start_date_layout">
+        android:layout_alignTop="@+id/view1"
+        android:layout_alignParentEnd="true">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/start_hour"/>
+            android:text="@string/start_hour"
+             />
 
         <TextView
             android:layout_width="wrap_content"
@@ -219,27 +290,45 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Slave"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-
         android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
         android:id="@+id/textView8"
-        android:layout_below="@+id/due_date_layout"
-        android:layout_alignStart="@+id/due_date_layout" />
+        android:layout_below="@+id/view5"
+        android:layout_alignParentStart="true" />
 
 
-    <EditText
-        android:layout_width="50dp"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberSigned"
-        android:ems="10"
+        android:padding="5dp"
         android:id="@+id/permission_slave"
+        android:background="@android:color/transparent"
+        android:layout_below="@+id/textView8"
+        android:layout_alignStart="@+id/view3"
+        android:layout_alignEnd="@+id/view3" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/name"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:id="@+id/textView6"
+        android:layout_below="@+id/cancel_button"
+        android:layout_alignStart="@+id/permission_type_layout"
+        android:layout_marginTop="35dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="#cdcdcd"
+        android:id="@+id/view6"
         android:layout_below="@+id/due_date_layout"
-        android:layout_toEndOf="@+id/textView8" />
-
-
-
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

@@ -236,6 +236,14 @@ public class MasterFragment extends Fragment {
         }
     }
 
+    public Master getSelectedMaster() {
+        return mSelectedMaster;
+    }
+
+    public Slave getSelectedSlave() {
+        return mSelectedSlave;
+    }
+
     private class TextViewPagerAdapter extends FragmentStatePagerAdapter {
         ArrayList<? extends Nameable> mObjects;
 

@@ -23,6 +23,7 @@ import com.incrementaventures.okey.Fragments.DoorsFragment;
 import com.incrementaventures.okey.Fragments.MasterFragment;
 import com.incrementaventures.okey.Fragments.InsertPinFragment;
 import com.incrementaventures.okey.Fragments.MenuFragment;
+import com.incrementaventures.okey.Fragments.ModifyPermissionFragment;
 import com.incrementaventures.okey.Fragments.ScanDevicesFragment;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
 
     private ProgressDialog mProgressDialog;
     private ScanDevicesFragment mScanDevicesFragment;
+    private MasterFragment mMasterFragment;
     private User mCurrentUser;
     private boolean mScanning;
 
@@ -70,14 +72,13 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
         authenticateUser();
         if (mCurrentUser == null) return;
         checkNewPermissions();
-        drawerSetup();
         checkPreferences();
         checkBluetoothLeSupport();
+        mMasterFragment = new MasterFragment();
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, new MasterFragment(), MasterFragment.TAG)
+                .add(R.id.container, mMasterFragment, MasterFragment.TAG)
                 .commit();
         setUpToolbar();
-
     }
 
     private void setUpToolbar() {
@@ -173,13 +174,6 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
         }
     }
 
-    /*
-        Configure the side drawer navigation menu
-     */
-    public void drawerSetup(){
-
-    }
-
     private void checkBluetoothLeSupport(){
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
@@ -187,9 +181,6 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
         }
     }
 
-    /*
-        OnBluetoothUserResponse callbacks
-     */
     @Override
     public void enableBluetooth() {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -198,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
 
     @Override
     public void bluetoothNotSupported() {
-        Toast.makeText(this, "Sorry, your device doesn't support bluetooth", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.device_doesnt_support_bluetooth, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -254,12 +245,10 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
     }
 
     @Override
-    public void slavesFound(ArrayList<HashMap<String, String>> slavesData) {
-    }
+    public void slavesFound(ArrayList<HashMap<String, String>> slavesData) { }
 
     @Override
     public void masterWithNoSlaves() {  }
-
 
     @Override
     public void permissionCreated(String key, int type) { }
@@ -284,22 +273,28 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
                 if (mProgressDialog != null) mProgressDialog.dismiss();
                 switch (code) {
                     case BluetoothClient.TIMEOUT:
-                        Toast.makeText(MainActivity.this, R.string.door_cant_open_timeout, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,
+                                R.string.door_cant_open_timeout, Toast.LENGTH_SHORT).show();
                         break;
                     case BluetoothClient.RESPONSE_INCORRECT:
-                        Toast.makeText(MainActivity.this, R.string.door_cant_open_bad_code, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,
+                                R.string.door_cant_open_bad_code, Toast.LENGTH_SHORT).show();
                         break;
                     case BluetoothClient.CANT_OPEN:
-                        Toast.makeText(MainActivity.this, R.string.door_cant_open, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,
+                                R.string.door_cant_open, Toast.LENGTH_SHORT).show();
                         break;
                     case BluetoothClient.CANT_CONFIGURE:
-                        Toast.makeText(MainActivity.this, R.string.door_cant_configure, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,
+                                R.string.door_cant_configure, Toast.LENGTH_SHORT).show();
                         break;
                     case BluetoothClient.PERMISSION_NOT_CREATED:
-                        Toast.makeText(MainActivity.this, R.string.permission_not_created, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,
+                                R.string.permission_not_created, Toast.LENGTH_SHORT).show();
                         break;
                     case BluetoothClient.DONT_HAVE_PERMISSION:
-                        Toast.makeText(MainActivity.this, R.string.no_permission, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,
+                                R.string.no_permission, Toast.LENGTH_SHORT).show();
                         break;
                     default:
                         break;
@@ -332,11 +327,13 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
                     mCurrentUser.makeFirstAdminConnection(extras.getString(DEFAULT_KEY_EXTRA),
                                                           extras.getString(NEW_KEY_EXTRA),
                                                           extras.getString(MASTER_NAME_EXTRA));
-                    mProgressDialog = ProgressDialog.show(this, null,  getResources().getString(R.string.configuring_door_dialog));
+                    mProgressDialog = ProgressDialog.show(this, null,
+                            getResources().getString(R.string.configuring_door_dialog));
                 }
                 break;
             default:
-                Toast.makeText(this, R.string.not_implemented_code_on_result, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.not_implemented_code_on_result,
+                        Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -413,8 +410,24 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
     }
 
     public void onAddNewPermissionClicked(View view) {
-        getSupportFragmentManager().popBackStack();
-
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStack();
+        Bundle args = new Bundle();
+        args.putString(Master.UUID, mMasterFragment.getSelectedMaster().getUUID());
+        Slave slave = mMasterFragment.getSelectedSlave();
+        if (slave != null) {
+            args.putString(Slave.UUID, slave.getUUID());
+            args.putString(Permission.KEY, slave.getPermission(User.getLoggedUser()).getKey());
+            args.putString(Permission.SLAVE_ID, slave.getPermission(User.getLoggedUser())
+                    .getSlaveId());
+            args.putString(Permission.NAME, "Permission name");
+        }
+        ModifyPermissionFragment fragment = new ModifyPermissionFragment();
+        fragment.setArguments(args);
+        fragmentManager.beginTransaction()
+                .replace( R.id.container, fragment)
+                .addToBackStack(MenuFragment.TAG)
+                .commit();
     }
 
     public void onSettingsClicked(View view) {

@@ -5,23 +5,20 @@
     android:layout_height="match_parent"
     >
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/background"
-        android:scaleType = "centerCrop"
-        />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
-        android:background="@color/turquoise" />
+        android:background="@color/turquoise"
+        />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/container"
-        android:layout_below="@+id/toolbar" />
+        android:layout_below="@+id/toolbar"
+        />
+
 </RelativeLayout>

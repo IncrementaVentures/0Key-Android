@@ -37,6 +37,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public static final String START_DATE = "start_date";
     public static final String END_DATE = "end_date";
     public static final String CREATED_AT = "createdAt";
+    public static final String NAME = "name";
 
     private ParseObject mParsePermission;
 
