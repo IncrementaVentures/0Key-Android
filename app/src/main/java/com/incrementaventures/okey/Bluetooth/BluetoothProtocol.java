@@ -125,10 +125,7 @@ public class BluetoothProtocol {
         return builder.toString();
     }
 
-    public static String buildNewPermissionMessage(String permissionType, int slaveId,
-                                                   String startDate, String startHour,
-                                                   String endDate, String endHour,
-                                                   String adminKey) {
+    public static String buildNewPermissionMessage(Permission permission, String adminKey) {
         StringBuilder builder = new StringBuilder();
         Time time = new Time();
         time.setToNow();
@@ -153,28 +150,28 @@ public class BluetoothProtocol {
         builder.append(EMPTY);
         builder.append(SEPARATOR);
 
-        builder.append(slaveId);
+        builder.append(permission.getKey());
         builder.append(SEPARATOR);
 
         // "02;date;key;0;0;slaveid;0;"
         builder.append(CREATE_NEW_PERMISSION_CODE);
         builder.append(SEPARATOR);
 
-        int type = getPermissionType(permissionType);
+        int type = Permission.getType(permission.getType());
         // "02;date;key;0;0;slaveid;0;permissionType;"
         builder.append(type);
         builder.append(SEPARATOR);
 
         if (type == TEMPORAL_PERMISSION) {
             // "02;date;key;0;0;slaveid;0;permissionType;startDateTstartHour;"
-            builder.append(startDate + "T" + startHour);
+            builder.append(permission.getStartDate());
             builder.append(SEPARATOR);
             // "02;date;key;0;0;slaveid;0;permissionType;startDateTstartHour;endDateTendHour;"
-            builder.append(endDate + "T" + endHour);
+            builder.append(permission.getEndDate());
             builder.append(SEPARATOR);
         } else {
             // "02;date;key;0;0;slaveid;0;permissionType;startDateTstartHour;0;"
-            builder.append(startDate + "T" + startHour);
+            builder.append(permission.getStartDate());
             builder.append(SEPARATOR);
             builder.append(EMPTY);
             builder.append(SEPARATOR);

@@ -1,17 +1,17 @@
 package com.incrementaventures.okey.Fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.incrementaventures.okey.Adapters.PermissionsAdapter;
+import com.incrementaventures.okey.Adapters.PermissionAdapter;
+import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
-import com.incrementaventures.okey.Models.Slave;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
@@ -24,12 +24,20 @@ import butterknife.ButterKnife;
  */
 public class PermissionsFragment extends Fragment {
     public static final String PERMISSIONS_DATA_EXTRA = "permissions_data_extra";
+    public static final String TAG = "permissions_fragment_tag";
 
     @Bind(R.id.permissions_list_view)
     ListView mPermissionsView;
 
     private ArrayList<Permission> mPermissions;
-    private PermissionsAdapter mPermissionsAdapter;
+    private PermissionAdapter mPermissionsAdapter;
+    private Master mMaster;
+    private OnPermissionAdapterListener mListener;
+
+    public interface OnPermissionAdapterListener {
+        void onModifyPermissionAdapterClicked(Permission permission);
+        void onDeletePermissionAdapterClicked(Permission permission);
+    }
 
     public PermissionsFragment() {
         // Required empty public constructor
@@ -42,25 +50,25 @@ public class PermissionsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_permissions, container, false);
         ButterKnife.bind(this, view);
         setPermissions();
-        mPermissionsAdapter = new PermissionsAdapter(getActivity(), R.layout.permission_list_item,
-                mPermissions);
+        mPermissionsAdapter = new PermissionAdapter(getActivity(), R.layout.permission_list_item,
+                mPermissions, mListener);
         mPermissionsView.setAdapter(mPermissionsAdapter);
         return view;
     }
 
-    private void setPermissions(){
-        ArrayList<String> permissionsAsString =
-                getArguments().getStringArrayList(PERMISSIONS_DATA_EXTRA);
-        mPermissions = new ArrayList<>();
-        for (String permissionData : permissionsAsString){
-            String[] data = permissionData.split(" ");
-            mPermissions.add(Permission.create( null,
-                                                null,
-                                                Integer.valueOf(data[2]),
-                                                data[0],
-                                                data[3],
-                                                data[4],
-                                                Integer.valueOf(data[1])));
+    private void setPermissions() {
+        mMaster = Master.getMaster(getArguments().getString(Master.UUID));
+        if (mMaster == null) return;
+        mPermissions = mMaster.getAllPermissions();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (OnPermissionAdapterListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnPermissionAdapterListener");
         }
     }
 }

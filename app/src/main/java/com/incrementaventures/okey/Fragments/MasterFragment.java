@@ -1,6 +1,7 @@
 package com.incrementaventures.okey.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,8 +30,9 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class MasterFragment extends Fragment {
+public class MasterFragment extends Fragment implements Master.OnNetworkResponseListener {
     public static final String TAG = "master_fragment_tag";
 
     @Bind(R.id.right_arrow_master)
@@ -50,15 +52,15 @@ public class MasterFragment extends Fragment {
     ImageButton mRightArrowSlave;
     @Bind(R.id.left_arrow_slave)
     ImageButton mLeftArrowSlave;
+    @Bind(R.id.open_button)
+    ImageButton mOpenButton;
 
     private ArrayList<Master> mMasters;
-    private Master mSelectedMaster;
     private int mSelectedMasterIndex;
     private HashMap<Integer, Permission> mPermissions;
     private ArrayList<Slave> mSlaves;
     private boolean mScannedDoor;
     private OnSlaveSelectedListener mSlaveSelectionListener;
-    private Slave mSelectedSlave;
     private int mSelectedSlaveIndex;
 
     public interface OnSlaveSelectedListener {
@@ -68,8 +70,7 @@ public class MasterFragment extends Fragment {
         void openWhenCloseSelected(Master master, Slave slave, String permissionKey);
     }
 
-    public MasterFragment() {
-    }
+    public MasterFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,96 +82,167 @@ public class MasterFragment extends Fragment {
         setPermissions();
         setNameableHolderAdapters();
         setUI();
-        setListeners();
         return v;
     }
 
-
     private void setSlaves() {
-        mSlaves = new ArrayList<>(mSelectedMaster.getSlaves());
+        if (mMasters == null || mMasters.size() == 0) return;
+        mSlaves = new ArrayList<>(mMasters.get(mSelectedMasterIndex).getSlaves());
         if (mSlaves.size() > 0) {
-            mSelectedSlave = mSlaves.get(0);
+            mSelectedSlaveIndex = 0;
         }
     }
 
     private void setMasters() {
+        Master.fetchMasters(this);
+        setLocalMasters();
+    }
+
+    private void setLocalMasters() {
         mMasters = Master.getMasters();
         if (mMasters.size() > 0) {
-            mSelectedMaster = mMasters.get(0);
+            mSelectedMasterIndex = 0;
         }
     }
 
+    @Override
+    public void onSlavesReceived(ArrayList<Slave> slaves) {
+        if (slaves == null || slaves.size() == 0)
+            return;
+        if (mSlaves == null)
+            mSlaves = new ArrayList<>();
+        mSlaves.addAll(slaves);
+        if (mSlaveNameAdapter == null) return;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setSlaveHolderAdapter();
+                mSlaveNameAdapter.notifyDataSetChanged();
+                setUI();
+            }
+        });
+    }
+
+    @Override
+    public void onMastersReceived(ArrayList<Master> masters) {
+        if (masters == null || masters.size() == 0)
+            return;
+        if (mMasters == null || mMasters.size() == 0) {
+            mMasters = new ArrayList<>();
+            mMasters.addAll(masters);
+            mSelectedMasterIndex = 0;
+            mPermissions = mMasters.get(mSelectedMasterIndex).getPermissions(User.getLoggedUser());
+        }
+        if (mMasterNameAdapter == null) return;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setMasterHolderAdapter();
+                mMasterNameAdapter.notifyDataSetChanged();
+                setUI();
+            }
+        });
+    }
+
+    /**
+     * Add the master to the list and set again the master holder adapter.
+     * @param master
+     */
+    @Override
+    public void onMasterReceived(Master master) {
+        mMasters.add(master);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setMasterHolderAdapter();
+            }
+        });
+    }
+
     private void setNameableHolderAdapters() {
+        setMasterHolderAdapter();
+        setSlaveHolderAdapter();
+    }
+
+    ViewPager.OnPageChangeListener mMasterPageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+
+        @Override
+        public void onPageSelected(int position) {
+            mSelectedMasterIndex = position;
+            setSlaves();
+            setSlaveHolderAdapter();
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) { }
+    };
+
+    private void setMasterHolderAdapter() {
         mMasterNameAdapter = new TextViewPagerAdapter(getChildFragmentManager(),
                 mMasters);
         mMasterNameContainer.setAdapter(mMasterNameAdapter);
+        mMasterNameContainer.addOnPageChangeListener(mMasterPageChangeListener);
+    }
 
+    private void setSlaveHolderAdapter() {
         mSlaveNameAdapter = new TextViewPagerAdapter(getChildFragmentManager(),
                 mSlaves);
         mSlaveNameContainer.setAdapter(mSlaveNameAdapter);
     }
 
     private void setUI() {
-        if (mSlaves == null || mSlaves.size() == 0) {
+        if (mSlaves == null || mSlaves.size() <= 1) {
             mLeftArrowSlave.setVisibility(ImageButton.GONE);
             mRightArrowSlave.setVisibility(ImageButton.GONE);
+        } else {
+            mLeftArrowSlave.setVisibility(ImageButton.VISIBLE);
+            mRightArrowSlave.setVisibility(ImageButton.VISIBLE);
         }
-        if (mMasters == null || mMasters.size() == 0) {
-            mLeftArrowSlave.setVisibility(ImageButton.GONE);
-            mRightArrowSlave.setVisibility(ImageButton.GONE);
+        if (mMasters == null || mMasters.size() <= 1) {
+            mLeftArrowMaster.setVisibility(ImageButton.GONE);
+            mRightArrowMaster.setVisibility(ImageButton.GONE);
+        } else {
+            mLeftArrowMaster.setVisibility(ImageButton.VISIBLE);
+            mRightArrowMaster.setVisibility(ImageButton.VISIBLE);
         }
     }
 
-    private void setListeners(){
-       /* mAddPermissionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Permission permission =
-                        mSelectedSlave.getPermission(User.getLoggedUser());
-                if (mSelectedMaster != null && mSelectedMaster.getPermissions() != null && permission.isAdmin()) {
-                    Intent intent = new Intent(getActivity(), ModifyPermissionActivity.class);
-                    intent.putExtra(DoorActivity.REQUEST_CODE, DoorActivity.NEW_PERMISSION_REQUEST);
-                    intent.putExtra(Permission.KEY, permission.getKey());
-                    startActivityForResult(intent, DoorActivity.NEW_PERMISSION_REQUEST);
-                } else {
-                    Toast.makeText(getActivity(), R.string.you_are_not_admin, Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }
-        });*/
+    @OnClick(R.id.open_button)
+    public void openDoorClicked() {
+        if (mMasters != null && mMasters.size() > 0 && mSlaves != null && mSlaves.size() > 0){
+            User.getLoggedUser().openDoor(mMasters.get(mSelectedMasterIndex),
+                    mSlaves.get(mSelectedSlaveIndex));
+        }
+    }
 
-        mLeftArrowMaster.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSelectedMasterIndex =
-                        moveViewPagerLeft(mMasterNameContainer, mSelectedMasterIndex);
-            }
-        });
+    @OnClick(R.id.left_arrow_master)
+    public void leftArrowMasterClicked() {
+        mSelectedMasterIndex =
+                moveViewPagerLeft(mMasterNameContainer, mSelectedMasterIndex);
+        setSlaves();
+        setSlaveHolderAdapter();
+    }
 
-        mRightArrowMaster.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSelectedMasterIndex =
-                        moveViewPagerRight(mMasterNameContainer, mSelectedMasterIndex, mMasters.size());
-            }
-        });
+    @OnClick(R.id.right_arrow_master)
+    public void rightArrowMasterClicked() {
+        mSelectedMasterIndex =
+                moveViewPagerRight(mMasterNameContainer, mSelectedMasterIndex, mMasters.size());
+        setSlaves();
+        setSlaveHolderAdapter();
+    }
 
-        mLeftArrowSlave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSelectedSlaveIndex =
-                        moveViewPagerLeft(mSlaveNameContainer, mSelectedSlaveIndex);
-            }
-        });
+    @OnClick(R.id.left_arrow_slave)
+    public void leftArrowSlaveClicked() {
+        mSelectedSlaveIndex =
+                moveViewPagerLeft(mSlaveNameContainer, mSelectedSlaveIndex);
+    }
 
-        mRightArrowSlave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSelectedSlaveIndex =
-                        moveViewPagerRight(mSlaveNameContainer, mSelectedSlaveIndex, mSlaves.size());
-            }
-        });
-
+    @OnClick(R.id.left_arrow_slave)
+    public void rightArrowSlaveClicked() {
+        mSelectedSlaveIndex =
+                moveViewPagerRight(mSlaveNameContainer, mSelectedSlaveIndex, mSlaves.size());
     }
 
     private int moveViewPagerRight(ViewPager viewPager, int currentIndex, int listLenght) {
@@ -192,16 +264,17 @@ public class MasterFragment extends Fragment {
     }
 
     private void setPermissions(){
-        mPermissions = mSelectedMaster.getPermissions();
+        if (mMasters == null || mMasters.size() == 0) return;
+        mPermissions = mMasters.get(mSelectedMasterIndex).getPermissions(User.getLoggedUser());
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mSlaveSelectionListener = (OnSlaveSelectedListener) activity;
+            mSlaveSelectionListener = (OnSlaveSelectedListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnSlaveSelectedListener");
+            throw new ClassCastException(context.toString() + " must implement OnSlaveSelectedListener");
         }
     }
 
@@ -213,7 +286,7 @@ public class MasterFragment extends Fragment {
                     mSlaves = new ArrayList<>();
                 }
                 for (HashMap<String, String> slaveData : slavesData) {
-                    final Slave slave = Slave.create(mSelectedMaster.getUUID(),
+                    final Slave slave = Slave.create(mMasters.get(mSelectedMasterIndex).getUUID(),
                             slaveData.get(Slave.ID),
                             Integer.valueOf(slaveData.get(Slave.TYPE)),
                             Integer.valueOf(slaveData.get(Slave.ID)));
@@ -228,8 +301,8 @@ public class MasterFragment extends Fragment {
 
     public void masterNetworkFound(Master master) {
         mMasters.add(master);
-        if (mSelectedMaster == null) {
-            mSelectedMaster = master;
+        if (mMasters.size() == 1) {
+            mSelectedMasterIndex = 0;
             setSlaves();
             setPermissions();
             setNameableHolderAdapters();
@@ -237,11 +310,11 @@ public class MasterFragment extends Fragment {
     }
 
     public Master getSelectedMaster() {
-        return mSelectedMaster;
+        return (mMasters != null && mMasters.size() > 0) ? mMasters.get(mSelectedMasterIndex) : null;
     }
 
     public Slave getSelectedSlave() {
-        return mSelectedSlave;
+        return (mSlaves != null && mSlaves.size() > 0) ? mSlaves.get(mSelectedSlaveIndex) : null;
     }
 
     private class TextViewPagerAdapter extends FragmentStatePagerAdapter {
@@ -263,6 +336,7 @@ public class MasterFragment extends Fragment {
 
         @Override
         public int getCount() {
+            if (mObjects == null) return 0;
             return mObjects.size();
         }
     }

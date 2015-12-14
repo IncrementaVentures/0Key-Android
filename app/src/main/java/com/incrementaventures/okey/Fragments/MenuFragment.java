@@ -42,6 +42,11 @@ public class MenuFragment extends Fragment {
     @Bind(R.id.settings)
     TextView mSettings;
 
+
+    public interface OnMenuButtonClicked {
+        void onMenuClick();
+    }
+
     public MenuFragment() {
         // Required empty public constructor
     }

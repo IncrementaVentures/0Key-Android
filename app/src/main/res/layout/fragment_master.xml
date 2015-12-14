@@ -117,6 +117,15 @@
 
         </RelativeLayout>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/permissions"
+            android:id="@+id/show_permissions_button"
+            android:onClick="onShowPermissionsClicked"
+            android:layout_below="@+id/selected_slave_bar"
+            android:layout_centerHorizontal="true" />
+
     </RelativeLayout>
 
 

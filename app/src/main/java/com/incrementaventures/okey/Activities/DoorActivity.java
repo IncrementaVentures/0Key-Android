@@ -31,11 +31,7 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DoorActivity extends ActionBarActivity implements
-        User.OnActionMasterResponse,
-        User.OnPermissionsResponse,
-        User.OnUserBluetoothToActivityResponse,
-        MasterFragment.OnSlaveSelectedListener {
+public class DoorActivity extends ActionBarActivity {
 
     public static final int NEW_PERMISSION_REQUEST = 40;
     public static final int EDIT_PERMISSION_REQUEST = 41;
@@ -53,22 +49,22 @@ public class DoorActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_door);
-        setUpActionBar();
+        //setUpActionBar();
         mMasterFragment = new MasterFragment();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.activity_door_container, mMasterFragment)
                 .addToBackStack(null)
                 .commit();
-        mMaster = getMaster();
-        mCurrentUser = User.getLoggedUser(this);
+        // mMaster = getMaster();
+        //mCurrentUser = User.getLoggedUser(this);
         mScannedDoor = getIntent().getExtras().getBoolean(MainActivity.SCANNED_DOOR_EXTRA);
     }
 
-
+/*
     private Master getMaster(){
         final String name = getIntent().getExtras().getString(MainActivity.MASTER_NAME_EXTRA);
         if (mScannedDoor){
-            return Master.create(name, "");
+            return Master.create(name, "", "");
         }
         ParseQuery query = new ParseQuery(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
@@ -108,7 +104,7 @@ public class DoorActivity extends ActionBarActivity implements
             }
             else {
                 Toast.makeText(this, R.string.you_are_not_admin, Toast.LENGTH_SHORT).show();
-            }*/
+            }
             return true;
         }
         else if (id == R.id.set_permission_key){
@@ -118,7 +114,7 @@ public class DoorActivity extends ActionBarActivity implements
         else if( id == R.id.edit_permission){
             // TODO: 10-12-2015 Pasar esto a MainActivity
 
-           /* Intent intent = new Intent(DoorActivity.this, ModifyPermissionActivity.class);
+            Intent intent = new Intent(DoorActivity.this, ModifyPermissionActivity.class);
             Permission p = mMaster.getPermissions();
             intent.putExtra(Permission.KEY, p.getKey());
             intent.putExtra(Permission.START_DATE,  p.getStartDate());
@@ -126,7 +122,7 @@ public class DoorActivity extends ActionBarActivity implements
             intent.putExtra(Permission.TYPE, BluetoothProtocol.getPermissionType(p.getType()));
             intent.putExtra(ModifyPermissionActivity.PERMISSION_OLD_SLAVE, 0);
             intent.putExtra(REQUEST_CODE, EDIT_PERMISSION_REQUEST);
-            startActivityForResult(intent, EDIT_PERMISSION_REQUEST); */
+            startActivityForResult(intent, EDIT_PERMISSION_REQUEST);
         }
         else if (id == R.id.first_config_action) {
             if (mScannedDoor) {
@@ -139,9 +135,9 @@ public class DoorActivity extends ActionBarActivity implements
         }
         else if (id == R.id.action_pair_slaves) {
             // TODO: 10-12-2015 Pasar esto a MainActivity
-            /*
+
             Toast.makeText(this, R.string.pairing_will_start, Toast.LENGTH_SHORT).show();
-            mCurrentUser.pairSlaves(mMaster.getName(), mMaster.getPermissions().getKey());*/
+            mCurrentUser.pairSlaves(mMaster.getName(), mMaster.getPermissions().getKey());
         }
         else if (id == R.id.action_get_slaves){
             if (!mScannedDoor){
@@ -169,7 +165,7 @@ public class DoorActivity extends ActionBarActivity implements
         // TODO: 10-12-2015 Pasar esto a MainActivity
         /*mProgressDialog = ProgressDialog.show(this, null,
                 getResources().getString(R.string.getting_slaves));
-        mCurrentUser.getSlaves(mMaster, mMaster.getPermissions().getKey());*/
+        mCurrentUser.getSlaves(mMaster, mMaster.getPermissions().getKey());
     }
 
     private void showSetKeyDialog(){
@@ -219,7 +215,7 @@ public class DoorActivity extends ActionBarActivity implements
         /*
         mProgressDialog = ProgressDialog.show(this, null, getString(R.string.eliminating_permission));
         mCurrentUser.deletePermission(mMaster.getName(), mMaster.getPermissions().getKey(),
-                permission.getKey(), Integer.valueOf(permission.getSlaveId()));*/
+                permission.getKey(), Integer.valueOf(permission.getSlaveId()));
     }
 
     @Override
@@ -302,7 +298,7 @@ public class DoorActivity extends ActionBarActivity implements
     public void permissionEdited(String key, int type) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
         // TODO: 10-12-2015 Pasar esto a MainActivity
-        /*
+
         String startHour = mPermissionData.
                 getString(ModifyPermissionActivity.PERMISSION_START_HOUR);
         String startDate = mPermissionData.
@@ -321,7 +317,7 @@ public class DoorActivity extends ActionBarActivity implements
             public void run() {
                 Toast.makeText(DoorActivity.this, R.string.permission_edited, Toast.LENGTH_SHORT).show();
             }
-        });*/
+        });
     }
 
     @Override
@@ -374,7 +370,7 @@ public class DoorActivity extends ActionBarActivity implements
         if (mProgressDialog != null) mProgressDialog.dismiss();
         // TODO: 10-12-2015 Pasar esto a MainActivity
 
-        /*
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -387,7 +383,7 @@ public class DoorActivity extends ActionBarActivity implements
                 permission.save();
                 mMasterFragment.refreshPermissionView(permission);
             }
-        });*/
+        });
     }
 
     @Override
@@ -520,13 +516,13 @@ public class DoorActivity extends ActionBarActivity implements
                             getString(ModifyPermissionActivity.PERMISSION_NEW_SLAVE);
                     mCurrentUser.createNewPermission(type, slave, startDate, startHour, endDate,
                             endHour, mMaster.getPermissions().getKey(), mMaster.getName());
-                    */
+
                 }
                 break;
             case DoorActivity.EDIT_PERMISSION_REQUEST:
                 if (resultCode == RESULT_OK){
                     // TODO: 10-12-2015 Pasar esto a MainActivity
-                    /*
+
                     mProgressDialog = ProgressDialog.show(this, null,
                             getResources().getString(R.string.editing_permission));
                     Bundle extras = data.getExtras();
@@ -550,7 +546,7 @@ public class DoorActivity extends ActionBarActivity implements
                     mCurrentUser.editPermission(type, oldSlaveId, newSlaveId,
                             startDate, startHour, endDate, endHour,mMaster.getPermissions().getKey(),
                             key, mMaster.getName());
-                    */
+
                 }
                 break;
             default:
@@ -583,4 +579,6 @@ public class DoorActivity extends ActionBarActivity implements
                 getResources().getString(R.string.searching_door));
         mCurrentUser.openWhenClose(master, slave, permissionKey);
     }
+    */
 }
+

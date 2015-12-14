@@ -15,11 +15,11 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 
-public class MastersAdapter extends ArrayAdapter<Master> {
+public class MasterAdapter extends ArrayAdapter<Master> {
 
     private LayoutInflater mLayoutInflater;
 
-    public MastersAdapter(Context context, int resource, ArrayList<Master> objects){
+    public MasterAdapter(Context context, int resource, ArrayList<Master> objects){
         super(context, resource, objects);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -32,7 +32,6 @@ public class MastersAdapter extends ArrayAdapter<Master> {
         if (view == null){
             view = mLayoutInflater.inflate(R.layout.master_list_item, parent, false);
             ImageView imageView = (ImageView) view.findViewById(R.id.master_image);
-            //Glide.with(mLayoutInflater.getContext()).load(R.drawable.house).into(imageView);
             Picasso.with(mLayoutInflater.getContext()).load(R.drawable.house).into(imageView);
         }
         TextView doorName = (TextView) view.findViewById(R.id.door_name_list_item);

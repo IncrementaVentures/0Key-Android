@@ -10,12 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
-import com.incrementaventures.okey.Adapters.MastersAdapter;
+import com.incrementaventures.okey.Adapters.MasterAdapter;
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
@@ -34,7 +33,7 @@ public class MainFragment extends Fragment {
     @Bind(R.id.master_list_main)
     GridView mMasterList;
     ArrayList<Master> mMasters;
-    MastersAdapter mAdapter;
+    MasterAdapter mAdapter;
     User mCurrentUser;
 
     public MainFragment() {
@@ -79,7 +78,7 @@ public class MainFragment extends Fragment {
     }
 
     private void setDoorList(){
-        mAdapter = new MastersAdapter(getActivity(), R.layout.master_list_item, mMasters);
+        mAdapter = new MasterAdapter(getActivity(), R.layout.master_list_item, mMasters);
         mMasterList.setAdapter(mAdapter);
     }
 
@@ -101,8 +100,8 @@ public class MainFragment extends Fragment {
     private void createFakeData(){
         if (mMasters.size() == 0){
             Master m1 = Master.create("PSN"
-                    , "Casa "+ User.getLoggedUser((MainActivity)getActivity()).getName());
-            Master m2 = Master.create("PSN", "Oficina");
+                    , "Casa "+ User.getLoggedUser((MainActivity)getActivity()).getName(), "");
+            Master m2 = Master.create("PSN", "Oficina", "");
             m1.save();
             m2.save();
             for (int i = 1; i<6; i++){
@@ -122,7 +121,7 @@ public class MainFragment extends Fragment {
             p1.save();
             p2.save();
 
-            mAdapter = new MastersAdapter(getActivity(), R.layout.master_list_item, mMasters);
+            mAdapter = new MasterAdapter(getActivity(), R.layout.master_list_item, mMasters);
             mMasterList.setAdapter(mAdapter);
         }
     }

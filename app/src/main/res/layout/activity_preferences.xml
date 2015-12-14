@@ -1,5 +1,7 @@
-<fragment
-    android:name="com.incrementaventures.okey.Bluetooth.PreferencesFragment"
+<fragment xmlns:tools="http://schemas.android.com/tools"
+    android:name="com.incrementaventures.okey.Fragments.PreferencesFragment"
+    android:tag="com.incrementaventures.okey.Fragments.PreferencesFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:layout="@layout/fragment_preferences" />

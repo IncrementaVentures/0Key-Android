@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference
+<android.support.v7.preference.PreferenceScreen
+ xmlns:android="http://schemas.android.com/apk/res/android">
+    <android.support.v7.preference.CheckBoxPreference
         android:key="protect_with_pin"
         android:title="@string/protect_with_key"
         android:defaultValue="false"
         />
-    <EditTextPreference
+    <android.support.v7.preference.EditTextPreference
         android:key="protect_pin"
         android:title="@string/pin"
         android:defaultValue=""
@@ -14,4 +15,4 @@
         android:maxLength="4"
         android:dependency="protect_with_pin"
         />
-</PreferenceScreen>
+</android.support.v7.preference.PreferenceScreen>

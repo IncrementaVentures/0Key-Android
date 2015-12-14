@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
-import com.incrementaventures.okey.Adapters.MastersAdapter;
+import com.incrementaventures.okey.Adapters.MasterAdapter;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
@@ -37,7 +37,7 @@ public class ScanDevicesFragment extends Fragment {
     TextView mNoDevicesFound;
 
     ArrayList<Master> mMasters;
-    MastersAdapter mAdapter;
+    MasterAdapter mAdapter;
 
     User mCurrentUser;
 
@@ -65,7 +65,7 @@ public class ScanDevicesFragment extends Fragment {
     private void setUp(){
         getActivity().setTitle(R.string.scan_devices);
         mMasters = new ArrayList<>();
-        mAdapter = new MastersAdapter(getActivity(), R.id.door_name_list_item, mMasters);
+        mAdapter = new MasterAdapter(getActivity(), R.id.door_name_list_item, mMasters);
         mDevicesList.setAdapter(mAdapter);
     }
 

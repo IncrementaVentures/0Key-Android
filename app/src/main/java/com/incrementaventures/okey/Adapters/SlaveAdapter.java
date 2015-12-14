@@ -22,14 +22,14 @@ import com.incrementaventures.okey.R;
 
 import java.util.List;
 
-public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMenuItemClickListener {
+public class SlaveAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMenuItemClickListener {
     LayoutInflater mLayoutInflater;
     private Slave mSelectedSlave;
     private Master mMaster;
     private Permission mPermission;
     private MasterFragment.OnSlaveSelectedListener mListener;
 
-    public SlavesAdapter(Context context, int resource, List<Slave> objects, Master master){
+    public SlaveAdapter(Context context, int resource, List<Slave> objects, Master master){
         super(context, resource, objects);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMaster = master;
@@ -57,7 +57,7 @@ public class SlavesAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMe
                 PopupMenu popup = new PopupMenu(getContext(), v);
                 MenuInflater inflater = popup.getMenuInflater();
                 inflater.inflate(R.menu.menu_more_options_slave, popup.getMenu());
-                popup.setOnMenuItemClickListener(SlavesAdapter.this);
+                popup.setOnMenuItemClickListener(SlaveAdapter.this);
                 popup.show();
             }
         });

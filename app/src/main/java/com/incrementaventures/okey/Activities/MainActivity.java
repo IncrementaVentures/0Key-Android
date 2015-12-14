@@ -1,13 +1,16 @@
 package com.incrementaventures.okey.Activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -16,14 +19,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
+import com.incrementaventures.okey.Fragments.ConfigurationFragment;
 import com.incrementaventures.okey.Fragments.DoorsFragment;
 import com.incrementaventures.okey.Fragments.MasterFragment;
 import com.incrementaventures.okey.Fragments.InsertPinFragment;
 import com.incrementaventures.okey.Fragments.MenuFragment;
 import com.incrementaventures.okey.Fragments.ModifyPermissionFragment;
+import com.incrementaventures.okey.Fragments.PermissionsFragment;
+import com.incrementaventures.okey.Fragments.PreferencesFragment;
 import com.incrementaventures.okey.Fragments.ScanDevicesFragment;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
@@ -37,15 +44,19 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
-public class MainActivity extends AppCompatActivity implements InsertPinFragment.PinDialogListener,
+public class MainActivity extends AppCompatActivity implements
+        InsertPinFragment.PinDialogListener,
         User.OnUserBluetoothToActivityResponse,
         User.OnActionMasterResponse,
         User.OnPermissionsResponse,
         Permission.OnNetworkResponseListener,
-        MasterFragment.OnSlaveSelectedListener {
+        MasterFragment.OnSlaveSelectedListener,
+        MenuFragment.OnMenuButtonClicked,
+        ModifyPermissionFragment.OnPermissionModifiedListener,
+        ConfigurationFragment.OnMasterConfigurationListener,
+        PermissionsFragment.OnPermissionAdapterListener {
 
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
@@ -56,12 +67,17 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
 
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+    @Bind(R.id.main_view)
+    View mRootView;
 
     private ProgressDialog mProgressDialog;
     private ScanDevicesFragment mScanDevicesFragment;
     private MasterFragment mMasterFragment;
     private User mCurrentUser;
     private boolean mScanning;
+    private ArrayList<String> mScannedMasters;
+    private ArrayAdapter<String> mScannedMastersAdapter;
+    private AlertDialog mScannedMastersDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +95,14 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
                 .add(R.id.container, mMasterFragment, MasterFragment.TAG)
                 .commit();
         setUpToolbar();
+    }
+
+    @Override
+    public void onMenuClick() {
+        getSupportFragmentManager().popBackStack();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, new MenuFragment()).
+                addToBackStack(MenuFragment.TAG).commit();
     }
 
     private void setUpToolbar() {
@@ -148,16 +172,15 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
             startActivity(intent);
             return true;
         }*/
-        else if (id == R.id.scan_devices_action){
             // TODO: 10-12-2015 Make new activity for result for scanning. Put scanFragment inside.
             /*mScanDevicesFragment = new ScanDevicesFragment();
             getFragmentManager().beginTransaction()
                     .replace(R.id.content_frame, mScanDevicesFragment)
                     .addToBackStack(null)
                     .commit();
-            mScanning = true;*/
+            mScanning = true;
             return true;
-        }
+            */
 
         return super.onOptionsItemSelected(item);
     }
@@ -194,64 +217,73 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
 
     @Override
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
-        String deviceName = device.getName();
-        if (deviceName == null){
-            deviceName = "No name";
-        }
-        if (mScanDevicesFragment != null)
-            mScanDevicesFragment.addDevice(Master.create(deviceName, ""));
+        final String deviceName = (device.getName() == null) ? device.getAddress() : device.getName();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mScannedMasters.add(deviceName);
+                mScannedMastersDialog.setMessage(null);
+                mScannedMastersAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
     public void deviceNotFound() {
-        if (mProgressDialog != null) mProgressDialog.dismiss();
-        Toast.makeText(this, R.string.device_not_found, Toast.LENGTH_SHORT).show();
+        Snackbar.make(mRootView,
+                R.string.device_not_found, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
     public void stopScanning() {
-        if (mScanDevicesFragment != null) mScanDevicesFragment.stopScanning();
+        if (mScannedMasters != null && mScannedMasters.size() == 0) {
+            if (mScannedMastersDialog != null) mScannedMastersDialog.dismiss();
+            Snackbar.make(mRootView, R.string.devices_not_found, Snackbar.LENGTH_LONG).show();
+        }
     }
 
-
-    /*
-        OnUserActionResponse callbacks
-     */
     @Override
     public void doorOpened(final int state) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (mProgressDialog != null) mProgressDialog.dismiss();
-                if (state == BluetoothClient.OPEN_MODE) {
-                    Toast.makeText(MainActivity.this, R.string.door_opened, Toast.LENGTH_SHORT).show();
-                } else if (state == BluetoothClient.DOOR_ALREADY_OPENED) {
-                    Toast.makeText(MainActivity.this, R.string.door_already_opened, Toast.LENGTH_SHORT).show();
-                }
+                Snackbar.make(mRootView, R.string.door_opened,
+                        Snackbar.LENGTH_LONG).show();
             }
         });
     }
 
-
     @Override
     public void doorOpening() {
-        mProgressDialog = ProgressDialog.show(this, null,
-              getResources().getString(R.string.opening_door), true);
+        Snackbar.make(mRootView, R.string.opening_door, Snackbar.LENGTH_INDEFINITE).show();
     }
 
     @Override
     public void noPermission() {
-        Toast.makeText(this, R.string.no_permission, Toast.LENGTH_SHORT).show();
+        Snackbar.make(mRootView, R.string.no_permission, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
     public void slavesFound(ArrayList<HashMap<String, String>> slavesData) { }
 
     @Override
-    public void masterWithNoSlaves() {  }
+    public void masterWithNoSlaves() { }
 
     @Override
-    public void permissionCreated(String key, int type) { }
+    public void permissionCreated(String key, Permission permission) {
+        permission.setKey(key);
+        permission.save();
+        Snackbar.make(mRootView, R.string.permission_created, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void masterConfigured(Master master, Permission adminPermission) {
+        adminPermission.save();
+        master.save();
+        mMasterFragment.onMasterReceived(master);
+        showMasterFragment();
+    }
 
     @Override
     public void permissionEdited(String key, int type) { }
@@ -270,31 +302,46 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mProgressDialog != null) mProgressDialog.dismiss();
                 switch (code) {
                     case BluetoothClient.TIMEOUT:
-                        Toast.makeText(MainActivity.this,
-                                R.string.door_cant_open_timeout, Toast.LENGTH_SHORT).show();
+                        Snackbar.make(mRootView, R.string.door_cant_open_timeout,
+                                Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.RESPONSE_INCORRECT:
-                        Toast.makeText(MainActivity.this,
-                                R.string.door_cant_open_bad_code, Toast.LENGTH_SHORT).show();
+                        Snackbar.make(mRootView, R.string.door_cant_open_bad_code,
+                                Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.CANT_OPEN:
-                        Toast.makeText(MainActivity.this,
-                                R.string.door_cant_open, Toast.LENGTH_SHORT).show();
+                        Snackbar.make(mRootView, R.string.door_cant_open,
+                                Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.CANT_CONFIGURE:
-                        Toast.makeText(MainActivity.this,
-                                R.string.door_cant_configure, Toast.LENGTH_SHORT).show();
+                        Snackbar.make(mRootView, R.string.door_cant_configure,
+                                Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.PERMISSION_NOT_CREATED:
-                        Toast.makeText(MainActivity.this,
-                                R.string.permission_not_created, Toast.LENGTH_SHORT).show();
+                        Snackbar.make(mRootView, R.string.permission_not_created,
+                                Snackbar.LENGTH_LONG).show();
+                        break;
+                    case BluetoothClient.PERMISSION_NOT_EDITED:
+                        Snackbar.make(mRootView, R.string.permission_not_edited,
+                                Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.DONT_HAVE_PERMISSION:
-                        Toast.makeText(MainActivity.this,
-                                R.string.no_permission, Toast.LENGTH_SHORT).show();
+                        Snackbar.make(mRootView, R.string.no_permission,
+                                Snackbar.LENGTH_LONG).show();
+                        break;
+                    case BluetoothClient.DONT_HAVE_PERMISSION_THIS_HOUR:
+                        Snackbar.make(mRootView, R.string.no_permission_this_hour,
+                                Snackbar.LENGTH_LONG).show();
+                        break;
+                    case BluetoothClient.BAD_INPUT:
+                        Snackbar.make(mRootView, R.string.bad_input_error,
+                                Snackbar.LENGTH_LONG).show();
+                        break;
+                    case BluetoothClient.DOOR_NOT_CONFIGURED:
+                        Snackbar.make(mRootView, R.string.door_not_configured,
+                                Snackbar.LENGTH_LONG).show();
                         break;
                     default:
                         break;
@@ -303,33 +350,14 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
         });
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case REQUEST_ENABLE_BT:
-                if (mScanning){
-                    /* if(resultCode == RESULT_OK){
-                        mScanDevicesFragment = new ScanDevicesFragment();
-                        getFragmentManager().beginTransaction()
-                                .replace(R.id.content_frame, mScanDevicesFragment)
-                                .addToBackStack(null)
-                                .commit();
-                        mScanning = false;
-                    } else {
-                        mScanDevicesFragment.stopScanning();
-                    }*/
+        switch (requestCode) {
+            case MainActivity.REQUEST_ENABLE_BT:
+                if (mScannedMastersDialog != null) {
+                    mScannedMastersDialog.cancel();
                 }
-                break;
-            case FIRST_CONFIG:
-                if (resultCode == RESULT_OK){
-                    Bundle extras = data.getExtras();
-                    mCurrentUser.makeFirstAdminConnection(extras.getString(DEFAULT_KEY_EXTRA),
-                                                          extras.getString(NEW_KEY_EXTRA),
-                                                          extras.getString(MASTER_NAME_EXTRA));
-                    mProgressDialog = ProgressDialog.show(this, null,
-                            getResources().getString(R.string.configuring_door_dialog));
-                }
+                if (resultCode == RESULT_OK) { }
                 break;
             default:
                 Toast.makeText(this, R.string.not_implemented_code_on_result,
@@ -387,8 +415,31 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
 
     }
 
+    private void showScannedMastersDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.scanned_0keys);
+        builder.setMessage(R.string.searching);
+        mScannedMasters = new ArrayList<>();
+        mScannedMastersAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                mScannedMasters);
+        builder.setAdapter(mScannedMastersAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getSupportFragmentManager().popBackStack();
+                ConfigurationFragment fragment = new ConfigurationFragment();
+                Bundle args = new Bundle();
+                args.putString(Master.ID, mScannedMasters.get(which));
+                fragment.setArguments(args);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .addToBackStack(ModifyPermissionFragment.TAG)
+                        .commit();
+            }
+        });
+        mScannedMastersDialog = builder.show();
+    }
 
-    public void onGoHomeClicked(View view) {
+    private void showMasterFragment() {
         getSupportFragmentManager().popBackStack();
         MasterFragment masterFragment = (MasterFragment)
                 getSupportFragmentManager().findFragmentByTag(MasterFragment.TAG);
@@ -399,14 +450,29 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
         showToolbar();
     }
 
-    public void onAddNew0keyClicked(View view) {
-        getSupportFragmentManager().popBackStack();
+    public void onGoHomeClicked(View view) {
+        showMasterFragment();
+    }
 
+    public void onAddNew0keyClicked(View view) {
+        mCurrentUser.scanDevices();
+        showScannedMastersDialog();
     }
 
     public void onAddNewDoorClicked(View view) {
         getSupportFragmentManager().popBackStack();
+    }
 
+    public void onShowPermissionsClicked(View view) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Bundle args = new Bundle();
+        args.putString(Master.UUID, mMasterFragment.getSelectedMaster().getUUID());
+        PermissionsFragment fragment = new PermissionsFragment();
+        fragment.setArguments(args);
+        fragmentManager.beginTransaction()
+                .replace( R.id.container, fragment)
+                .addToBackStack(PermissionsFragment.TAG)
+                .commit();
     }
 
     public void onAddNewPermissionClicked(View view) {
@@ -417,21 +483,85 @@ public class MainActivity extends AppCompatActivity implements InsertPinFragment
         Slave slave = mMasterFragment.getSelectedSlave();
         if (slave != null) {
             args.putString(Slave.UUID, slave.getUUID());
-            args.putString(Permission.KEY, slave.getPermission(User.getLoggedUser()).getKey());
-            args.putString(Permission.SLAVE_ID, slave.getPermission(User.getLoggedUser())
-                    .getSlaveId());
-            args.putString(Permission.NAME, "Permission name");
         }
         ModifyPermissionFragment fragment = new ModifyPermissionFragment();
         fragment.setArguments(args);
         fragmentManager.beginTransaction()
                 .replace( R.id.container, fragment)
-                .addToBackStack(MenuFragment.TAG)
+                .addToBackStack(ModifyPermissionFragment.TAG)
                 .commit();
     }
 
     public void onSettingsClicked(View view) {
         getSupportFragmentManager().popBackStack();
+        PreferencesFragment fragment = new PreferencesFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace( R.id.container, fragment)
+                .addToBackStack(ModifyPermissionFragment.TAG)
+                .commit();
+    }
 
+    public void onMenuItemClicked(View view) {
+        getSupportFragmentManager().popBackStack();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace( R.id.container, new MenuFragment())
+                .addToBackStack(MenuFragment.TAG).commit();
+    }
+
+    @Override
+    public void onCreatePermissionClicked(Permission permission, String userKey) {
+        Snackbar.make(mRootView, R.string.creating_permission,
+                Snackbar.LENGTH_INDEFINITE).show();
+        User.getLoggedUser().createNewPermission(permission, userKey, permission.getMaster().getId());
+    }
+
+    @Override
+    public void onModifyPermissionClicked(Permission permission, String userKey) {
+
+    }
+
+    @Override
+    public void onDeletePermissionClicked(Permission permission, String userKey) {
+
+    }
+
+    @Override
+    public void onConfigureMasterClick(String permissionKey, String defaultKey, Master master) {
+        Snackbar.make(mRootView, R.string.configuring_door_dialog, Snackbar.LENGTH_INDEFINITE).show();
+        mCurrentUser.makeFirstAdminConnection(permissionKey, defaultKey, master);
+    }
+
+    @Override
+    public void onModifyPermissionAdapterClicked(Permission permission) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStack();
+        Bundle args = new Bundle();
+        args.putString(Master.UUID, permission.getMasterUuid());
+        args.putString(Slave.UUID, permission.getSlaveUuid());
+        args.putInt(ModifyPermissionFragment.PERMISSION_OLD_SLAVE, permission.getSlaveId());
+        args.putString(Permission.NAME, permission.getUser().getEmail());
+        args.putString(Permission.UUID, permission.getUUID());
+        ModifyPermissionFragment fragment = new ModifyPermissionFragment();
+        fragment.setArguments(args);
+        fragmentManager.beginTransaction()
+                .replace( R.id.container, fragment)
+                .addToBackStack(ModifyPermissionFragment.TAG)
+                .commit();
+
+    }
+
+    @Override
+    public void onDeletePermissionAdapterClicked(Permission permission) {
+        HashMap<Integer, Permission> permissions =
+                permission.getMaster().getPermissions(User.getLoggedUser());
+        if (permissions.containsKey(permission.getSlaveId())) {
+            mCurrentUser.deletePermission(permission.getMaster().getName(),
+                    permissions.get(permission.getSlaveId()).getKey(),
+                    permission.getKey(),
+                    permission.getSlaveId());
+            Snackbar.make(mRootView, R.string.deleting_permission, Snackbar.LENGTH_INDEFINITE).show();
+        } else {
+            Snackbar.make(mRootView, R.string.no_permission, Snackbar.LENGTH_LONG).show();
+        }
     }
 }

@@ -8,7 +8,7 @@ import com.parse.ParseQuery;
 public class Slave implements ParseObject, Nameable {
     public static final String SLAVE_CLASS_NAME = "Slave";
     public static final String UUID = "uuid";
-    public static final String ID = "id";
+    public static final String ID = "slave_id";
     public static final String MASTER_UUID = "master_uuid";
     public static final String NAME = "name";
     public static final String TYPE = "type";
@@ -76,10 +76,11 @@ public class Slave implements ParseObject, Nameable {
     }
 
     public Permission getPermission(User user) {
-        ParseQuery query =
-                ParseQuery.getQuery(Permission.PERMISSION_CLASS_NAME);
+        ParseQuery query = ParseQuery.getQuery(Permission.PERMISSION_CLASS_NAME);
+        query.fromLocalDatastore();
         query.whereEqualTo(Permission.MASTER_UUID, getUuidMaster());
         query.whereEqualTo(Permission.USER_UUID, user.getUUID());
+        query.whereEqualTo(Permission.SLAVE_ID, getId());
         try {
             return Permission.create(query.getFirst());
         } catch (ParseException e) {
@@ -91,6 +92,7 @@ public class Slave implements ParseObject, Nameable {
     public static Slave getSlave(String uuid) {
         if (TextUtils.isEmpty(uuid)) return null;
         ParseQuery<com.parse.ParseObject> query = new ParseQuery<>(SLAVE_CLASS_NAME);
+        query.fromLocalDatastore();
         query.whereEqualTo(UUID, uuid);
         try {
             com.parse.ParseObject parseObject = query.getFirst();

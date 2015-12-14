@@ -3,19 +3,19 @@ package com.incrementaventures.okey.Activities;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.incrementaventures.okey.Fragments.LoginFragment;
 import com.incrementaventures.okey.R;
 
-public class AuthActivity extends ActionBarActivity {
+public class AuthActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
-        setUpActionBar();
         LoginFragment newFragment = new LoginFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -27,10 +27,6 @@ public class AuthActivity extends ActionBarActivity {
         // Commit the transaction
         transaction.commit();
 
-    }
-
-    private void setUpActionBar() {
-        getSupportActionBar().setElevation(0);
     }
 
     @Override

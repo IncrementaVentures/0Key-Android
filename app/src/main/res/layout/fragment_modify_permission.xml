@@ -15,6 +15,7 @@
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
+        android:onClick="onGoHomeClicked"
         android:src="@drawable/cancel_icon" />
 
     <TextView

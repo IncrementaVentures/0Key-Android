@@ -154,6 +154,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
 
     public Master getMaster(){
         ParseQuery query = new ParseQuery(Master.MASTER_CLASS_NAME);
+        query.fromLocalDatastore();
         query.whereEqualTo(Master.UUID, mParsePermission.getString(MASTER_UUID));
         try {
             ParseObject o = query.getFirst();
@@ -165,7 +166,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     }
 
     public User getUser(){
-        ParseQuery<ParseUser> query = new ParseQuery<>(User.USER_CLASS_NAME);
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereEqualTo(User.UUID, mParsePermission.getString(USER_UUID));
         try {
             ParseUser o = query.getFirst();
@@ -186,6 +187,19 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
                 return  "Administrator";
             default:
                 return "Unknown";
+        }
+    }
+
+    public static int getType(String type){
+        switch (type) {
+            case "Temporal":
+                return TEMPORAL_PERMISSION;
+            case "Permanent":
+                return PERMANENT_PERMISSION;
+            case "Administrator":
+                return ADMIN_PERMISSION;
+            default:
+                return 3;
         }
     }
 
@@ -267,12 +281,11 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         return false;
     }
 
-    public String getSlaveId() {
-        return mParsePermission.getString(SLAVE_ID);
+    public int getSlaveId() {
+        return mParsePermission.getInt(SLAVE_ID);
     }
 
     public static void getNewPermissions(final OnNetworkResponseListener listener, User user) {
-
         ParseQuery<ParseObject> query = new ParseQuery<>(Permission.PERMISSION_CLASS_NAME);
         query.orderByDescending(Permission.CREATED_AT);
         query.whereEqualTo(Permission.USER_UUID, user.getUUID());
@@ -295,6 +308,26 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         } else {
             return true;
         }
+    }
+
+    public String getMasterUuid() {
+        return mParsePermission.getString(MASTER_UUID);
+    }
+
+    public String getSlaveUuid() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(Slave.SLAVE_CLASS_NAME);
+        query.fromLocalDatastore();
+        query.whereEqualTo(Slave.ID, getSlaveId());
+        query.whereEqualTo(Slave.MASTER_UUID, getMasterUuid());
+        try {
+            ParseObject slave = query.getFirst();
+            if (slave != null) {
+                return slave.getString(Slave.UUID);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static class ProcessNetworkPermissionsTask extends

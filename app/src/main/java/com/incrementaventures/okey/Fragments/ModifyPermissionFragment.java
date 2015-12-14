@@ -3,10 +3,14 @@ package com.incrementaventures.okey.Fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +25,7 @@ import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
+import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
@@ -84,14 +89,22 @@ public class ModifyPermissionFragment extends Fragment {
     private Slave mSelectedSlave;
     private ArrayList<Slave> mSlaves;
 
-    public ModifyPermissionFragment() {
+    private OnPermissionModifiedListener mPermissionModifiedListener;
+
+    public interface OnPermissionModifiedListener {
+        void onCreatePermissionClicked(Permission permission, String userKey);
+        void onModifyPermissionClicked(Permission permission, String userKey);
+        void onDeletePermissionClicked(Permission permission, String userKey);
     }
+
+    public ModifyPermissionFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_new_permission, container, false);
+        View v = inflater.inflate(R.layout.fragment_modify_permission, container, false);
         ButterKnife.bind(this, v);
+        hideToolbar();
         getArgumentsData();
         setMasters();
         setSlaves();
@@ -106,18 +119,19 @@ public class ModifyPermissionFragment extends Fragment {
 
     private void setMasters() {
         mMasters = Master.getMasters();
-        if (mSelectedMaster == null && mMasters.size() > 0) {
+        if (mMasters.size() > 0) {
             mSelectedMaster = mMasters.get(0);
+            mSelectedMasterView.setText(mSelectedMaster.getName());
         }
     }
 
     private void setSlaves() {
         mSlaves = new ArrayList<>(mSelectedMaster.getSlaves());
-        if (mSelectedSlave == null && mSlaves.size() > 0) {
-            mSelectedSlave = mSlaves.get(0);
-        }
-        else {
+        if (mSlaves.size() == 0) {
             mSelectedSlaveView.setText(R.string.no_slaves_found_yet);
+            mSelectedSlaveView.setClickable(false);
+        } else {
+            mSelectedSlave = mSlaves.get(0);
         }
     }
 
@@ -248,18 +262,24 @@ public class ModifyPermissionFragment extends Fragment {
         mNewPermissionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent data = new Intent();
-                data.putExtra(PERMISSION_TYPE, mPermissionTypeView.getText().toString());
-                data.putExtra(PERMISSION_START_DATE, mStartDateView.getText().toString());
-                data.putExtra(PERMISSION_START_HOUR, mStartHourView.getText().toString());
-                data.putExtra(PERMISSION_END_DATE, mEndDateView.getText().toString());
-                data.putExtra(PERMISSION_END_HOUR, mEndHourView.getText().toString());
-                data.putExtra(PERMISSION_KEY, mKey);
-                data.putExtra(PERMISSION_OLD_SLAVE, mOldSlaveId);
-                data.putExtra(PERMISSION_NEW_SLAVE, mSelectedSlaveView.getText().toString());
-                data.putExtra(MainActivity.SCANNED_DOOR_EXTRA, false);
-                getActivity().setResult(Activity.RESULT_OK, data);
-                getActivity().finish();
+                if (TextUtils.isEmpty(mKey)) {
+                    User user = User.getUser(mPermissionNameView.getText().toString());
+                    if (user == null) {
+                        Snackbar.make(getView(), getString(R.string.invalid_email),
+                                Snackbar.LENGTH_LONG ).show();
+                        return;
+                    }
+                    Permission permission = Permission.create(user, mSelectedMaster,
+                            Permission.getType(mPermissionTypeView.getText().toString()),
+                            "",
+                            mStartDateView.getText().toString() + "T" + mStartHourView.getText().toString(),
+                            mEndDateView.getText().toString() + "T" + mEndHourView.getText().toString(),
+                            mSelectedSlave.getId());
+
+                    mPermissionModifiedListener.onCreatePermissionClicked(permission,
+                            User.getLoggedUser().getPermission(mSelectedMaster,
+                                    mSelectedSlave.getId()).getKey());
+                }
             }
         });
 
@@ -297,6 +317,11 @@ public class ModifyPermissionFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         mSelectedMaster = mMasters.get(which);
                         mSelectedMasterView.setText(mastersNames[which]);
+                        mSlaves = new ArrayList<>(mSelectedMaster.getSlaves());
+                        if (mSlaves.size() > 0) {
+                            mSelectedSlave = mSlaves.get(0);
+                            mSelectedSlaveView.setText(mSelectedSlave.getName());
+                        }
                     }
                 });
                 builder.show();
@@ -304,4 +329,21 @@ public class ModifyPermissionFragment extends Fragment {
         });
     }
 
+
+    private void hideToolbar() {
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if ( actionBar != null) {
+            actionBar.hide();
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mPermissionModifiedListener = (OnPermissionModifiedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnPermissionModifiedListener");
+        }
+    }
 }
