@@ -83,6 +83,7 @@ public class ModifyPermissionFragment extends Fragment {
     private String mStartHour;
     private String mKey;
     private String mPermissionName;
+    private Permission mOldPermission;
     private int mOldSlaveId;
     private Master mSelectedMaster;
     private ArrayList<Master> mMasters;
@@ -93,7 +94,8 @@ public class ModifyPermissionFragment extends Fragment {
 
     public interface OnPermissionModifiedListener {
         void onCreatePermissionClicked(Permission permission, String userKey);
-        void onModifyPermissionClicked(Permission permission, String userKey);
+        void onModifyPermissionClicked(Permission oldPermission, Permission newPermission,
+                                       String userKey, String doorId);
         void onDeletePermissionClicked(Permission permission, String userKey);
     }
 
@@ -148,6 +150,9 @@ public class ModifyPermissionFragment extends Fragment {
         String oldSlave = String.valueOf(getArguments().getInt(PERMISSION_OLD_SLAVE, -1));
         mOldSlaveId = Integer.valueOf(oldSlave);
         mPermissionName = getArguments().getString(Permission.NAME);
+        if (getArguments().getString(Permission.UUID) != null) {
+            mOldPermission = Permission.getPermission(getArguments().getString(Permission.UUID));
+        }
         if (!TextUtils.isEmpty(mPermissionName)) {
             mPermissionNameView.setText(mPermissionName);
         }
@@ -262,24 +267,41 @@ public class ModifyPermissionFragment extends Fragment {
         mNewPermissionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                User user = User.getUser(mPermissionNameView.getText().toString());
+                if (user == null) {
+                    Snackbar.make(getView(), getString(R.string.invalid_email),
+                            Snackbar.LENGTH_LONG ).show();
+                    return;
+                }
+                int slaveId = 0;
+                if (mSelectedSlave != null) {
+                    slaveId = mSelectedSlave.getId();
+                }
+                // If creating new permission
+                String userKey = User.getLoggedUser().getPermission(mSelectedMaster,
+                        slaveId).getKey();
                 if (TextUtils.isEmpty(mKey)) {
-                    User user = User.getUser(mPermissionNameView.getText().toString());
-                    if (user == null) {
-                        Snackbar.make(getView(), getString(R.string.invalid_email),
-                                Snackbar.LENGTH_LONG ).show();
-                        return;
-                    }
                     Permission permission = Permission.create(user, mSelectedMaster,
                             Permission.getType(mPermissionTypeView.getText().toString()),
                             "",
                             mStartDateView.getText().toString() + "T" + mStartHourView.getText().toString(),
                             mEndDateView.getText().toString() + "T" + mEndHourView.getText().toString(),
-                            mSelectedSlave.getId());
+                            slaveId);
 
-                    mPermissionModifiedListener.onCreatePermissionClicked(permission,
-                            User.getLoggedUser().getPermission(mSelectedMaster,
-                                    mSelectedSlave.getId()).getKey());
+                    mPermissionModifiedListener.onCreatePermissionClicked(permission, userKey);
+                // If editing permission
+                } else {
+                    Permission permission = Permission.create(user, mSelectedMaster,
+                            Permission.getType(mPermissionTypeView.getText().toString()),
+                            mKey,
+                            mStartDateView.getText().toString() + "T" + mStartHourView.getText().toString(),
+                            mEndDateView.getText().toString() + "T" + mEndHourView.getText().toString(),
+                            slaveId);
+
+                    mPermissionModifiedListener.onModifyPermissionClicked(mOldPermission, permission,
+                            userKey, mSelectedMaster.getId());
                 }
+
             }
         });
 

@@ -27,6 +27,7 @@ import com.incrementaventures.okey.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -90,6 +91,12 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         mSlaves = new ArrayList<>(mMasters.get(mSelectedMasterIndex).getSlaves());
         if (mSlaves.size() > 0) {
             mSelectedSlaveIndex = 0;
+        } else {
+            if (mPermissions != null && mPermissions.size() > 0) {
+                TreeMap<Integer, Permission> treeMap = new TreeMap<>(mPermissions);
+                User.getLoggedUser().getSlaves(mMasters.get(mSelectedMasterIndex), treeMap.firstEntry().getValue().getKey());
+            }
+
         }
     }
 
@@ -276,27 +283,6 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnSlaveSelectedListener");
         }
-    }
-
-    public void addSlave(final ArrayList<HashMap<String,String>> slavesData){
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mSlaves == null) {
-                    mSlaves = new ArrayList<>();
-                }
-                for (HashMap<String, String> slaveData : slavesData) {
-                    final Slave slave = Slave.create(mMasters.get(mSelectedMasterIndex).getUUID(),
-                            slaveData.get(Slave.ID),
-                            Integer.valueOf(slaveData.get(Slave.TYPE)),
-                            Integer.valueOf(slaveData.get(Slave.ID)));
-                    if (!mSlaves.contains(slave)) {
-                        slave.save();
-                        mSlaves.add(slave);
-                    }
-                }
-            }
-        });
     }
 
     public void masterNetworkFound(Master master) {

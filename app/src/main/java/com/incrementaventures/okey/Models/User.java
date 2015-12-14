@@ -84,7 +84,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         void doorOpened(int state);
         void doorOpening();
         void noPermission();
-        void slavesFound(ArrayList<HashMap<String,String>> slavesData);
+        void slavesFound(Master master, ArrayList<Slave> slaves);
         void masterWithNoSlaves();
         void error(int code);
     }
@@ -92,7 +92,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     public interface OnPermissionsResponse{
         void permissionCreated(String key, Permission permission);
         void masterConfigured(Master master, Permission adminPermission);
-        void permissionEdited(String key, int type);
+        void permissionEdited(String key, Permission newPermission);
         void permissionDeleted(String key);
         void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData);
         void permissionReceived(int type, String key, String start, String end);
@@ -130,8 +130,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     }
 
     @Override
-    public void permissionEdited(String key, int type) {
-        mPermissionsListener.permissionEdited(key, type);
+    public void permissionEdited(String key, Permission newPermission) {
+        mPermissionsListener.permissionEdited(key, newPermission);
     }
 
     @Override
@@ -155,8 +155,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     }
 
     @Override
-    public void slavesFound(ArrayList<HashMap<String,String>> slavesData) {
-        mMasterListener.slavesFound(slavesData);
+    public void slavesFound(Master master, ArrayList<Slave> slaves) {
+        mMasterListener.slavesFound(master, slaves);
     }
 
     @Override
@@ -319,7 +319,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             return;
         }
         mMasterListener.doorOpening();
-        mBluetoothClient.executeOpenDoor(p.getKey(), master.getName(), slave.getId());
+        mBluetoothClient.executeOpenDoor(p.getKey(), master.getId(), slave.getId());
     }
 
     public void makeFirstAdminConnection(String permissionKey, String defaultKey, Master master) {
@@ -332,7 +332,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             mBluetoothListener.enableBluetooth();
             return;
         }
-        mBluetoothClient.executeFirstConnectionConfiguration(permissionKey, defaultKey, master);
+        mBluetoothClient.executeFirstConnectionConfiguration(defaultKey, permissionKey, master);
     }
 
     public void scanDevices(){
@@ -383,9 +383,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         mBluetoothClient.executeOpenDoorWhenClose(p.getKey(), master.getName(), slave.getId());
     }
 
-    public void editPermission(String type, int oldSlaveId, int newSlaveId,String startDate,
-                               String startHour, String endDate,String endHour, String adminKey,
-                               String toEditPermissionKey, String doorName){
+    public void editPermission(Permission oldPermission, Permission newPermission, String adminKey,
+                               String doorId) {
         mBluetoothClient = new BluetoothClient(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
@@ -394,11 +393,10 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             mBluetoothListener.enableBluetooth();
             return;
         }
-        mBluetoothClient.executeEditPermission(type, oldSlaveId, newSlaveId, startDate, startHour,
-                endDate, endHour, adminKey, toEditPermissionKey, doorName);
+        mBluetoothClient.executeEditPermission(oldPermission, newPermission, adminKey, doorId);
     }
 
-    public void deletePermission(String masterName, String adminKey, String permissionKey,
+    public void deletePermission(String masterId, String adminKey, String permissionKey,
                                  int slave){
         mBluetoothClient = new BluetoothClient(mContext, this);
         if (!mBluetoothClient.isSupported()){
@@ -408,7 +406,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             mBluetoothListener.enableBluetooth();
             return;
         }
-        mBluetoothClient.executeDeletePermission(masterName, adminKey, permissionKey, slave);
+        mBluetoothClient.executeDeletePermission(masterId, adminKey, permissionKey, slave);
     }
 
     public void readMyPermission(Master master, Slave slave, String permissionKey){
@@ -444,7 +442,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             mBluetoothListener.enableBluetooth();
             return;
         }
-        mBluetoothClient.executeGetSlaves(master.getName(), permissionKey);
+        mBluetoothClient.executeGetSlaves(master, permissionKey);
     }
 
     public void pairSlaves(String masterName, String adminKey){

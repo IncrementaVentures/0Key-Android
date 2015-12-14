@@ -181,11 +181,8 @@ public class BluetoothProtocol {
         return builder.toString();
     }
 
-    public static String buildEditPermissionMessage(String permissionType, int oldSlaveId,
-                                                    int newSlaveId,
-                                                    String startDate, String startHour,
-                                                    String endDate, String endHour,
-                                                    String adminKey, String permissionKey) {
+    public static String buildEditPermissionMessage(Permission oldPermission, Permission newPermission,
+                                                    String adminKey) {
         StringBuilder builder = new StringBuilder();
         Time time = new Time();
         time.setToNow();
@@ -197,26 +194,26 @@ public class BluetoothProtocol {
         // "02;date;key;"
         builder.append(adminKey).append(SEPARATOR);
         // "02;date;key;slaveId;"
-        builder.append(permissionKey).append(SEPARATOR);
+        builder.append(oldPermission.getKey()).append(SEPARATOR);
         // "02;date;key;slaveId;permissionKey;"
-        builder.append(oldSlaveId).append(SEPARATOR);
+        builder.append(oldPermission.getSlaveId()).append(SEPARATOR);
         // "02;date;key;slaveId;permissionKey;oldSlaveId;"
-        builder.append(newSlaveId).append(SEPARATOR);
+        builder.append(newPermission.getSlaveId()).append(SEPARATOR);
         // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;"
         builder.append(MODIFY_PERMISSION_CODE).append(SEPARATOR);
 
-        int type = getPermissionType(permissionType);
+        int type = Permission.getType(newPermission.getType());
         // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;permissionType;"
         builder.append(type).append(SEPARATOR);
 
         if (type == TEMPORAL_PERMISSION){
             // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;permissionType;start;"
-            builder.append(startDate + "T" + startHour).append(SEPARATOR);
+            builder.append(newPermission.getStartDate()).append(SEPARATOR);
             // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;permissionType;start;end;"
-            builder.append(endDate + "T" + endHour).append(SEPARATOR);
+            builder.append(newPermission.getEndDate()).append(SEPARATOR);
         } else {
             // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;permissionType;start;"
-            builder.append(startDate + "T" + startHour).append(SEPARATOR);
+            builder.append(newPermission.getStartDate()).append(SEPARATOR);
             // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;permissionType;start;0;"
             builder.append(EMPTY).append(SEPARATOR);
         }
@@ -464,19 +461,17 @@ public class BluetoothProtocol {
         return false;
     }
 
-    public static ArrayList<HashMap<String,String>> getSlavesList(String response){
-        ArrayList<HashMap<String,String>> slavesData = new ArrayList<>();
+    public static ArrayList<Slave> getSlavesList(String response){
         response = response.substring(2, response.length()-3);
         String[] parts = response.split(ITEM_SEPARATOR);
-        HashMap<String,String> slaveData ;
-        if (response.equals(SEPARATOR)) return slavesData;
+        ArrayList<Slave> slaves = new ArrayList<>();
+        if (response.equals(SEPARATOR)) return slaves;
         for (String part : parts){
-            slaveData = new HashMap<>();
             part = part.substring(1, part.length()-1);
-            slaveData.put(Slave.ID, part.split(SEPARATOR)[0]);
-            slaveData.put(Slave.TYPE, part.split(SEPARATOR)[1]);
-            slavesData.add(slaveData);
+            String id = part.split(SEPARATOR)[0];
+            String type = part.split(SEPARATOR)[1];
+            slaves.add(Slave.create("", "", id, Integer.valueOf(type), Integer.valueOf(id)));
         }
-        return slavesData;
+        return slaves;
     }
 }

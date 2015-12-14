@@ -23,8 +23,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public static final int TEMPORAL_PERMISSION = 2;
     public static final int UNKNOWN_PERMISSION = 3;
 
-    public static final String PERMANENT_DATE = "01/01/3000";
-    public static final String UNKNOWN_DATE = "Unknown";
+    public static final String PERMANENT_DATE = "3000-01-01T00:01";
 
     public static final String PERMISSION_CLASS_NAME = "Permission";
     public static final String USER_UUID = "user_uuid";
@@ -127,6 +126,32 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         }
     }
 
+    public void setMasterUuid(String masterUuid) {
+        mParsePermission.put(MASTER_UUID, masterUuid);
+    }
+
+    public void share() {
+        Master newInstanceMaster = Master.create(getMaster().getId(), getMaster().getName(),
+                getUserUuid());
+        newInstanceMaster.save();
+        setMasterUuid(newInstanceMaster.getUUID());
+        save();
+        List<Slave> slaves = getMaster().getSlaves();
+        for (Slave slave : slaves) {
+            if (getSlaveId() == 0) {
+                Slave.create(newInstanceMaster.getUUID(), newInstanceMaster.getId(), slave.getName(),
+                        slave.getType(), slave.getId()).save();
+            } else if (getSlaveId() == slave.getId()) {
+                Slave.create(newInstanceMaster.getUUID(), newInstanceMaster.getId(), slave.getName(),
+                        slave.getType(), slave.getId()).save();
+            }
+        }
+    }
+
+    public String getUserUuid() {
+        return mParsePermission.getString(USER_UUID);
+    }
+
     @Override
     public String getObjectId() {
         return mParsePermission.getObjectId();
@@ -139,6 +164,11 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public void delete() {
+        deleteFromLocal();
+        mParsePermission.deleteEventually();
     }
 
     @Override
@@ -159,6 +189,19 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         try {
             ParseObject o = query.getFirst();
             return Master.create(o);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Permission getPermission(String uuid) {
+        ParseQuery query = new ParseQuery(PERMISSION_CLASS_NAME);
+        query.fromLocalDatastore();
+        query.whereEqualTo(Master.UUID, uuid);
+        try {
+            ParseObject o = query.getFirst();
+            return Permission.create(o);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -206,6 +249,9 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public void setType(int type){
         mParsePermission.put(TYPE, type);
     }
+    public void setSlaveId(int slaveId){
+        mParsePermission.put(SLAVE_ID, slaveId);
+    }
 
     public String getKey(){
         return mParsePermission.getString(KEY);
@@ -249,7 +295,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     }
 
     public void setEndDate(String endDate){
-        mParsePermission.put(START_DATE, endDate);
+        mParsePermission.put(END_DATE, endDate);
     }
 
     public void setKey(String key){

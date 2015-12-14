@@ -96,33 +96,4 @@ public class MainFragment extends Fragment {
             }
         });
     }
-
-    private void createFakeData(){
-        if (mMasters.size() == 0){
-            Master m1 = Master.create("PSN"
-                    , "Casa "+ User.getLoggedUser((MainActivity)getActivity()).getName(), "");
-            Master m2 = Master.create("PSN", "Oficina", "");
-            m1.save();
-            m2.save();
-            for (int i = 1; i<6; i++){
-                Slave s1 = Slave.create(m1.getUUID(), "Slave "+i, 0, i);
-                Slave s2 = Slave.create(m2.getUUID(), "Slave "+i, 0, i);
-                s1.save();
-                s2.save();
-            }
-            mMasters.add(m1);
-            mMasters.add(m2);
-            Time now = new Time();
-            now.setToNow();
-            Permission p1 = Permission.create(mCurrentUser, m1, 0, "1234",
-                    BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE, 0);
-            Permission p2 = Permission.create(mCurrentUser, m2, 0, "1234",
-                    BluetoothProtocol.formatDate(now), Permission.PERMANENT_DATE, 0);
-            p1.save();
-            p2.save();
-
-            mAdapter = new MasterAdapter(getActivity(), R.layout.master_list_item, mMasters);
-            mMasterList.setAdapter(mAdapter);
-        }
-    }
 }

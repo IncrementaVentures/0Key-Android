@@ -10,16 +10,17 @@ public class Slave implements ParseObject, Nameable {
     public static final String UUID = "uuid";
     public static final String ID = "slave_id";
     public static final String MASTER_UUID = "master_uuid";
+    public static final String MASTER_ID = "master_id";
     public static final String NAME = "name";
     public static final String TYPE = "type";
 
     private com.parse.ParseObject mParseSlave;
 
-
-    private Slave(String uuidMaster, String name, int type, int id){
+    private Slave(String uuidMaster, String masterId, String name, int type, int id) {
         mParseSlave = com.parse.ParseObject.create(SLAVE_CLASS_NAME);
         mParseSlave.put(UUID, java.util.UUID.randomUUID().toString());
         mParseSlave.put(MASTER_UUID, uuidMaster);
+        mParseSlave.put(MASTER_ID, masterId);
         mParseSlave.put(NAME, name);
         mParseSlave.put(TYPE, type);
         mParseSlave.put(ID, id);
@@ -29,8 +30,8 @@ public class Slave implements ParseObject, Nameable {
         mParseSlave = parseSlave;
     }
 
-    public static Slave create( String uuidMaster, String name, int type, int id){
-        return new Slave(uuidMaster, name, type, id);
+    public static Slave create( String uuidMaster, String masterId, String name, int type, int id){
+        return new Slave(uuidMaster, masterId, name, type, id);
     }
 
     public static Slave create(com.parse.ParseObject parseSlave){
@@ -101,6 +102,14 @@ public class Slave implements ParseObject, Nameable {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void setMasterUuid(String masterUuid) {
+        mParseSlave.put(MASTER_UUID, masterUuid);
+    }
+
+    public void setMasterId(String masterId) {
+        mParseSlave.put(MASTER_ID, masterId);
     }
 
     @Override

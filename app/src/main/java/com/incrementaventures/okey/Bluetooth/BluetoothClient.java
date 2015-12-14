@@ -12,10 +12,12 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Handler;
 import android.text.format.Time;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
+import com.incrementaventures.okey.Models.Slave;
 import com.incrementaventures.okey.Models.User;
 
 import java.util.ArrayList;
@@ -101,6 +103,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private String mStartHour;
     private String mToEditPermissionKey;
     private Permission mPermission;
+    private Permission mNewPermission;
     private Master mMaster;
 
     /**
@@ -125,12 +128,12 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         void doorOpened(int state);
         void permissionCreated(String key, Permission permission);
         void masterConfigured(Master master, Permission adminPermission);
-        void permissionEdited(String key, int type);
+        void permissionEdited(String key, Permission newPermission);
         void permissionDeleted(String key);
         void permissionReceived(int type, String key, String start, String end);
         void permissionsReceived(ArrayList<HashMap<String, String>> permisionsData);
         void stopScanning();
-        void slavesFound(ArrayList<HashMap<String,String>> slavesData);
+        void slavesFound(Master master, ArrayList<Slave> slaves);
         void doorClosed(int state);
         void error(int mode);
     }
@@ -164,7 +167,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executeOpenDoor(String key, String masterName, int slaveId){
+    public void executeOpenDoor(String key, String masterName, int slaveId) {
         mPermissionKey = key;
         mSlaveId = slaveId;
         mMasterId = masterName;
@@ -203,27 +206,19 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executeEditPermission(String type, int oldSlaveId, int newSlaveId,
-                                      String startDate, String startHour,
-                                      String endDate, String endHour, String adminKey,
-                                      String toEditPermissionKey, String doorName){
+    public void executeEditPermission(Permission oldPermission, Permission newPermission,
+                                      String adminKey, String doorId) {
         mMode = EDIT_PERMISSION_MODE;
-        mSlaveId = oldSlaveId;
-        mNewSlaveId = newSlaveId;
-        mToEditPermissionKey = toEditPermissionKey;
-        mMasterId = doorName;
-        mPermissionType = type;
+        mPermission = oldPermission;
+        mNewPermission = newPermission;
+        mMasterId = doorId;
         mPermissionKey = adminKey;
-        mEndDate = endDate;
-        mEndHour = endHour;
-        mStartDate = startDate;
-        mStartHour = startHour;
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executeDeletePermission(String masterName, String adminKey, String permissionKey,
+    public void executeDeletePermission(String masterId, String adminKey, String permissionKey,
                                         int slave) {
-        mMasterId = masterName;
+        mMasterId = masterId;
         mMode = DELETE_PERMISSION_MODE;
         mPermissionKey = adminKey;
         mToEditPermissionKey = permissionKey;
@@ -247,8 +242,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executeGetSlaves(String masterName, String permissionKey){
-        mMasterId = masterName;
+    public void executeGetSlaves(Master master, String permissionKey){
+        mMasterId = master.getId();
+        mMaster = master;
         mPermissionKey = permissionKey;
         mMode = GET_SLAVES_MODE;
         startScan(NORMAL_SCAN_TIME);
@@ -357,9 +353,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                             mPermissionKey);
                     break;
                 case EDIT_PERMISSION_MODE:
-                    message = BluetoothProtocol.buildEditPermissionMessage(mPermissionType,
-                            mSlaveId, mNewSlaveId, mStartDate, mStartHour, mEndDate, mEndHour,
-                            mPermissionKey, mToEditPermissionKey);
+                    message = BluetoothProtocol.buildEditPermissionMessage(mPermission, mNewPermission,
+                            mPermissionKey);
                     break;
                 case DELETE_PERMISSION_MODE:
                     message = BluetoothProtocol.buildDeletePermissionMessage(mPermissionKey,
@@ -402,7 +397,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             mWaitingResponse = false;
 
             String response = new String(characteristic.getValue());
-
+            Log.d("BLUETOOTH MESSAGE", response);
             if (mReceivedMessageParts == null) mReceivedMessageParts = new LinkedList<>();
             mReceivedMessageParts.offer(response);
 
@@ -551,8 +546,11 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     mListener.permissionCreated(key, mPermission);
                     break;
                 case EDIT_PERMISSION_MODE:
-                    mListener.permissionEdited(key,
-                            BluetoothProtocol.getPermissionType(mPermissionType));
+                    mPermission.setSlaveId(mNewPermission.getSlaveId());
+                    mPermission.setStartDate(mNewPermission.getStartDate());
+                    mPermission.setEndDate(mNewPermission.getEndDate());
+                    mPermission.setType(Permission.getType(mNewPermission.getType()));
+                    mListener.permissionEdited(key, mPermission);
                     break;
                 case DELETE_PERMISSION_MODE:
                     mListener.permissionDeleted(key);
@@ -635,9 +633,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
         switch (errorCode){
             case BluetoothProtocol.OK_ERROR_CODE:
-                ArrayList<HashMap<String,String>> slaves = BluetoothProtocol.getSlavesList(fullMessage);
+                ArrayList<Slave> slaves = BluetoothProtocol.getSlavesList(fullMessage);
                 if (slaves.size() == 0) mListener.masterWithNoSlaves();
-                mListener.slavesFound(slaves);
+                mListener.slavesFound(mMaster, slaves);
                 break;
             default:
                 int e = determineError(errorCode);

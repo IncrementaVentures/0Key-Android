@@ -222,7 +222,6 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 mScannedMasters.add(deviceName);
-                mScannedMastersDialog.setMessage(null);
                 mScannedMastersAdapter.notifyDataSetChanged();
             }
         });
@@ -265,7 +264,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void slavesFound(ArrayList<HashMap<String, String>> slavesData) { }
+    public void slavesFound(Master master, ArrayList<Slave> slaves) {
+        for (Slave slave : slaves) {
+            slave.setMasterId(master.getId());
+            slave.setMasterUuid(master.getUUID());
+            slave.save();
+        }
+        mMasterFragment.onSlavesReceived(slaves);
+    }
 
     @Override
     public void masterWithNoSlaves() { }
@@ -273,20 +279,38 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void permissionCreated(String key, Permission permission) {
         permission.setKey(key);
-        permission.save();
-        Snackbar.make(mRootView, R.string.permission_created, Snackbar.LENGTH_LONG).show();
+        permission.share();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showMasterFragment();
+                Snackbar.make(mRootView, R.string.permission_created, Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
-    public void masterConfigured(Master master, Permission adminPermission) {
+    public void masterConfigured(final Master master, final Permission adminPermission) {
         adminPermission.save();
         master.save();
         mMasterFragment.onMasterReceived(master);
-        showMasterFragment();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCurrentUser.getSlaves(master, adminPermission.getKey());
+                showMasterFragment();
+                Snackbar.make(mRootView, R.string.master_configured, Snackbar.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     @Override
-    public void permissionEdited(String key, int type) { }
+    public void permissionEdited(String key, Permission newPermission) {
+        newPermission.save();
+        Snackbar.make(mRootView, R.string.permission_edited, Snackbar.LENGTH_LONG).show();
+        showMasterFragment();
+    }
 
     @Override
     public void permissionDeleted(String key) { }
@@ -418,7 +442,6 @@ public class MainActivity extends AppCompatActivity implements
     private void showScannedMastersDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.scanned_0keys);
-        builder.setMessage(R.string.searching);
         mScannedMasters = new ArrayList<>();
         mScannedMastersAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
                 mScannedMasters);
@@ -437,6 +460,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
         mScannedMastersDialog = builder.show();
+        Snackbar.make(mRootView, R.string.searching, Snackbar.LENGTH_LONG).show();
     }
 
     private void showMasterFragment() {
@@ -461,6 +485,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void onAddNewDoorClicked(View view) {
         getSupportFragmentManager().popBackStack();
+        showToolbar();
     }
 
     public void onShowPermissionsClicked(View view) {
@@ -516,8 +541,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onModifyPermissionClicked(Permission permission, String userKey) {
-
+    public void onModifyPermissionClicked(Permission oldPermission, Permission newPermission,
+                                          String userKey, String doorId) {
+        Snackbar.make(mRootView, R.string.editing_permission, Snackbar.LENGTH_INDEFINITE).show();
+        mCurrentUser.editPermission(oldPermission, newPermission, userKey, doorId);
     }
 
     @Override
@@ -541,13 +568,13 @@ public class MainActivity extends AppCompatActivity implements
         args.putInt(ModifyPermissionFragment.PERMISSION_OLD_SLAVE, permission.getSlaveId());
         args.putString(Permission.NAME, permission.getUser().getEmail());
         args.putString(Permission.UUID, permission.getUUID());
+        args.putString(Permission.KEY, permission.getKey());
         ModifyPermissionFragment fragment = new ModifyPermissionFragment();
         fragment.setArguments(args);
         fragmentManager.beginTransaction()
                 .replace( R.id.container, fragment)
                 .addToBackStack(ModifyPermissionFragment.TAG)
                 .commit();
-
     }
 
     @Override
@@ -555,7 +582,7 @@ public class MainActivity extends AppCompatActivity implements
         HashMap<Integer, Permission> permissions =
                 permission.getMaster().getPermissions(User.getLoggedUser());
         if (permissions.containsKey(permission.getSlaveId())) {
-            mCurrentUser.deletePermission(permission.getMaster().getName(),
+            mCurrentUser.deletePermission(permission.getMaster().getId(),
                     permissions.get(permission.getSlaveId()).getKey(),
                     permission.getKey(),
                     permission.getSlaveId());
