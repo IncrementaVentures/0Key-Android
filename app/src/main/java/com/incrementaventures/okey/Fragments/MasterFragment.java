@@ -251,16 +251,16 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
                 moveViewPagerLeft(mSlaveNameContainer, mSelectedSlaveIndex);
     }
 
-    @OnClick(R.id.left_arrow_slave)
+    @OnClick(R.id.right_arrow_slave)
     public void rightArrowSlaveClicked() {
         mSelectedSlaveIndex =
                 moveViewPagerRight(mSlaveNameContainer, mSelectedSlaveIndex, mSlaves.size());
     }
 
-    private int moveViewPagerRight(ViewPager viewPager, int currentIndex, int listLenght) {
+    private int moveViewPagerRight(ViewPager viewPager, int currentIndex, int listLength) {
         currentIndex++;
-        if (currentIndex >= listLenght) {
-            currentIndex = listLenght - 1;
+        if (currentIndex >= listLength) {
+            currentIndex = listLength - 1;
         }
         viewPager.setCurrentItem(currentIndex);
         return currentIndex;
