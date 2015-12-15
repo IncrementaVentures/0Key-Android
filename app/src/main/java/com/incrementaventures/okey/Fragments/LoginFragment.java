@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -88,16 +90,21 @@ public class LoginFragment extends Fragment implements User.OnParseUserResponse{
     public void userSignedUp() {  }
 
     @Override
-    public void userLoggedIn() {
+    public void userLoggedIn(ParseUser parseUser) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
-        Intent intent = new Intent(getActivity(), MainActivity.class);
-        startActivity(intent);
-        getActivity().finish();
+        if (parseUser.getBoolean(User.EMAIL_VERIFIED)) {
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            startActivity(intent);
+            getActivity().finish();
+        } else {
+            Snackbar.make(getView(), R.string.verifiy_account, Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override
     public void authError(ParseException e) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
-        Toast.makeText(getActivity().getApplicationContext(), R.string.auth_error, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity().getApplicationContext(), R.string.auth_error,
+                Toast.LENGTH_SHORT).show();
     }
 }

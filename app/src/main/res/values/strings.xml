@@ -139,5 +139,6 @@
     <string name="searching">Searching</string>
     <string name="deleting_permission">Deleting permission</string>
     <string name="master_configured">Master configured</string>
+    <string name="verifiy_account">Verify your account</string>
 
 </resources>

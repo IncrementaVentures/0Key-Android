@@ -27,6 +27,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     public static final String UUID = "uuid";
     public static final String MALE = "m";
     public static final String FEMALE = "f";
+    public static final String EMAIL_VERIFIED = "emailVerified";
 
 
     private ParseUser mParseUser;
@@ -68,7 +69,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
 
     public interface OnParseUserResponse{
         void userSignedUp();
-        void userLoggedIn();
+        void userLoggedIn(ParseUser parseUser);
         void authError(ParseException e);
     }
 
@@ -230,7 +231,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null) {
                     // IMPORTANT: use getLoggedUser() to obtain the user in the activity
-                    listener.userLoggedIn();
+                    listener.userLoggedIn(parseUser);
                 } else {
                     listener.authError(e);
                 }

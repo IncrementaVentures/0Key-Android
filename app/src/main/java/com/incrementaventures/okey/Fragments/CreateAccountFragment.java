@@ -1,6 +1,7 @@
 package com.incrementaventures.okey.Fragments;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -89,18 +91,26 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserR
     public void userSignedUp() {
         if (mProgressDialog != null) mProgressDialog.dismiss();
         Intent intent = new Intent(getActivity(), MainActivity.class);
-        startActivity(intent);
-        getActivity().finish();
+        // Create new fragment and transaction
+        LoginFragment newFragment = new LoginFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack if needed
+        transaction.replace(R.id.auth_container, newFragment);
+        transaction.addToBackStack(null);
+        // Commit the transaction
+        transaction.commit();
     }
 
     @Override
-    public void userLoggedIn() {
+    public void userLoggedIn(ParseUser parseUser) {
 
     }
 
     @Override
     public void authError(ParseException e) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
-        Toast.makeText(getActivity().getApplicationContext(), R.string.auth_error, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity().getApplicationContext(), R.string.auth_error,
+                Toast.LENGTH_SHORT).show();
     }
 }
