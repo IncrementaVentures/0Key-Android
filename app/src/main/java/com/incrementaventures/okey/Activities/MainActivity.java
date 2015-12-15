@@ -29,6 +29,7 @@ import com.incrementaventures.okey.Fragments.MasterFragment;
 import com.incrementaventures.okey.Fragments.InsertPinFragment;
 import com.incrementaventures.okey.Fragments.MenuFragment;
 import com.incrementaventures.okey.Fragments.ModifyPermissionFragment;
+import com.incrementaventures.okey.Fragments.NewDoorFragment;
 import com.incrementaventures.okey.Fragments.PermissionsFragment;
 import com.incrementaventures.okey.Fragments.PreferencesFragment;
 import com.incrementaventures.okey.Fragments.ScanDevicesFragment;
@@ -56,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements
         MenuFragment.OnMenuButtonClicked,
         ModifyPermissionFragment.OnPermissionModifiedListener,
         ConfigurationFragment.OnMasterConfigurationListener,
-        PermissionsFragment.OnPermissionAdapterListener {
+        PermissionsFragment.OnPermissionAdapterListener,
+        NewDoorFragment.OnPairRequestedListener {
 
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
@@ -486,7 +488,11 @@ public class MainActivity extends AppCompatActivity implements
 
     public void onAddNewDoorClicked(View view) {
         getSupportFragmentManager().popBackStack();
-        showToolbar();
+        NewDoorFragment fragment = new NewDoorFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace( R.id.container, fragment)
+                .addToBackStack(PermissionsFragment.TAG)
+                .commit();
     }
 
     public void onShowPermissionsClicked(View view) {
@@ -585,14 +591,24 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onDeletePermissionAdapterClicked(Permission permission) {
-        HashMap<Integer, Permission> permissions =
-                permission.getMaster().getPermissions(User.getLoggedUser());
-        if (permissions.containsKey(permission.getSlaveId())) {
+        Permission adminPermission = mCurrentUser.getAdminPermission(permission.getMaster());
+        if (adminPermission != null) {
             mCurrentUser.deletePermission(permission.getMaster().getId(),
-                    permissions.get(permission.getSlaveId()).getKey(),
+                    adminPermission.getKey(),
                     permission.getKey(),
                     permission.getSlaveId());
             Snackbar.make(mRootView, R.string.deleting_permission, Snackbar.LENGTH_INDEFINITE).show();
+        } else {
+            Snackbar.make(mRootView, R.string.no_permission, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onPairRequested(Master master, int slaveId) {
+        Permission permission = mCurrentUser.getAdminPermission(master);
+        if (permission != null) {
+            mCurrentUser.pairSlaves(
+                    master.getId(), permission.getKey(), permission.getSlaveId(), slaveId);
         } else {
             Snackbar.make(mRootView, R.string.no_permission, Snackbar.LENGTH_LONG).show();
         }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -130,6 +131,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
                 setSlaveHolderAdapter();
                 mSlaveNameAdapter.notifyDataSetChanged();
                 setUI();
+                Snackbar.make(getView(), R.string.slaves_added, Snackbar.LENGTH_LONG).show();
             }
         });
     }

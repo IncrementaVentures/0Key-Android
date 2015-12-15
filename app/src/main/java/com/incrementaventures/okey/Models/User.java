@@ -459,6 +459,14 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         mBluetoothClient.executePairSlaves(masterName, adminKey, keySlaveId, pairSlaveId);
     }
 
+    public Permission getAdminPermission(Master master) {
+        HashMap<Integer, Permission> permissions = master.getPermissions(User.getLoggedUser());
+        if (permissions.containsKey(0)) {
+            return permissions.get(0);
+        }
+        return null;
+    }
+
     public Permission getPermission(Master master, int id) {
         return master.getPermissions(this).get(id);
     }

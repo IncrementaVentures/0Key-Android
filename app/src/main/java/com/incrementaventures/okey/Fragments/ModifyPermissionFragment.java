@@ -329,7 +329,7 @@ public class ModifyPermissionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(R.string.doors);
+                builder.setTitle(R.string.masters);
                 final CharSequence[] mastersNames = new CharSequence[mMasters.size()];
                 for (int i = 0; i < mMasters.size(); i++) {
                     mastersNames[i] = mMasters.get(i).getName();

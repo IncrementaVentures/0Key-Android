@@ -141,5 +141,7 @@
     <string name="master_configured">Master configured</string>
     <string name="verifiy_account">Verify your account</string>
     <string name="no_masters_yet">No masters yet</string>
+    <string name="pairing_slave">Pairing slave</string>
+    <string name="slaves_added">Slaves added</string>
 
 </resources>
