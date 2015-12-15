@@ -502,6 +502,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onAddNewPermissionClicked(View view) {
+        if (mMasterFragment.getSelectedMaster() == null) {
+            Snackbar.make(mRootView, R.string.no_masters_yet, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.popBackStack();
         Bundle args = new Bundle();

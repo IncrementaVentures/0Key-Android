@@ -16,7 +16,8 @@ import com.parse.SignUpCallback;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incrementaventures.okey.Models.ParseObject {
+public class User implements BluetoothClient.OnBluetoothToUserResponse,
+        com.incrementaventures.okey.Models.ParseObject {
 
     public static final String USER_CLASS_NAME = "User";
     private static final String NAME = "name";
@@ -446,7 +447,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         mBluetoothClient.executeGetSlaves(master, permissionKey);
     }
 
-    public void pairSlaves(String masterName, String adminKey){
+    public void pairSlaves(String masterName, String adminKey, int keySlaveId, int pairSlaveId) {
         mBluetoothClient = new BluetoothClient(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
@@ -455,7 +456,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             mBluetoothListener.enableBluetooth();
             return;
         }
-        mBluetoothClient.executePairSlaves(masterName, adminKey);
+        mBluetoothClient.executePairSlaves(masterName, adminKey, keySlaveId, pairSlaveId);
     }
 
     public Permission getPermission(Master master, int id) {

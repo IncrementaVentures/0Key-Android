@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +57,10 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     @Bind(R.id.open_button)
     ImageButton mOpenButton;
 
+    @Bind(R.id.show_permissions_button)
+    Button mShowPermissionsButton;
+
+
     private ArrayList<Master> mMasters;
     private int mSelectedMasterIndex;
     private HashMap<Integer, Permission> mPermissions;
@@ -96,7 +101,6 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
                 TreeMap<Integer, Permission> treeMap = new TreeMap<>(mPermissions);
                 User.getLoggedUser().getSlaves(mMasters.get(mSelectedMasterIndex), treeMap.firstEntry().getValue().getKey());
             }
-
         }
     }
 
@@ -207,12 +211,18 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
             mLeftArrowSlave.setVisibility(ImageButton.VISIBLE);
             mRightArrowSlave.setVisibility(ImageButton.VISIBLE);
         }
-        if (mMasters == null || mMasters.size() <= 1) {
+        if (mMasters == null || mMasters.size() == 0) {
             mLeftArrowMaster.setVisibility(ImageButton.GONE);
             mRightArrowMaster.setVisibility(ImageButton.GONE);
+            mShowPermissionsButton.setVisibility(Button.GONE);
+        } else if (mMasters.size() <= 1) {
+            mLeftArrowMaster.setVisibility(ImageButton.GONE);
+            mRightArrowMaster.setVisibility(ImageButton.GONE);
+            mShowPermissionsButton.setVisibility(Button.GONE);
         } else {
             mLeftArrowMaster.setVisibility(ImageButton.VISIBLE);
             mRightArrowMaster.setVisibility(ImageButton.VISIBLE);
+            mShowPermissionsButton.setVisibility(Button.VISIBLE);
         }
     }
 

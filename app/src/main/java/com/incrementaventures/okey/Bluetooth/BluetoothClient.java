@@ -250,9 +250,11 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executePairSlaves(String masterName, String adminKey){
+    public void executePairSlaves(String masterId, String adminKey, int keySlaveId, int pairSlaveId) {
         mPermissionKey = adminKey;
-        mMasterId = masterName;
+        mSlaveId = keySlaveId;
+        mNewSlaveId = pairSlaveId;
+        mMasterId = masterId;
         mMode = PAIR_SLAVES_MODE;
         startScan(MEDIUM_SCAN_TIME);
     }
@@ -372,7 +374,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                             buildGetAllPermissionsMessage(mSlaveId, mPermissionKey);
                     break;
                 case PAIR_SLAVES_MODE:
-                    message = BluetoothProtocol.buildPairSlavesMessage(mPermissionKey);
+                    message = BluetoothProtocol.buildPairSlavesMessage(mPermissionKey, mSlaveId, mNewSlaveId);
                     break;
                 default:
                     return;

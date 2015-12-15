@@ -330,7 +330,8 @@ public class BluetoothProtocol {
         return builder.toString();
     }
 
-    public static String buildPairSlavesMessage(String permissionKey) {
+    public static String buildPairSlavesMessage(String permissionKey, int idKeySlave,
+                                                int idPairSlave) {
         StringBuilder builder = new StringBuilder();
         Time time = new Time();
         time.setToNow();
@@ -345,6 +346,14 @@ public class BluetoothProtocol {
 
         // "10;date;key;"
         builder.append(permissionKey);
+        builder.append(SEPARATOR);
+
+        // "10;date;key;idKeySlave;"
+        builder.append(idKeySlave);
+        builder.append(SEPARATOR);
+
+        // "10;date;key;idKeySlave;idPairSlave;"
+        builder.append(idPairSlave);
         builder.append(SEPARATOR);
 
         // "10;date;key;*"

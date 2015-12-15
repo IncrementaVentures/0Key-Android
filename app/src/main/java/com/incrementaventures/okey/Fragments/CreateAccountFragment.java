@@ -90,7 +90,6 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserR
     @Override
     public void userSignedUp() {
         if (mProgressDialog != null) mProgressDialog.dismiss();
-        Intent intent = new Intent(getActivity(), MainActivity.class);
         // Create new fragment and transaction
         LoginFragment newFragment = new LoginFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
