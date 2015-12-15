@@ -136,7 +136,7 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         return mParseMaster.getString(UUID);
     }
 
-    public static void deleteAll(){
+    public static void unpinAll(){
         ParseQuery<ParseObject> query = new ParseQuery<>(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
 
@@ -145,7 +145,6 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
             public void done(List<ParseObject> list, ParseException e) {
                     for (ParseObject o : list){
                         try {
-                            o.deleteEventually();
                             o.unpin();
                         } catch (ParseException e1) {
                             e1.printStackTrace();

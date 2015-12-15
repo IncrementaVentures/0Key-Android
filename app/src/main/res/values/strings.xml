@@ -143,5 +143,6 @@
     <string name="no_masters_yet">No masters yet</string>
     <string name="pairing_slave">Pairing slave</string>
     <string name="slaves_added">Slaves added</string>
+    <string name="logout">Logout</string>
 
 </resources>

@@ -1,8 +1,6 @@
 package com.incrementaventures.okey.Fragments;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -14,11 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.incrementaventures.okey.Activities.DoorActivity;
-import com.incrementaventures.okey.Activities.ModifyPermissionActivity;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Nameable;
 import com.incrementaventures.okey.Models.Permission;
@@ -28,7 +22,6 @@ import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TreeMap;
 
 import butterknife.Bind;

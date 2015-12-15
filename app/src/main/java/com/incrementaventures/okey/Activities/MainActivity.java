@@ -541,8 +541,15 @@ public class MainActivity extends AppCompatActivity implements
     public void onMenuItemClicked(View view) {
         getSupportFragmentManager().popBackStack();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace( R.id.container, new MenuFragment())
+        transaction.replace(R.id.container, new MenuFragment())
                 .addToBackStack(MenuFragment.TAG).commit();
+    }
+
+    public void onLogoutClicked(View view) {
+        mCurrentUser.logout();
+        Intent intent = new Intent(this, AuthActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override

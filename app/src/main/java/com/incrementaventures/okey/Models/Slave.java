@@ -2,8 +2,11 @@ package com.incrementaventures.okey.Models;
 
 import android.text.TextUtils;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+
+import java.util.List;
 
 public class Slave implements ParseObject, Nameable {
     public static final String SLAVE_CLASS_NAME = "Slave";
@@ -102,6 +105,24 @@ public class Slave implements ParseObject, Nameable {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static void unpinAll() {
+        ParseQuery<com.parse.ParseObject> query = new ParseQuery<>(Slave.SLAVE_CLASS_NAME);
+        query.fromLocalDatastore();
+
+        query.findInBackground(new FindCallback<com.parse.ParseObject>() {
+            @Override
+            public void done(List<com.parse.ParseObject> list, ParseException e) {
+                for (com.parse.ParseObject o : list){
+                    try {
+                        o.unpin();
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     public void setMasterUuid(String masterUuid) {

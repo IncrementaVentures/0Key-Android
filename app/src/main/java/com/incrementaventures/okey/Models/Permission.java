@@ -302,7 +302,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         mParsePermission.put(KEY, key);
     }
 
-    public static void deleteAll(){
+    public static void unpinAll(){
         ParseQuery<ParseObject> query = new ParseQuery<>(Permission.PERMISSION_CLASS_NAME);
         query.fromLocalDatastore();
 
@@ -311,7 +311,6 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
             public void done(List<ParseObject> list, ParseException e) {
                 for (ParseObject o : list) {
                     try {
-                        o.deleteEventually();
                         o.unpin();
                     } catch (ParseException e1) {
                         e1.printStackTrace();

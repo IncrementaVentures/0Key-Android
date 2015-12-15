@@ -4,7 +4,6 @@ package com.incrementaventures.okey.Models;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
-import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.parse.LogInCallback;
@@ -481,6 +480,13 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void logout() {
+        ParseUser.logOut();
+        Master.unpinAll();
+        Permission.unpinAll();
+        Slave.unpinAll();
     }
 
     public boolean hasPermission(Master master){

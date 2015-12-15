@@ -103,4 +103,16 @@
         android:layout_below="@+id/add_new_permission"
         android:layout_alignStart="@+id/add_new_permission" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:onClick="onLogoutClicked"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/logout"
+        android:id="@+id/logout"
+        android:textColor="@color/white"
+        android:layout_below="@+id/settings"
+        android:layout_alignStart="@+id/settings" />
+
 </RelativeLayout>
