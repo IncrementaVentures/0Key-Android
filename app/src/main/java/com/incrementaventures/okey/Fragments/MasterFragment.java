@@ -187,14 +187,14 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
 
     private void setMasterHolderAdapter() {
         mMasterNameAdapter = new TextViewPagerAdapter(getChildFragmentManager(),
-                mMasters);
+                mMasters, true);
         mMasterNameContainer.setAdapter(mMasterNameAdapter);
         mMasterNameContainer.addOnPageChangeListener(mMasterPageChangeListener);
     }
 
     private void setSlaveHolderAdapter() {
         mSlaveNameAdapter = new TextViewPagerAdapter(getChildFragmentManager(),
-                mSlaves);
+                mSlaves, false);
         mSlaveNameContainer.setAdapter(mSlaveNameAdapter);
     }
 
@@ -213,7 +213,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         } else if (mMasters.size() <= 1) {
             mLeftArrowMaster.setVisibility(ImageButton.GONE);
             mRightArrowMaster.setVisibility(ImageButton.GONE);
-            mShowPermissionsButton.setVisibility(Button.GONE);
+            mShowPermissionsButton.setVisibility(Button.VISIBLE);
         } else {
             mLeftArrowMaster.setVisibility(ImageButton.VISIBLE);
             mRightArrowMaster.setVisibility(ImageButton.VISIBLE);
@@ -310,16 +310,20 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
 
     private class TextViewPagerAdapter extends FragmentStatePagerAdapter {
         ArrayList<? extends Nameable> mObjects;
+        private boolean mShowIcon;
 
-        public TextViewPagerAdapter(FragmentManager fm, ArrayList<? extends Nameable> objects) {
+        public TextViewPagerAdapter(FragmentManager fm, ArrayList<? extends Nameable> objects,
+                                    boolean showIcon) {
             super(fm);
             mObjects = objects;
+            mShowIcon = showIcon;
         }
 
         @Override
         public Fragment getItem(int position) {
             Bundle args = new Bundle();
             args.putString(Master.NAME, mObjects.get(position).getName());
+            args.putBoolean(NameHolderFragment.SHOW_ICON, mShowIcon);
             NameHolderFragment nameHolderFragment = new NameHolderFragment();
             nameHolderFragment.setArguments(args);
             return nameHolderFragment;

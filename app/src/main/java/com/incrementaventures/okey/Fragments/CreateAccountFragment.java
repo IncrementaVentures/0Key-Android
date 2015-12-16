@@ -1,20 +1,19 @@
 package com.incrementaventures.okey.Fragments;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 import com.parse.ParseException;
@@ -24,7 +23,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class CreateAccountFragment extends Fragment implements User.OnParseUserResponse{
+public class CreateAccountFragment extends Fragment implements User.OnParseUserLoginResponse {
 
     @Bind(R.id.create_account_email)
     EditText mEmail;
@@ -82,7 +81,28 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserR
                 }
                 User.signUp(thisFragment, name, password, email, phone, sex, birthday);
                 mProgressDialog = ProgressDialog.show(getActivity(), null, getResources().getString(R.string.logging));
+            }
+        });
 
+        mBirthday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new DatePickerFragment(){
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        String yearString = String.valueOf(year);
+                        String monthString = String.valueOf(month + 1);
+                        String dayString = String.valueOf(day);
+
+                        if (monthString.length() == 1 ) monthString = "0" + monthString;
+                        if (dayString.length() == 1 ) dayString = "0" + dayString;
+                        String birthday = yearString + "-"
+                                + monthString + "-"
+                                + dayString;
+                        mBirthday.setText(birthday);
+                    }
+                };
+                newFragment.show(getActivity().getFragmentManager(), "datePicker");
             }
         });
     }

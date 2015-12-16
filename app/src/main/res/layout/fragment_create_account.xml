@@ -20,13 +20,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:hint="Name"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:ems="10"
-            android:id="@+id/create_account_name"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:id="@+id/create_account_name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/password"
+            android:id="@+id/textView20" />
 
         <EditText
             android:layout_width="match_parent"
@@ -34,12 +37,15 @@
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/create_account_password"
-            android:layout_below="@+id/create_account_name"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:hint="Password"
-            android:layout_alignRight="@+id/create_account_name"
-            android:layout_alignEnd="@+id/create_account_name" />
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+             />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/email"
+            android:id="@+id/textView21" />
 
         <EditText
             android:layout_width="match_parent"
@@ -47,12 +53,15 @@
             android:inputType="textEmailAddress"
             android:ems="10"
             android:id="@+id/create_account_email"
-            android:layout_below="@+id/create_account_password"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:hint="Email"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/phone_number"
+            android:id="@+id/textView22" />
 
         <EditText
             android:layout_width="match_parent"
@@ -60,22 +69,24 @@
             android:inputType="phone"
             android:ems="10"
             android:id="@+id/create_account_phone"
-            android:layout_below="@+id/create_account_email"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:hint="Phone number"/>
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            />
 
-
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:focusable="true"
+            android:focusableInTouchMode="false"
+            android:text="@string/birthday"
+            android:id="@+id/textView23" />
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="60dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:text="0key"
         android:id="@+id/textView"
         android:layout_alignParentTop="true"
@@ -85,6 +96,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:id="@+id/create_account_button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -94,7 +106,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/create_account_birthday"
-        android:hint="@string/birthday"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:layout_below="@+id/linearLayout"
         android:layout_alignParentStart="true"
         android:layout_alignEnd="@+id/linearLayout" />
@@ -109,21 +121,41 @@
         android:weightSum="1"
         android:id="@+id/create_account_radio_group">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/gender"
+            android:id="@+id/textView24"
+            android:layout_weight="0.4" />
+
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/male"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:id="@+id/create_account_male"
             android:layout_gravity="right"
-            android:layout_weight="0.79"
+            android:layout_weight="0.3"
             android:checked="true" />
 
         <RadioButton
-            android:layout_width="164dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/female"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:id="@+id/create_account_female"
-            android:checked="false" />
+            android:checked="false"
+            android:layout_weight="0.3" />
     </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/full_name"
+        android:id="@+id/textView19"
+        android:layout_above="@+id/linearLayout"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

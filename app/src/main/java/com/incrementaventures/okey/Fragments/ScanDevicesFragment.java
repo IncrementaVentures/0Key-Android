@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
-import com.incrementaventures.okey.Adapters.MasterAdapter;
+import com.incrementaventures.okey.Views.Adapters.MasterAdapter;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;

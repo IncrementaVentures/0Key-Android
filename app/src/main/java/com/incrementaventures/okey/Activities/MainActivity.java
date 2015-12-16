@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -45,6 +46,8 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -109,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void setUpToolbar() {
         mToolbar.setNavigationIcon(R.drawable.ic_action_menu);
+        mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -546,10 +550,19 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onLogoutClicked(View view) {
-        mCurrentUser.logout();
-        Intent intent = new Intent(this, AuthActivity.class);
-        startActivity(intent);
-        finish();
+        mCurrentUser.logout(new User.OnParseUserLogoutListener() {
+            @Override
+            public void userLoggedOut() {
+                Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        Snackbar.make(mRootView, R.string.logging_out, Snackbar.LENGTH_LONG).show();
+    }
+
+    public void onGoBackClicked(View view) {
+        onBackPressed();
     }
 
     @Override

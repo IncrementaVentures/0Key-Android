@@ -3,12 +3,31 @@
     android:layout_height="match_parent"
     tools:context="com.incrementaventures.okey.Fragments.NameHolderFragment">
 
-    <TextView android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/master_name"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Door name"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ic_house"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/master_name"
+            android:src="@drawable/ic_action_home" />
+
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/master_name"
+            android:padding="5dp"
+            android:textAppearance="@style/TextAppearance.AvenirGreyLarge"
+            android:text="Door name"
+            />
+
+    </LinearLayout>
+
+
 
 </RelativeLayout>

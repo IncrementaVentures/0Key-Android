@@ -4,7 +4,6 @@ package com.incrementaventures.okey.Fragments;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +13,8 @@ import android.widget.Toast;
 
 import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
-import com.incrementaventures.okey.Adapters.MasterAdapter;
-import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
+import com.incrementaventures.okey.Views.Adapters.MasterAdapter;
 import com.incrementaventures.okey.Models.Master;
-import com.incrementaventures.okey.Models.Permission;
-import com.incrementaventures.okey.Models.Slave;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 

@@ -1,4 +1,4 @@
-package com.incrementaventures.okey.Adapters;
+package com.incrementaventures.okey.Views.Adapters;
 
 
 import android.content.Context;

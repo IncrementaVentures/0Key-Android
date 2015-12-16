@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.incrementaventures.okey.Adapters.PermissionAdapter;
+import com.incrementaventures.okey.Views.Adapters.PermissionAdapter;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.R;

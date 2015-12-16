@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:src="@drawable/ic_action_menu_gray"
+            android:src="@drawable/ic_arrow_back_gray"
             android:background="@android:color/transparent"
             android:id="@+id/menu_button"
             android:onClick="onMenuItemClicked"
@@ -27,7 +27,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:padding="10dp"
-            android:src="@drawable/ok_icon"
+            android:src="@drawable/ic_action_check"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
@@ -36,31 +36,21 @@
             android:layout_alignParentEnd="true" />
 
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/profile_picture"
-            android:src="@drawable/no_profile_picture"
-            android:layout_marginTop="30dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:text="@string/full_name"
             android:id="@+id/textView9"
             android:padding="5dp"
-            android:layout_below="@+id/profile_picture"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="40dp" />
+            android:layout_below="@+id/ok_button"
+            android:layout_marginTop="50dp" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:ems="10"
             android:id="@+id/user_name"
             android:layout_below="@+id/textView9"
@@ -70,7 +60,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:text="@string/email"
             android:padding="5dp"
             android:id="@+id/textView10"
@@ -81,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:ems="10"
             android:id="@+id/user_email"
             android:layout_below="@+id/textView10"
@@ -91,7 +81,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:text="@string/password"
             android:padding="5dp"
             android:id="@+id/textView11"
@@ -103,7 +93,7 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:id="@+id/user_password"
             android:layout_below="@+id/textView11"
             android:layout_alignParentStart="true"
@@ -112,7 +102,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:text="@string/birthday"
             android:padding="5dp"
             android:id="@+id/textView12"
@@ -123,9 +113,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="date"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:ems="10"
             android:id="@+id/user_birthday"
+            android:focusable="true"
+            android:focusableInTouchMode="false"
             android:layout_below="@+id/textView12"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true" />
@@ -133,7 +125,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:text="@string/gender"
             android:padding="5dp"
             android:id="@+id/textView13"
@@ -154,14 +146,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/female"
                 android:id="@+id/user_sex_female"
-                android:layout_below="@+id/user_birthday"
-                android:layout_alignStart="@+id/user_sex_group"
+                android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
                 android:layout_marginRight="10dp"
                 android:checked="false" />
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
                 android:text="@string/male"
                 android:id="@+id/user_sex_male"
                 android:checked="true" />

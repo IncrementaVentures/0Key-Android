@@ -14,14 +14,14 @@
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
         android:onClick="onGoHomeClicked"
-        android:src="@drawable/cancel_icon"
+        android:src="@drawable/ic_action_clear"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:padding="10dp"
         android:text="@string/add_new_door"
         android:id="@+id/textView5"
@@ -33,18 +33,17 @@
         android:layout_height="50dp"
         android:padding="10dp"
         android:id="@+id/ok_button"
-        android:layout_gravity="right"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
-        android:src="@drawable/ok_icon"
+        android:src="@drawable/ic_action_check"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:text="@string/name"
         android:padding="5dp"
         android:id="@+id/textView17"
@@ -55,7 +54,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:id="@+id/new_door_name"
         android:layout_below="@+id/textView17"
         android:layout_alignParentStart="true"
@@ -64,7 +63,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:padding="5dp"
         android:text="@string/location"
         android:id="@+id/textView18"
@@ -74,7 +73,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         style="?android:editTextStyle"
         android:text="@string/no_masters_yet"
         android:id="@+id/selected_master"

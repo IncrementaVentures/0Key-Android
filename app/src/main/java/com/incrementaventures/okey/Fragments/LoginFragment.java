@@ -22,7 +22,7 @@ import com.parse.ParseUser;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class LoginFragment extends Fragment implements User.OnParseUserResponse{
+public class LoginFragment extends Fragment implements User.OnParseUserLoginResponse {
 
     @Bind(R.id.create_account_in_login_button)
     Button mToCreateButton;

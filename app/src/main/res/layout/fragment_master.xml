@@ -27,7 +27,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="10dp"
-                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/darker_gray"
                 android:id="@+id/master_name_container"
                 android:layout_alignParentTop="true"
@@ -64,9 +63,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/open_button"
             android:src="@drawable/locked_padlock"
-            android:padding="40dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
+            android:padding="15dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
@@ -76,7 +75,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="80dp"
+
             android:layout_below="@id/open_button"
             android:id="@+id/selected_slave_bar">
 
@@ -84,11 +84,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="10dp"
-                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/darker_gray"
                 android:id="@+id/slave_name_container"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true" />
 
             <ImageButton
                 android:layout_width="60dp"
@@ -99,8 +98,8 @@
                 android:id="@+id/right_arrow_slave"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
-                android:layout_marginEnd="50dp"
-                android:layout_centerVertical="true"
+                android:layout_marginEnd="30dp"
+                android:layout_alignTop="@+id/left_arrow_slave"
                 android:layout_alignParentEnd="true" />
 
             <ImageButton
@@ -112,8 +111,9 @@
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:id="@+id/left_arrow_slave"
+                android:layout_centerVertical="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="50dp" />
+                android:layout_marginStart="30dp" />
 
 
         </RelativeLayout>
@@ -122,51 +122,41 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/permissions"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:id="@+id/show_permissions_button"
             android:onClick="onShowPermissionsClicked"
-            android:layout_below="@+id/selected_slave_bar"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" />
 
-    </RelativeLayout>
-
-
-
-    <!--
-        <RelativeLayout
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="0.8">
+            android:layout_height="match_parent"
+            android:layout_above="@+id/show_permissions_button"
+            android:onClick="onAddNewPermissionClicked"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/selected_slave_bar"
+            android:id="@+id/share_virtual_key">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="@style/TextAppearance.AvenirGreySmall"
+                android:textColor="@color/turquoise"
+                android:gravity="center_vertical"
+                android:layout_marginRight="5dp"
+                android:text="@string/share_a_virtual_key"
+                />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/permissions_up_bar"
-                android:background="@color/turquoise"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:gravity="center_vertical"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_action_share"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/white"
-                    android:text="Permits"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" />
+        </LinearLayout>
 
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_action_add_circle_outline"
-                    android:background="@android:color/transparent"
-                    android:padding="10dp"
-                    android:id="@+id/add_permission_button"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentEnd="true" />
-
-            </RelativeLayout>
-        </RelativeLayout>
-        -->
+    </RelativeLayout>
 </RelativeLayout>

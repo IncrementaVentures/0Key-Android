@@ -7,6 +7,7 @@ import android.content.Context;
 import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.parse.LogInCallback;
+import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -67,10 +68,14 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
 
-    public interface OnParseUserResponse{
+    public interface OnParseUserLoginResponse {
         void userSignedUp();
         void userLoggedIn(ParseUser parseUser);
         void authError(ParseException e);
+    }
+
+    public interface OnParseUserLogoutListener {
+        void userLoggedOut();
     }
 
     public interface OnUserBluetoothToActivityResponse {
@@ -187,15 +192,15 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     /**
-     * SignUp the user. OnParseUserResponse#userSignedUp(User) is called if it succeeds and
-     * OnParseUserResponse#authError(ParseException) is called if there was an error.
+     * SignUp the user. OnParseUserLoginResponse#userSignedUp(User) is called if it succeeds and
+     * OnParseUserLoginResponse#authError(ParseException) is called if there was an error.
      * @param listener Listener to alert the subscribed classes that the user is signed up
      * @param name User name
      * @param pass User password
      * @param email User email, the de username too
      * @param phone Device phone
      */
-    public static void signUp(final OnParseUserResponse listener, String name, String pass,
+    public static void signUp(final OnParseUserLoginResponse listener, String name, String pass,
                               String email, String phone, String sex, String birthday) {
 
         final User user = new User(name, pass, email, phone, sex, birthday);
@@ -218,13 +223,13 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     /**
-     * Log in the user. OnParseUserResponse#userLoggedIn(User) is called if it succeeds.
-     * OnParseUserResponse#authError(ParseException) is called if it fails.
+     * Log in the user. OnParseUserLoginResponse#userLoggedIn(User) is called if it succeeds.
+     * OnParseUserLoginResponse#authError(ParseException) is called if it fails.
      * @param listener Listener to alert the subscribed classes that the user is logged in
      * @param email User email, the username too
      * @param pass User password
      */
-    public static void logIn(final OnParseUserResponse listener, String email, String pass){
+    public static void logIn(final OnParseUserLoginResponse listener, String email, String pass){
 
         ParseUser.logInInBackground(email, pass, new LogInCallback() {
             @Override
@@ -284,7 +289,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public String getBirthday() {
-        return mParseUser.getString(BIRTHDAY);
+        String birthday =  mParseUser.getString(BIRTHDAY);
+        return birthday.substring(0, birthday.indexOf("T"));
     }
 
     public boolean isMale() {
@@ -482,11 +488,16 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         }
     }
 
-    public void logout() {
-        ParseUser.logOut();
-        Master.unpinAll();
-        Permission.unpinAll();
-        Slave.unpinAll();
+    public void logout(final OnParseUserLogoutListener listener) {
+        ParseUser.logOutInBackground(new LogOutCallback() {
+            @Override
+            public void done(ParseException e) {
+                Master.unpinAll();
+                Permission.unpinAll();
+                Slave.unpinAll();
+                listener.userLoggedOut();
+            }
+        });
     }
 
     public boolean hasPermission(Master master){

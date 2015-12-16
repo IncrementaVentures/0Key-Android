@@ -144,5 +144,14 @@
     <string name="pairing_slave">Pairing slave</string>
     <string name="slaves_added">Slaves added</string>
     <string name="logout">Logout</string>
+    <string name="logging_out">Logging out</string>
+    <string name="phone_number">Phone number</string>
+    <string name="create_account">Create account</string>
+    <string name="login">Log in</string>
+    <string name="from_hour">From hour</string>
+    <string name="from_date">From date</string>
+    <string name="to_hour">To hour</string>
+    <string name="to_date">To date</string>
+    <string name="share_a_virtual_key">Share a virtual key</string>
 
 </resources>

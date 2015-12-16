@@ -15,7 +15,12 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/linearLayout">
 
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/password"
+            android:id="@+id/textView25" />
 
         <EditText
             android:layout_width="match_parent"
@@ -23,12 +28,8 @@
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/login_password"
-            android:layout_below="@+id/login_name"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:hint="Password"
-            android:layout_alignRight="@+id/login_name"
-            android:layout_alignEnd="@+id/login_name" />
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+             />
 
 
     </LinearLayout>
@@ -37,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="60dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:text="0key"
         android:id="@+id/textView"
         android:layout_alignParentTop="true"
@@ -46,8 +47,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Log in"
+        android:text="@string/login"
         android:id="@+id/login_button"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
@@ -58,17 +60,27 @@
         android:inputType="textEmailAddress"
         android:ems="10"
         android:id="@+id/login_email"
-        android:hint="Email"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:layout_above="@+id/linearLayout"
         android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create account"
+        android:text="@string/create_account"
         android:id="@+id/create_account_in_login_button"
         android:layout_alignParentBottom="true"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:layout_alignLeft="@+id/linearLayout"
         android:layout_alignStart="@+id/linearLayout" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/email"
+        android:id="@+id/textView26"
+        android:layout_above="@+id/login_email"
+        android:layout_alignStart="@+id/login_email" />
 
 </RelativeLayout>

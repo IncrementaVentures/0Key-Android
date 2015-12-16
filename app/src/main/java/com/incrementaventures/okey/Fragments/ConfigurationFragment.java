@@ -63,11 +63,6 @@ public class ConfigurationFragment extends Fragment {
                 mFactoryPassword.getText().toString(), master);
     }
 
-    @OnClick(R.id.cancel_button)
-    public void onCancelButtonClick() {
-
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

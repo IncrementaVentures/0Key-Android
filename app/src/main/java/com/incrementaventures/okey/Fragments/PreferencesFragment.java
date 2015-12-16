@@ -1,6 +1,7 @@
 package com.incrementaventures.okey.Fragments;
 
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
@@ -10,6 +11,7 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
@@ -20,6 +22,7 @@ import com.incrementaventures.okey.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class PreferencesFragment extends Fragment {
     @Bind(R.id.user_name)
@@ -71,6 +74,26 @@ public class PreferencesFragment extends Fragment {
             mUserFemale.setSelected(true);
         }
         return view;
+    }
+
+    @OnClick(R.id.user_birthday)
+    public void onBirthdayTextClick() {
+        DialogFragment newFragment = new DatePickerFragment(){
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                String yearString = String.valueOf(year);
+                String monthString = String.valueOf(month + 1);
+                String dayString = String.valueOf(day);
+
+                if (monthString.length() == 1 ) monthString = "0" + monthString;
+                if (dayString.length() == 1 ) dayString = "0" + dayString;
+                String birthday = yearString + "-"
+                        + monthString + "-"
+                        + dayString;
+                mUserBirthday.setText(birthday);
+            }
+        };
+        newFragment.show(getActivity().getFragmentManager(), "datePicker");
     }
 
     @Override

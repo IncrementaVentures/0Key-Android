@@ -2,35 +2,27 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_menu"
-    android:padding="25dp"
+    android:padding="16dp"
     tools:context="com.incrementaventures.okey.Fragments.MenuFragment">
 
-
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:id="@+id/profile_picture"
-        android:src="@drawable/no_profile_picture"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignBottom="@+id/user_email" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="User name"
         android:textColor="@color/white"
         android:id="@+id/user_name"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/profile_picture" />
+        android:layout_below="@+id/back_button"
+        android:layout_toEndOf="@+id/back_button"
+        android:layout_marginStart="26dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteMedium"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="5dp"
@@ -38,28 +30,27 @@
         android:textColor="@color/white"
         android:id="@+id/user_email"
         android:layout_below="@+id/user_name"
-        android:layout_toEndOf="@+id/profile_picture" />
+        android:layout_alignStart="@+id/user_name" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
         android:text="@string/home"
         android:onClick="onGoHomeClicked"
         android:padding="10dp"
         android:id="@+id/go_home"
         android:textColor="@color/white"
-        android:layout_marginTop="60dp"
-        android:layout_below="@+id/profile_picture"
-        android:layout_alignStart="@+id/profile_picture"
-        android:layout_marginStart="50dp" />
+        android:layout_marginTop="47dp"
+        android:layout_below="@+id/user_email"
+        android:layout_alignStart="@+id/user_email" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:onClick="onAddNew0keyClicked"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
         android:textColor="@color/white"
         android:text="@string/add_new_0key"
         android:id="@+id/add_new_0key"
@@ -71,7 +62,7 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:onClick="onAddNewDoorClicked"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
         android:text="@string/add_new_door"
         android:id="@+id/add_new_door"
         android:textColor="@color/white"
@@ -83,7 +74,7 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:onClick="onAddNewPermissionClicked"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
         android:text="@string/add_new_permission"
         android:id="@+id/add_new_permission"
         android:textColor="@color/white"
@@ -95,8 +86,8 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:onClick="onSettingsClicked"
-        android:layout_marginTop="30dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginTop="29dp"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
         android:text="@string/settings"
         android:id="@+id/settings"
         android:textColor="@color/white"
@@ -108,11 +99,21 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:onClick="onLogoutClicked"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
         android:text="@string/logout"
         android:id="@+id/logout"
         android:textColor="@color/white"
         android:layout_below="@+id/settings"
         android:layout_alignStart="@+id/settings" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_arrow_back_white_36dp"
+        android:onClick="onGoBackClicked"
+        android:id="@+id/back_button"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

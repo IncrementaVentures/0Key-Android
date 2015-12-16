@@ -25,8 +25,6 @@ import butterknife.OnClick;
 public class MenuFragment extends Fragment {
     public static final String TAG = "menu_fragment_tag";
 
-    @Bind(R.id.profile_picture)
-    ImageView mProfilePicture;
     @Bind(R.id.user_name)
     TextView mUserName;
     @Bind(R.id.user_email)
