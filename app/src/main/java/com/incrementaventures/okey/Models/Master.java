@@ -3,7 +3,6 @@ package com.incrementaventures.okey.Models;
 import android.text.TextUtils;
 
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -18,7 +17,7 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
     public static final String ID = "master_id";
     public static final String MASTER_ID = "master_id";
     public static final String NAME = "name";
-    public static final String USER_UUID = "user_uuid";
+    public static final String USER_ID = "user_id";
     private static final String CREATED_AT = "createdAt";
     private static final String UPDATED_AT = "upatedAt";
     private static final String DEFAULT_NAME = "Default name";
@@ -33,18 +32,18 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         void onMasterReceived(Master master);
     }
 
-    private Master(String id, String name, String userUuid) {
+    private Master(String id, String name, String userId) {
         mParseMaster = ParseObject.create(MASTER_CLASS_NAME);
         mParseMaster.put(ID, id);
         mMasterName = ParseObject.create(MASTER_NAME_CLASS_NAME);
         mMasterName.put(NAME, name);
-        mMasterName.put(USER_UUID, userUuid);
+        mMasterName.put(USER_ID, userId);
         mMasterName.put(MASTER_ID, id);
     }
 
     private Master(ParseObject parseMaster) {
         mParseMaster = parseMaster;
-        mMasterName = getParseMasterName(parseMaster, User.getLoggedUser().getUUID());
+        mMasterName = getParseMasterName(parseMaster, User.getLoggedUser().getId());
     }
 
     public static Master create(String id ,String name, String userUuid) {
@@ -65,7 +64,10 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
 
     @Override
     public String getName(){
-        return mParseMaster.getString(NAME);
+        if (mMasterName == null) {
+            mMasterName = getParseMasterName(mParseMaster, User.getLoggedUser().getId());
+        }
+        return mMasterName.getString(NAME);
     }
 
     public String getId() {
@@ -76,13 +78,12 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         ParseQuery<ParseObject> query = new ParseQuery<>(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
         query.orderByDescending(CREATED_AT);
-        String userUuid = User.getLoggedUser().getUUID();
-        query.whereEqualTo(USER_UUID, userUuid);
         ArrayList<Master> masters = new ArrayList<>();
         try {
             List<ParseObject> parseMasters  = query.find();
             for (ParseObject object : parseMasters) {
-                masters.add(Master.create(object));
+                if (object != null)
+                    masters.add(Master.create(object));
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -93,22 +94,22 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
     private static ParseObject getParseMasterName(ParseObject master, String userUuid) {
         ParseQuery<ParseObject> query = new ParseQuery<>(Master.MASTER_NAME_CLASS_NAME);
         query.whereEqualTo(MASTER_ID, master.get(ID));
-        query.whereEqualTo(USER_UUID, userUuid);
+        query.whereEqualTo(USER_ID, userUuid);
         query.fromLocalDatastore();
         ParseObject masterName;
         try {
             masterName = query.getFirst();
             if (masterName == null) {
                 masterName = ParseObject.create(MASTER_NAME_CLASS_NAME);
-                masterName.put(USER_UUID, userUuid);
-                masterName.put(MASTER_ID, master.get(ID));
-                masterName.put(NAME, DEFAULT_NAME);
+                masterName.put(USER_ID, userUuid);
+                masterName.put(MASTER_ID, master.getString(ID));
+                masterName.put(NAME, master.getString(ID));
             }
         } catch (ParseException e) {
             masterName = ParseObject.create(MASTER_NAME_CLASS_NAME);
-            masterName.put(USER_UUID, userUuid);
-            masterName.put(MASTER_ID, master.get(ID));
-            masterName.put(NAME, DEFAULT_NAME);
+            masterName.put(USER_ID, userUuid);
+            masterName.put(MASTER_ID, master.getString(ID));
+            masterName.put(NAME, master.getString(ID));
         }
         return masterName;
     }
@@ -125,7 +126,7 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
                     List<ParseObject> list  = query.find();
                     Master master;
                     for (ParseObject object : list){
-                        master = getMaster(object.getString(UUID));
+                        master = getMaster(object.getString(OBJECT_ID));
                         if (master == null) {
                             master = Master.create(object);
                             masters.add(master);
@@ -154,14 +155,29 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
             e.printStackTrace();
         }
     }
+
     @Override
-    public void save(){
-        mParseMaster.pinInBackground();
-        mParseMaster.saveEventually();
-        mMasterName.pinInBackground();
-        mMasterName.saveEventually();
+    public void save() {
+        saveLocal();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Master master = fetchMaster(getId());
+                if (master == null) {
+                    mParseMaster.saveEventually();
+                }
+                mMasterName.saveEventually();
+            }
+        }).start();
     }
 
+    public void saveLocal() {
+        mParseMaster.pinInBackground();
+        if (mMasterName == null) {
+            mMasterName = getParseMasterName(mParseMaster, User.getLoggedUser().getId());
+        }
+        mMasterName.pinInBackground();
+    }
 
     public static void unpinAll(){
         ParseQuery<ParseObject> query = new ParseQuery<>(Master.MASTER_CLASS_NAME);
@@ -216,7 +232,7 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         if (mParseMaster == null) return null;
         ParseQuery query = new ParseQuery(Permission.PERMISSION_CLASS_NAME);
         query.whereEqualTo(Permission.MASTER_ID, getId());
-        query.whereEqualTo(Permission.USER_UUID, user.getUUID());
+        query.whereEqualTo(Permission.USER_ID, user.getId());
         query.fromLocalDatastore();
         HashMap<Integer, Permission>  permissions = new HashMap<>();
         try {
@@ -316,28 +332,27 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         }
     }
 
-    public static void fetchMaster(final String id, final OnNetworkResponseListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (TextUtils.isEmpty(id)) return;
-                ParseQuery<ParseObject> query = new ParseQuery<>(MASTER_CLASS_NAME);
-                query.whereEqualTo(ID, id);
-                try {
-                    ParseObject parseMaster = query.getFirst();
-                    listener.onMasterReceived(Master.create(parseMaster));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+    public static Master fetchMaster(final String id) {
+        if (TextUtils.isEmpty(id)) return null;
+        ParseQuery<ParseObject> query = new ParseQuery<>(MASTER_CLASS_NAME);
+        query.whereEqualTo(ID, id);
+        Master master = null;
+        try {
+            ParseObject parseMaster = query.getFirst();
+            if (parseMaster != null) {
+                master = Master.create(parseMaster);
             }
-        }).start();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return master;
     }
 
     private static ParseObject fetchParseMasterName(ParseObject master, String userUuid)
             throws ParseException {
         ParseQuery<ParseObject> query = new ParseQuery<>(Master.MASTER_NAME_CLASS_NAME);
         query.whereEqualTo(MASTER_ID, master.get(ID));
-        query.whereEqualTo(USER_UUID, userUuid);
+        query.whereEqualTo(USER_ID, userUuid);
         return query.getFirst();
     }
 }

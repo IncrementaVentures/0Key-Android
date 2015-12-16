@@ -182,7 +182,7 @@ public class BluetoothProtocol {
         return builder.toString();
     }
 
-    public static String buildEditPermissionMessage(Permission oldPermission, Permission newPermission,
+    public static String buildEditPermissionMessage(Permission toEditPermission, int oldSlaveId,
                                                     String adminKey) {
         StringBuilder builder = new StringBuilder();
         Time time = new Time();
@@ -195,26 +195,26 @@ public class BluetoothProtocol {
         // "02;date;key;"
         builder.append(adminKey).append(SEPARATOR);
         // "02;date;key;slaveId;"
-        builder.append(oldPermission.getKey()).append(SEPARATOR);
+        builder.append(toEditPermission.getKey()).append(SEPARATOR);
         // "02;date;key;slaveId;permissionKey;"
-        builder.append(oldPermission.getSlaveId()).append(SEPARATOR);
+        builder.append(oldSlaveId).append(SEPARATOR);
         // "02;date;key;slaveId;permissionKey;oldSlaveId;"
-        builder.append(newPermission.getSlaveId()).append(SEPARATOR);
+        builder.append(toEditPermission.getSlaveId()).append(SEPARATOR);
         // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;"
         builder.append(MODIFY_PERMISSION_CODE).append(SEPARATOR);
 
-        int type = Permission.getType(newPermission.getType());
+        int type = Permission.getType(toEditPermission.getType());
         // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;permissionType;"
         builder.append(type).append(SEPARATOR);
 
         if (type == TEMPORAL_PERMISSION){
             // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;permissionType;start;"
-            builder.append(newPermission.getStartDate()).append(SEPARATOR);
+            builder.append(toEditPermission.getStartDate()).append(SEPARATOR);
             // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;permissionType;start;end;"
-            builder.append(newPermission.getEndDate()).append(SEPARATOR);
+            builder.append(toEditPermission.getEndDate()).append(SEPARATOR);
         } else {
             // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;permissionType;start;"
-            builder.append(newPermission.getStartDate()).append(SEPARATOR);
+            builder.append(toEditPermission.getStartDate()).append(SEPARATOR);
             // "02;date;key;slaveId;permissionKey;oldSlaveId;newSlaveId;1;permissionType;start;0;"
             builder.append(EMPTY).append(SEPARATOR);
         }
@@ -479,8 +479,8 @@ public class BluetoothProtocol {
             part = part.substring(1, part.length()-1);
             String id = part.split(SEPARATOR)[0];
             String type = part.split(SEPARATOR)[1];
-            slaves.add(Slave.create("", Slave.DEFAULT_NAME, Integer.valueOf(type), Integer.valueOf(id),
-                    User.getLoggedUser().getUUID()));
+            slaves.add(Slave.create("", id, Integer.valueOf(type), Integer.valueOf(id),
+                    User.getLoggedUser().getId()));
         }
         return slaves;
     }

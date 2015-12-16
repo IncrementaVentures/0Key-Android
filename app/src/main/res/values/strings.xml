@@ -153,5 +153,8 @@
     <string name="to_hour">To hour</string>
     <string name="to_date">To date</string>
     <string name="share_a_virtual_key">Share a virtual key</string>
+    <string name="refresh_data">Refresh data</string>
+    <string name="verification_email_sent">Verification email sent</string>
+    <string name="new_permissions">New permissions</string>
 
 </resources>

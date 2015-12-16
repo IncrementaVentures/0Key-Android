@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Models.User;
@@ -36,7 +38,7 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
     @Bind(R.id.create_account_button)
     Button mCreateButton;
     @Bind(R.id.create_account_birthday)
-    EditText mBirthday;
+    TextView mBirthday;
     @Bind(R.id.create_account_radio_group)
     RadioGroup mRadioGroupSex;
 
@@ -80,7 +82,7 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
                         sex = User.MALE;
                 }
                 User.signUp(thisFragment, name, password, email, phone, sex, birthday);
-                mProgressDialog = ProgressDialog.show(getActivity(), null, getResources().getString(R.string.logging));
+                mProgressDialog = ProgressDialog.show(getActivity(), null, getResources().getString(R.string.creating_account));
             }
         });
 
@@ -110,6 +112,8 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
     @Override
     public void userSignedUp() {
         if (mProgressDialog != null) mProgressDialog.dismiss();
+        Snackbar.make(getActivity().findViewById(R.id.auth_container), R.string.verification_email_sent,
+                Snackbar.LENGTH_LONG).show();
         // Create new fragment and transaction
         LoginFragment newFragment = new LoginFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();

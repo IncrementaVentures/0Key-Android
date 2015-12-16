@@ -1,11 +1,9 @@
 package com.incrementaventures.okey.Fragments;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -21,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
@@ -83,7 +80,7 @@ public class ModifyPermissionFragment extends Fragment {
     private String mStartHour;
     private String mKey;
     private String mPermissionName;
-    private Permission mOldPermission;
+    private Permission mToEditPermission;
     private int mOldSlaveId;
     private Master mSelectedMaster;
     private ArrayList<Master> mMasters;
@@ -94,7 +91,7 @@ public class ModifyPermissionFragment extends Fragment {
 
     public interface OnPermissionModifiedListener {
         void onCreatePermissionClicked(Permission permission, String userKey);
-        void onModifyPermissionClicked(Permission oldPermission, Permission newPermission,
+        void onModifyPermissionClicked(Permission toEditPermission, int oldSlaveId,
                                        String userKey, String doorId);
         void onDeletePermissionClicked(Permission permission, String userKey);
     }
@@ -140,7 +137,7 @@ public class ModifyPermissionFragment extends Fragment {
     private void getArgumentsData() {
         mKey = getArguments().getString(Permission.KEY);
         User user = User.getLoggedUser();
-        mSelectedMaster = Master.getMaster(getArguments().getString(Master.ID), user.getUUID());
+        mSelectedMaster = Master.getMaster(getArguments().getString(Master.ID), user.getId());
         if (mSelectedMaster != null) {
             mSelectedMasterView.setText(mSelectedMaster.getName());
             mSelectedSlave = Slave.getSlave(mSelectedMaster.getId(), getArguments().getInt(Slave.ID));
@@ -151,8 +148,8 @@ public class ModifyPermissionFragment extends Fragment {
         String oldSlave = String.valueOf(getArguments().getInt(PERMISSION_OLD_SLAVE, -1));
         mOldSlaveId = Integer.valueOf(oldSlave);
         mPermissionName = getArguments().getString(Permission.NAME);
-        if (getArguments().getString(Permission.UUID) != null) {
-            mOldPermission = Permission.getPermission(getArguments().getString(Permission.UUID));
+        if (getArguments().getString(Permission.OBJECT_ID) != null) {
+            mToEditPermission = Permission.getPermission(getArguments().getString(Permission.OBJECT_ID));
         }
         if (!TextUtils.isEmpty(mPermissionName)) {
             mPermissionNameView.setText(mPermissionName);
@@ -279,8 +276,13 @@ public class ModifyPermissionFragment extends Fragment {
                     slaveId = mSelectedSlave.getId();
                 }
                 // If creating new permission
-                String userKey = User.getLoggedUser().getPermission(mSelectedMaster,
-                        slaveId).getKey();
+                Permission adminPermission = Permission.getPermission(User.getLoggedUser().getId(),
+                        mSelectedMaster.getId(), 0);
+                if (adminPermission == null) {
+                    Snackbar.make(getView(), R.string.no_permission, Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+                String userKey = adminPermission.getKey();
                 if (TextUtils.isEmpty(mKey)) {
                     Permission permission = Permission.create(user, mSelectedMaster,
                             Permission.getType(mPermissionTypeView.getText().toString()),
@@ -292,14 +294,13 @@ public class ModifyPermissionFragment extends Fragment {
                     mPermissionModifiedListener.onCreatePermissionClicked(permission, userKey);
                 // If editing permission
                 } else {
-                    Permission permission = Permission.create(user, mSelectedMaster,
-                            Permission.getType(mPermissionTypeView.getText().toString()),
-                            mKey,
-                            mStartDateView.getText().toString() + "T" + mStartHourView.getText().toString(),
-                            mEndDateView.getText().toString() + "T" + mEndHourView.getText().toString(),
-                            slaveId);
-
-                    mPermissionModifiedListener.onModifyPermissionClicked(mOldPermission, permission,
+                    mToEditPermission.setType(Permission.getType(mPermissionTypeView.getText().toString()));
+                    mToEditPermission.setStartDate(mStartDateView.getText().toString() + "T"
+                            + mStartHourView.getText().toString());
+                    mToEditPermission.setEndDate(mEndDateView.getText().toString() + "T" +
+                            mEndHourView.getText().toString());
+                    mToEditPermission.setSlaveId(slaveId);
+                    mPermissionModifiedListener.onModifyPermissionClicked(mToEditPermission, mOldSlaveId,
                             userKey, mSelectedMaster.getId());
                 }
 

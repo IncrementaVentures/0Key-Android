@@ -1,20 +1,16 @@
 package com.incrementaventures.okey.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -60,7 +56,7 @@ public class ShareKeyActivity extends ActionBarActivity {
                 return true;
             }
             Master master = Master.getMaster(getIntent().getStringExtra(Master.ID),
-                    User.getLoggedUser().getUUID());
+                    User.getLoggedUser().getId());
             Permission permission =
                     Permission.create(
                             user,

@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.incrementaventures.okey.Models.Master;
-import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
@@ -58,7 +57,7 @@ public class ConfigurationFragment extends Fragment {
     @OnClick(R.id.ok_button)
     public void onOkButtonClick() {
         Master master  = Master.create(mMasterId, mName.getText().toString(),
-                User.getLoggedUser().getUUID());
+                User.getLoggedUser().getId());
         mListener.onConfigureMasterClick(mNewPassword.getText().toString(),
                 mFactoryPassword.getText().toString(), master);
     }

@@ -109,10 +109,11 @@
             android:layout_below="@+id/user_password"
             android:layout_alignParentStart="true" />
 
-        <EditText
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="date"
+            style="?android:editTextStyle"
             android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:ems="10"
             android:id="@+id/user_birthday"

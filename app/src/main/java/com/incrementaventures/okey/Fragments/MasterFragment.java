@@ -57,8 +57,8 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
 
     private ArrayList<Master> mMasters;
     private int mSelectedMasterIndex;
-    private HashMap<Integer, Permission> mPermissions;
     private ArrayList<Slave> mSlaves;
+    private ArrayList<Permission> mPermissions;
     private boolean mScannedDoor;
     private OnSlaveSelectedListener mSlaveSelectionListener;
     private int mSelectedSlaveIndex;
@@ -77,9 +77,9 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_master, container, false);
         ButterKnife.bind(this, v);
+        setPermissions();
         setMasters();
         setSlaves();
-        setPermissions();
         setNameableHolderAdapters();
         setUI();
         return v;
@@ -90,11 +90,6 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         mSlaves = new ArrayList<>(mMasters.get(mSelectedMasterIndex).getSlaves());
         if (mSlaves.size() > 0) {
             mSelectedSlaveIndex = 0;
-        } else {
-            if (mPermissions != null && mPermissions.size() > 0) {
-                TreeMap<Integer, Permission> treeMap = new TreeMap<>(mPermissions);
-                User.getLoggedUser().getSlaves(mMasters.get(mSelectedMasterIndex), treeMap.firstEntry().getValue().getKey());
-            }
         }
     }
 
@@ -103,7 +98,12 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     }
 
     private void setLocalMasters() {
-        mMasters = Master.getMasters();
+        mMasters = new ArrayList<>();
+        for (Permission permission : mPermissions) {
+            if (permission.getMaster() != null) {
+                mMasters.add(permission.getMaster());
+            }
+        }
         if (mMasters.size() > 0) {
             mSelectedMasterIndex = 0;
         }
@@ -111,11 +111,14 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
 
     @Override
     public void onSlavesReceived(ArrayList<Slave> slaves) {
-        if (slaves == null || slaves.size() == 0)
+        if (slaves == null || slaves.size() == 0 || mMasters == null || mMasters.size() == 0)
             return;
-        if (mSlaves == null)
-            mSlaves = new ArrayList<>();
-        mSlaves.addAll(slaves);
+        mSlaves = new ArrayList<>();
+        for (Slave slave : slaves) {
+            if (mMasters.get(mSelectedMasterIndex).getId().equals(slave.getMasterId())) {
+                mSlaves.add(slave);
+            }
+        }
         if (mSlaveNameAdapter == null) return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -123,7 +126,6 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
                 setSlaveHolderAdapter();
                 mSlaveNameAdapter.notifyDataSetChanged();
                 setUI();
-                Snackbar.make(getView(), R.string.slaves_added, Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -132,12 +134,9 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     public void onMastersReceived(ArrayList<Master> masters) {
         if (masters == null || masters.size() == 0)
             return;
-        if (mMasters == null || mMasters.size() == 0) {
-            mMasters = new ArrayList<>();
-            mMasters.addAll(masters);
-            mSelectedMasterIndex = 0;
-            mPermissions = mMasters.get(mSelectedMasterIndex).getPermissions(User.getLoggedUser());
-        }
+        mMasters = new ArrayList<>();
+        mMasters.addAll(masters);
+        mSelectedMasterIndex = 0;
         if (mMasterNameAdapter == null) return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -159,7 +158,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                setMasterHolderAdapter();
+                setNameableHolderAdapters();
             }
         });
     }
@@ -189,12 +188,14 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
                 mMasters, true);
         mMasterNameContainer.setAdapter(mMasterNameAdapter);
         mMasterNameContainer.addOnPageChangeListener(mMasterPageChangeListener);
+        mMasterNameAdapter.notifyDataSetChanged();
     }
 
     private void setSlaveHolderAdapter() {
         mSlaveNameAdapter = new TextViewPagerAdapter(getChildFragmentManager(),
                 mSlaves, false);
         mSlaveNameContainer.setAdapter(mSlaveNameAdapter);
+        mSlaveNameAdapter.notifyDataSetChanged();
     }
 
     private void setUI() {
@@ -274,9 +275,8 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         return currentIndex;
     }
 
-    private void setPermissions(){
-        if (mMasters == null || mMasters.size() == 0) return;
-        mPermissions = mMasters.get(mSelectedMasterIndex).getPermissions(User.getLoggedUser());
+    private void setPermissions() {
+        mPermissions = Permission.getPermissions(User.getLoggedUser().getId());
     }
 
     @Override
@@ -290,6 +290,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     }
 
     public void masterNetworkFound(Master master) {
+        if (master == null) return;
         mMasters.add(master);
         if (mMasters.size() == 1) {
             mSelectedMasterIndex = 0;

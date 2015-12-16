@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
@@ -30,7 +31,7 @@ public class PreferencesFragment extends Fragment {
     @Bind(R.id.user_email)
     EditText mUserEmail;
     @Bind(R.id.user_birthday)
-    EditText mUserBirthday;
+    TextView mUserBirthday;
     @Bind(R.id.user_password)
     EditText mUserPassword;
     @Bind(R.id.user_sex_group)

@@ -58,7 +58,7 @@ public class PermissionsFragment extends Fragment {
     }
 
     private void setPermissions() {
-        mMaster = Master.getMaster(getArguments().getString(Master.ID), User.getLoggedUser().getUUID());
+        mMaster = Master.getMaster(getArguments().getString(Master.ID), User.getLoggedUser().getId());
         if (mMaster == null) return;
         mPermissions = mMaster.getAllPermissions();
     }

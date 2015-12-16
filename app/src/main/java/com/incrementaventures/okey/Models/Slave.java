@@ -14,13 +14,17 @@ public class Slave implements ParseObject, Nameable {
     public static final String ID = "slave_id";
     public static final String SLAVE_ID = "slave_id";
     public static final String MASTER_ID = "master_id";
-    public static final String USER_UUID = "user_uuid";
+    public static final String USER_ID = "user_id";
     public static final String NAME = "name";
     public static final String TYPE = "type";
     public static final String DEFAULT_NAME = "Default name";
 
     private com.parse.ParseObject mParseSlave;
     private com.parse.ParseObject mParseSlaveName;
+
+    public interface OnSlavesNetworkResponse {
+        void onSlaveReceived(Slave slave);
+    }
 
     private Slave(String masterId, String name, int type, int id, String userUuid) {
         mParseSlave = com.parse.ParseObject.create(SLAVE_CLASS_NAME);
@@ -31,7 +35,7 @@ public class Slave implements ParseObject, Nameable {
         mParseSlaveName.put(NAME, name);
         mParseSlaveName.put(MASTER_ID, masterId);
         mParseSlaveName.put(SLAVE_ID, id);
-        mParseSlaveName.put(USER_UUID, userUuid);
+        mParseSlaveName.put(USER_ID, userUuid);
     }
 
     private Slave(com.parse.ParseObject parseSlave, com.parse.ParseObject parseSlaveName){
@@ -44,7 +48,7 @@ public class Slave implements ParseObject, Nameable {
     }
 
     public static Slave create(com.parse.ParseObject parseSlave) {
-        return new Slave(parseSlave, getParseSlaveName(User.getLoggedUser().getUUID(),
+        return new Slave(parseSlave, getParseSlaveName(User.getLoggedUser().getId(),
                 parseSlave.getString(MASTER_ID), parseSlave.getInt(ID)));
     }
 
@@ -61,10 +65,25 @@ public class Slave implements ParseObject, Nameable {
 
     @Override
     public void save() {
+        saveLocal();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Slave slave = fetchSlave(mParseSlave.getString(MASTER_ID), getId());
+                if (slave != null) {
+                    mParseSlave.saveEventually();
+                    mParseSlaveName.saveEventually();
+                }
+            }
+        }).start();
+    }
+
+    public void saveLocal() {
         mParseSlave.pinInBackground();
-        mParseSlave.saveEventually();
+        if (mParseSlaveName == null) {
+            mParseSlaveName = getParseSlaveName(User.getLoggedUser().getId(), getMasterId(), getId());
+        }
         mParseSlaveName.pinInBackground();
-        mParseSlaveName.saveEventually();
     }
 
     public int getId(){
@@ -77,7 +96,10 @@ public class Slave implements ParseObject, Nameable {
 
     @Override
     public String getName(){
-        return mParseSlave.getString(NAME);
+        if (mParseSlaveName == null) {
+            mParseSlaveName = getParseSlaveName(User.getLoggedUser().getId(), getMasterId(), getId());
+        }
+        return mParseSlaveName.getString(NAME);
     }
 
     public int getType(){
@@ -87,8 +109,8 @@ public class Slave implements ParseObject, Nameable {
     public Permission getPermission(User user) {
         ParseQuery query = ParseQuery.getQuery(Permission.PERMISSION_CLASS_NAME);
         query.fromLocalDatastore();
-        query.whereEqualTo(Permission.MASTER_ID, Master.getMaster(getMasterId(), user.getUUID()));
-        query.whereEqualTo(Permission.USER_UUID, user.getUUID());
+        query.whereEqualTo(Permission.MASTER_ID, Master.getMaster(getMasterId(), user.getId()));
+        query.whereEqualTo(Permission.USER_ID, user.getId());
         query.whereEqualTo(Permission.SLAVE_ID, getId());
         try {
             return Permission.create(query.getFirst());
@@ -98,6 +120,23 @@ public class Slave implements ParseObject, Nameable {
         return null;
     }
 
+
+    public static Slave fetchSlave(final String masterId, final int id) {
+        if (TextUtils.isEmpty(masterId)) return null;
+        ParseQuery<com.parse.ParseObject> query = ParseQuery.getQuery(SLAVE_CLASS_NAME);
+        query.whereEqualTo(ID, id);
+        query.whereEqualTo(MASTER_ID, masterId);
+        Slave slave = null;
+        try {
+            com.parse.ParseObject parseSlave = query.getFirst();
+            if (parseSlave != null) {
+                slave = Slave.create(parseSlave);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return slave;
+    }
 
     public static void deleteAllLocal() {
         ParseQuery<com.parse.ParseObject> query = ParseQuery.getQuery(SLAVE_CLASS_NAME);
@@ -132,7 +171,7 @@ public class Slave implements ParseObject, Nameable {
         query.fromLocalDatastore();
         query.whereEqualTo(MASTER_ID, masterId);
         query.whereEqualTo(ID, slaveId);
-        query.whereEqualTo(USER_UUID, userUuid);
+        query.whereEqualTo(USER_ID, userUuid);
         com.parse.ParseObject parseObject = null;
         try {
             parseObject = query.getFirst();
@@ -140,11 +179,15 @@ public class Slave implements ParseObject, Nameable {
                 parseObject = com.parse.ParseObject.create(SLAVE_NAME_CLASS_NAME);
                 parseObject.put(MASTER_ID, masterId);
                 parseObject.put(ID, slaveId);
-                parseObject.put(USER_UUID, userUuid);
-                parseObject.put(NAME, DEFAULT_NAME);
+                parseObject.put(USER_ID, userUuid);
+                parseObject.put(NAME, slaveId);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            parseObject = com.parse.ParseObject.create(SLAVE_NAME_CLASS_NAME);
+            parseObject.put(MASTER_ID, masterId);
+            parseObject.put(ID, slaveId);
+            parseObject.put(USER_ID, userUuid);
+            parseObject.put(NAME, slaveId);
         }
         return parseObject;
     }

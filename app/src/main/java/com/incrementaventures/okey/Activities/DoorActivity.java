@@ -68,7 +68,7 @@ public class DoorActivity extends ActionBarActivity {
         }
         ParseQuery query = new ParseQuery(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
-        query.whereEqualTo(Master.UUID, getIntent().getExtras().getString(Master.UUID));
+        query.whereEqualTo(Master.OBJECT_ID, getIntent().getExtras().getString(Master.OBJECT_ID));
         try {
             ParseObject doorParse = query.getFirst();
             return Master.create(doorParse);
@@ -280,7 +280,7 @@ public class DoorActivity extends ActionBarActivity {
                             Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(DoorActivity.this, ShareKeyActivity.class);
                     intent.putExtra(Permission.KEY, key);
-                    intent.putExtra(Permission.MASTER_UUID, mMaster.getUUID());
+                    intent.putExtra(Permission.MASTER_UUID, mMaster.getId());
                     intent.putExtra(Permission.TYPE, type);
                     String startDate = mPermissionData.getString(ModifyPermissionActivity.PERMISSION_START_DATE);
                     String startHour = mPermissionData.getString(ModifyPermissionActivity.PERMISSION_START_HOUR);

@@ -25,7 +25,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     private static final String BIRTHDAY = "birthday";
     private static final String SEX = "sex";
     private static final String PHONE = "phone";
-    public static final String UUID = "uuid";
+    public static final String OBJECT_ID = "objectId";
     public static final String MALE = "m";
     public static final String FEMALE = "f";
     public static final String EMAIL_VERIFIED = "emailVerified";
@@ -62,8 +62,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         mParseUser.saveEventually();
     }
 
-    public String getUUID() {
-        return mParseUser.getString(UUID);
+    public String getId() {
+        return getObjectId();
     }
 
 
@@ -183,7 +183,6 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         mParseUser.put(BIRTHDAY, birthday);
         mParseUser.setEmail(email);
         mParseUser.setPassword(password);
-        mParseUser.put(UUID, java.util.UUID.randomUUID().toString());
     }
 
     private User(ParseUser parseUser){
@@ -288,8 +287,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public String getBirthday() {
-        String birthday =  mParseUser.getString(BIRTHDAY);
-        return birthday.substring(0, birthday.indexOf("T"));
+        return mParseUser.getString(BIRTHDAY);
     }
 
     public boolean isMale() {
@@ -389,7 +387,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         mBluetoothClient.executeOpenDoorWhenClose(p.getKey(), master.getName(), slave.getId());
     }
 
-    public void editPermission(Permission oldPermission, Permission newPermission, String adminKey,
+    public void editPermission(Permission toEditPermission, int oldSlaveId, String adminKey,
                                String doorId) {
         mBluetoothClient = new BluetoothClient(mContext, this);
         if (!mBluetoothClient.isSupported()){
@@ -399,7 +397,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
             mBluetoothListener.enableBluetooth();
             return;
         }
-        mBluetoothClient.executeEditPermission(oldPermission, newPermission, adminKey, doorId);
+        mBluetoothClient.executeEditPermission(toEditPermission, oldSlaveId, adminKey, doorId);
     }
 
     public void deletePermission(String masterId, String adminKey, Permission permission){

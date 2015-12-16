@@ -206,11 +206,11 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executeEditPermission(Permission oldPermission, Permission newPermission,
-                                      String adminKey, String doorId) {
+    public void executeEditPermission(Permission toEditPermission, int oldSlaveId, String adminKey,
+                                      String doorId) {
         mMode = EDIT_PERMISSION_MODE;
-        mPermission = oldPermission;
-        mNewPermission = newPermission;
+        mSlaveId = oldSlaveId;
+        mPermission = toEditPermission;
         mMasterId = doorId;
         mPermissionKey = adminKey;
         startScan(NORMAL_SCAN_TIME);
@@ -353,8 +353,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                             mPermissionKey);
                     break;
                 case EDIT_PERMISSION_MODE:
-                    message = BluetoothProtocol.buildEditPermissionMessage(mPermission, mNewPermission,
-                            mPermissionKey);
+                    message = BluetoothProtocol.buildEditPermissionMessage(mPermission, mSlaveId, mPermissionKey);
                     break;
                 case DELETE_PERMISSION_MODE:
                     message = BluetoothProtocol.buildDeletePermissionMessage(mPermissionKey, mPermission);
@@ -526,8 +525,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     return;
             }
 
-            if (key != null){
-                switch (mMode){
+            if (key != null) {
+                switch (mMode) {
                     case FIRST_ADMIN_CONNECTION_MODE:
                         mMaster.save();
                         Time now = new Time();
@@ -552,10 +551,10 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                         mListener.permissionEdited(key, mPermission);
                         break;
                     case DELETE_PERMISSION_MODE:
-                    mListener.permissionDeleted(mPermission);
-                    break;
-                default:
-                    mListener.error(RESPONSE_INCORRECT);
+                        mListener.permissionDeleted(mPermission);
+                        break;
+                    default:
+                        mListener.error(RESPONSE_INCORRECT);
             }
         } else {
             switch (mMode){
