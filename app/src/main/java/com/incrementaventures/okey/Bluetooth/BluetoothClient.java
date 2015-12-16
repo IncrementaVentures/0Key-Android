@@ -129,7 +129,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         void permissionCreated(String key, Permission permission);
         void masterConfigured(Master master, Permission adminPermission);
         void permissionEdited(String key, Permission newPermission);
-        void permissionDeleted(String key);
+        void permissionDeleted(Permission permission);
         void permissionReceived(int type, String key, String start, String end);
         void permissionsReceived(ArrayList<HashMap<String, String>> permisionsData);
         void stopScanning();
@@ -216,13 +216,11 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executeDeletePermission(String masterId, String adminKey, String permissionKey,
-                                        int slave) {
+    public void executeDeletePermission(String masterId, String adminKey, Permission permission) {
         mMasterId = masterId;
+        mPermission = permission;
         mMode = DELETE_PERMISSION_MODE;
         mPermissionKey = adminKey;
-        mToEditPermissionKey = permissionKey;
-        mSlaveId = slave;
         startScan(NORMAL_SCAN_TIME);
     }
 
@@ -359,8 +357,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                             mPermissionKey);
                     break;
                 case DELETE_PERMISSION_MODE:
-                    message = BluetoothProtocol.buildDeletePermissionMessage(mPermissionKey,
-                            mToEditPermissionKey, mSlaveId);
+                    message = BluetoothProtocol.buildDeletePermissionMessage(mPermissionKey, mPermission);
                     break;
                 case GET_SLAVES_MODE:
                     message = BluetoothProtocol.buildGetSlavesMessage(mPermissionKey);
@@ -525,37 +522,37 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         String key = BluetoothProtocol.getNewPermissionKey(fullMessage);
         if (!errorCode.equals(BluetoothProtocol.OK_ERROR_CODE)){
             int e = determineError(errorCode);
-            mListener.error(e);
-            return;
-        }
+                    mListener.error(e);
+                    return;
+            }
 
-        if (key != null){
-            switch (mMode){
-                case FIRST_ADMIN_CONNECTION_MODE:
-                    mMaster.save();
-                    Time now = new Time();
-                    now.setToNow();
-                    mPermission = Permission.create(User.getLoggedUser(),
-                            mMaster,
-                            Permission.ADMIN_PERMISSION,
-                            key,
-                            BluetoothProtocol.formatDate(now),
-                            Permission.PERMANENT_DATE,
-                            0);
-                    mListener.masterConfigured(mMaster, mPermission);
-                    break;
-                case CREATE_NEW_PERMISSION_MODE:
-                    mListener.permissionCreated(key, mPermission);
-                    break;
-                case EDIT_PERMISSION_MODE:
-                    mPermission.setSlaveId(mNewPermission.getSlaveId());
-                    mPermission.setStartDate(mNewPermission.getStartDate());
-                    mPermission.setEndDate(mNewPermission.getEndDate());
-                    mPermission.setType(Permission.getType(mNewPermission.getType()));
-                    mListener.permissionEdited(key, mPermission);
-                    break;
-                case DELETE_PERMISSION_MODE:
-                    mListener.permissionDeleted(key);
+            if (key != null){
+                switch (mMode){
+                    case FIRST_ADMIN_CONNECTION_MODE:
+                        mMaster.save();
+                        Time now = new Time();
+                        now.setToNow();
+                        mPermission = Permission.create(User.getLoggedUser(),
+                                mMaster,
+                                Permission.ADMIN_PERMISSION,
+                                key,
+                                BluetoothProtocol.formatDate(now),
+                                Permission.PERMANENT_DATE,
+                                0);
+                        mListener.masterConfigured(mMaster, mPermission);
+                        break;
+                    case CREATE_NEW_PERMISSION_MODE:
+                        mListener.permissionCreated(key, mPermission);
+                        break;
+                    case EDIT_PERMISSION_MODE:
+                        mPermission.setSlaveId(mNewPermission.getSlaveId());
+                        mPermission.setStartDate(mNewPermission.getStartDate());
+                        mPermission.setEndDate(mNewPermission.getEndDate());
+                        mPermission.setType(Permission.getType(mNewPermission.getType()));
+                        mListener.permissionEdited(key, mPermission);
+                        break;
+                    case DELETE_PERMISSION_MODE:
+                    mListener.permissionDeleted(mPermission);
                     break;
                 default:
                     mListener.error(RESPONSE_INCORRECT);

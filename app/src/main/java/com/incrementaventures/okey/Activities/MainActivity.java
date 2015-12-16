@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -25,7 +23,6 @@ import android.widget.Toast;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.incrementaventures.okey.Fragments.ConfigurationFragment;
-import com.incrementaventures.okey.Fragments.DoorsFragment;
 import com.incrementaventures.okey.Fragments.MasterFragment;
 import com.incrementaventures.okey.Fragments.InsertPinFragment;
 import com.incrementaventures.okey.Fragments.MenuFragment;
@@ -33,7 +30,6 @@ import com.incrementaventures.okey.Fragments.ModifyPermissionFragment;
 import com.incrementaventures.okey.Fragments.NewDoorFragment;
 import com.incrementaventures.okey.Fragments.PermissionsFragment;
 import com.incrementaventures.okey.Fragments.PreferencesFragment;
-import com.incrementaventures.okey.Fragments.ScanDevicesFragment;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
@@ -46,8 +42,6 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -75,11 +69,8 @@ public class MainActivity extends AppCompatActivity implements
     @Bind(R.id.main_view)
     View mRootView;
 
-    private ProgressDialog mProgressDialog;
-    private ScanDevicesFragment mScanDevicesFragment;
     private MasterFragment mMasterFragment;
     private User mCurrentUser;
-    private boolean mScanning;
     private ArrayList<String> mScannedMasters;
     private ArrayAdapter<String> mScannedMastersAdapter;
     private AlertDialog mScannedMastersDialog;
@@ -253,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mProgressDialog != null) mProgressDialog.dismiss();
                 Snackbar.make(mRootView, R.string.door_opened,
                         Snackbar.LENGTH_LONG).show();
             }
@@ -274,7 +264,6 @@ public class MainActivity extends AppCompatActivity implements
     public void slavesFound(Master master, ArrayList<Slave> slaves) {
         for (Slave slave : slaves) {
             slave.setMasterId(master.getId());
-            slave.setMasterUuid(master.getUUID());
             slave.save();
         }
         mMasterFragment.onSlavesReceived(slaves);
@@ -320,7 +309,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void permissionDeleted(String key) { }
+    public void permissionDeleted(Permission permission) {
+        permission.delete();
+        Snackbar.make(mRootView, R.string.permission_deleted, Snackbar.LENGTH_LONG).show();
+    }
 
     @Override
     public void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData) { }
@@ -502,7 +494,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onShowPermissionsClicked(View view) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Bundle args = new Bundle();
-        args.putString(Master.UUID, mMasterFragment.getSelectedMaster().getUUID());
+        args.putString(Master.ID, mMasterFragment.getSelectedMaster().getId());
         PermissionsFragment fragment = new PermissionsFragment();
         fragment.setArguments(args);
         fragmentManager.beginTransaction()
@@ -516,14 +508,13 @@ public class MainActivity extends AppCompatActivity implements
             Snackbar.make(mRootView, R.string.no_masters_yet, Snackbar.LENGTH_LONG).show();
             return;
         }
-
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.popBackStack();
         Bundle args = new Bundle();
-        args.putString(Master.UUID, mMasterFragment.getSelectedMaster().getUUID());
+        args.putString(Master.ID, mMasterFragment.getSelectedMaster().getId());
         Slave slave = mMasterFragment.getSelectedSlave();
         if (slave != null) {
-            args.putString(Slave.UUID, slave.getUUID());
+            args.putInt(Slave.ID, slave.getId());
         }
         ModifyPermissionFragment fragment = new ModifyPermissionFragment();
         fragment.setArguments(args);
@@ -595,8 +586,8 @@ public class MainActivity extends AppCompatActivity implements
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.popBackStack();
         Bundle args = new Bundle();
-        args.putString(Master.UUID, permission.getMasterUuid());
-        args.putString(Slave.UUID, permission.getSlaveUuid());
+        args.putString(Master.ID, permission.getMasterId());
+        args.putInt(Slave.ID, permission.getSlaveId());
         args.putInt(ModifyPermissionFragment.PERMISSION_OLD_SLAVE, permission.getSlaveId());
         args.putString(Permission.NAME, permission.getUser().getEmail());
         args.putString(Permission.UUID, permission.getUUID());
@@ -615,8 +606,7 @@ public class MainActivity extends AppCompatActivity implements
         if (adminPermission != null) {
             mCurrentUser.deletePermission(permission.getMaster().getId(),
                     adminPermission.getKey(),
-                    permission.getKey(),
-                    permission.getSlaveId());
+                    permission);
             Snackbar.make(mRootView, R.string.deleting_permission, Snackbar.LENGTH_INDEFINITE).show();
         } else {
             Snackbar.make(mRootView, R.string.no_permission, Snackbar.LENGTH_LONG).show();

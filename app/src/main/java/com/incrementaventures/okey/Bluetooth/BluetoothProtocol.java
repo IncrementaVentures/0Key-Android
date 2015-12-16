@@ -4,6 +4,7 @@ import android.text.format.Time;
 
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
+import com.incrementaventures.okey.Models.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -222,8 +223,7 @@ public class BluetoothProtocol {
         return builder.toString();
     }
 
-    public static String buildDeletePermissionMessage(String adminKey, String permissionKey,
-                                                      int slaveId) {
+    public static String buildDeletePermissionMessage(String adminKey, Permission permission) {
         StringBuilder builder = new StringBuilder();
         Time time = new Time();
         time.setToNow();
@@ -235,9 +235,9 @@ public class BluetoothProtocol {
         // "02;date;adminKey;"
         builder.append(adminKey).append(SEPARATOR);
         // "02;date;adminKey;permissionKey;"
-        builder.append(permissionKey).append(SEPARATOR);
+        builder.append(permission.getKey()).append(SEPARATOR);
         // "02;date;adminKey;permissionKey;"
-        builder.append(slaveId).append(SEPARATOR);
+        builder.append(permission.getSlaveId()).append(SEPARATOR);
         // "02;date;adminKey;permissionKey;0"
         builder.append(EMPTY).append(SEPARATOR);
         // "02;date;adminKey;permissionKey;0;2"
@@ -479,7 +479,8 @@ public class BluetoothProtocol {
             part = part.substring(1, part.length()-1);
             String id = part.split(SEPARATOR)[0];
             String type = part.split(SEPARATOR)[1];
-            slaves.add(Slave.create("", "", id, Integer.valueOf(type), Integer.valueOf(id)));
+            slaves.add(Slave.create("", Slave.DEFAULT_NAME, Integer.valueOf(type), Integer.valueOf(id),
+                    User.getLoggedUser().getUUID()));
         }
         return slaves;
     }

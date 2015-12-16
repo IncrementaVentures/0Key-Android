@@ -59,7 +59,8 @@ public class ShareKeyActivity extends ActionBarActivity {
                 Toast.makeText(this, R.string.user_doesnt_exist, Toast.LENGTH_SHORT).show();
                 return true;
             }
-            Master master = Master.getMaster(getIntent().getStringExtra(Master.UUID));
+            Master master = Master.getMaster(getIntent().getStringExtra(Master.ID),
+                    User.getLoggedUser().getUUID());
             Permission permission =
                     Permission.create(
                             user,

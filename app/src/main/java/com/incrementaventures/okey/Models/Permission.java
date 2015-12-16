@@ -27,7 +27,6 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
 
     public static final String PERMISSION_CLASS_NAME = "Permission";
     public static final String USER_UUID = "user_uuid";
-    public static final String MASTER_UUID = "master_uuid";
     public static final String MASTER_ID = "master_id";
     public static final String SLAVE_ID = "slave_id";
     public static final String UUID = "uuid";
@@ -53,7 +52,6 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         mParsePermission = ParseObject.create(PERMISSION_CLASS_NAME);
         if (user != null) mParsePermission.put(USER_UUID, user.getUUID());
         if (master != null) {
-            mParsePermission.put(MASTER_UUID, master.getUUID());
             mParsePermission.put(MASTER_ID, master.getId());
         }
         mParsePermission.put(SLAVE_ID, slaveId);
@@ -126,26 +124,8 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         }
     }
 
-    public void setMasterUuid(String masterUuid) {
-        mParsePermission.put(MASTER_UUID, masterUuid);
-    }
-
     public void share() {
-        Master newInstanceMaster = Master.create(getMaster().getId(), getMaster().getName(),
-                getUserUuid());
-        newInstanceMaster.save();
-        setMasterUuid(newInstanceMaster.getUUID());
         save();
-        List<Slave> slaves = getMaster().getSlaves();
-        for (Slave slave : slaves) {
-            if (getSlaveId() == 0) {
-                Slave.create(newInstanceMaster.getUUID(), newInstanceMaster.getId(), slave.getName(),
-                        slave.getType(), slave.getId()).save();
-            } else if (getSlaveId() == slave.getId()) {
-                Slave.create(newInstanceMaster.getUUID(), newInstanceMaster.getId(), slave.getName(),
-                        slave.getType(), slave.getId()).save();
-            }
-        }
     }
 
     public String getUserUuid() {
@@ -166,18 +146,45 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         }
     }
 
+    public static void deleteAllLocal() {
+        ParseQuery<com.parse.ParseObject> query = ParseQuery.getQuery(PERMISSION_CLASS_NAME);
+        query.fromLocalDatastore();
+        try {
+            List<com.parse.ParseObject> localPermissions = query.find();
+            for (com.parse.ParseObject localPermission : localPermissions) {
+                localPermission.unpin();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void delete() {
         deleteFromLocal();
         mParsePermission.deleteEventually();
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PERMISSION_CLASS_NAME);
+        query.whereEqualTo(SLAVE_ID, getSlaveId());
+        query.whereEqualTo(USER_UUID, getUserUuid());
+        query.whereEqualTo(MASTER_ID, getMaster().getId());
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+
+                if (e == null && list != null && list.size() != 0) {
+                    for (ParseObject permission : list) {
+                        permission.deleteEventually();
+                    }
+                }
+            }
+        });
     }
 
     @Override
-    public void save(){
+    public void save() {
         mParsePermission.pinInBackground();
         mParsePermission.saveEventually();
     }
 
-    @Override
     public String getUUID() {
         return mParsePermission.getString(UUID);
     }
@@ -185,7 +192,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public Master getMaster(){
         ParseQuery query = new ParseQuery(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
-        query.whereEqualTo(Master.UUID, mParsePermission.getString(MASTER_UUID));
+        query.whereEqualTo(Master.ID, mParsePermission.getString(MASTER_ID));
         try {
             ParseObject o = query.getFirst();
             return Master.create(o);
@@ -195,10 +202,29 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         return null;
     }
 
+    public String getMasterId() {
+        return mParsePermission.getString(MASTER_ID);
+    }
+
+    public static Permission getPermission(String userUuid, String masterId, int slaveId) {
+        ParseQuery query = new ParseQuery(PERMISSION_CLASS_NAME);
+        query.fromLocalDatastore();
+        query.whereEqualTo(MASTER_ID, masterId);
+        query.whereEqualTo(USER_UUID, userUuid);
+        query.whereEqualTo(SLAVE_ID, slaveId);
+        try {
+            ParseObject o = query.getFirst();
+            return Permission.create(o);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static Permission getPermission(String uuid) {
         ParseQuery query = new ParseQuery(PERMISSION_CLASS_NAME);
         query.fromLocalDatastore();
-        query.whereEqualTo(Master.UUID, uuid);
+        query.whereEqualTo(UUID, uuid);
         try {
             ParseObject o = query.getFirst();
             return Permission.create(o);
@@ -353,26 +379,6 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         } else {
             return true;
         }
-    }
-
-    public String getMasterUuid() {
-        return mParsePermission.getString(MASTER_UUID);
-    }
-
-    public String getSlaveUuid() {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(Slave.SLAVE_CLASS_NAME);
-        query.fromLocalDatastore();
-        query.whereEqualTo(Slave.ID, getSlaveId());
-        query.whereEqualTo(Slave.MASTER_UUID, getMasterUuid());
-        try {
-            ParseObject slave = query.getFirst();
-            if (slave != null) {
-                return slave.getString(Slave.UUID);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public static class ProcessNetworkPermissionsTask extends

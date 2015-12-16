@@ -62,7 +62,6 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         mParseUser.saveEventually();
     }
 
-    @Override
     public String getUUID() {
         return mParseUser.getString(UUID);
     }
@@ -99,7 +98,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         void permissionCreated(String key, Permission permission);
         void masterConfigured(Master master, Permission adminPermission);
         void permissionEdited(String key, Permission newPermission);
-        void permissionDeleted(String key);
+        void permissionDeleted(Permission permission);
         void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData);
         void permissionReceived(int type, String key, String start, String end);
         void error(int code);
@@ -141,8 +140,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     @Override
-    public void permissionDeleted(String key) {
-        mPermissionsListener.permissionDeleted(key);
+    public void permissionDeleted(Permission permission) {
+        mPermissionsListener.permissionDeleted(permission);
     }
 
     @Override
@@ -403,8 +402,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         mBluetoothClient.executeEditPermission(oldPermission, newPermission, adminKey, doorId);
     }
 
-    public void deletePermission(String masterId, String adminKey, String permissionKey,
-                                 int slave){
+    public void deletePermission(String masterId, String adminKey, Permission permission){
         mBluetoothClient = new BluetoothClient(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
@@ -413,7 +411,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
             mBluetoothListener.enableBluetooth();
             return;
         }
-        mBluetoothClient.executeDeletePermission(masterId, adminKey, permissionKey, slave);
+        mBluetoothClient.executeDeletePermission(masterId, adminKey, permission);
     }
 
     public void readMyPermission(Master master, Slave slave, String permissionKey){

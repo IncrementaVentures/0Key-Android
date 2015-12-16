@@ -139,13 +139,14 @@ public class ModifyPermissionFragment extends Fragment {
 
     private void getArgumentsData() {
         mKey = getArguments().getString(Permission.KEY);
-        mSelectedMaster = Master.getMaster(getArguments().getString(Master.UUID));
+        User user = User.getLoggedUser();
+        mSelectedMaster = Master.getMaster(getArguments().getString(Master.ID), user.getUUID());
         if (mSelectedMaster != null) {
             mSelectedMasterView.setText(mSelectedMaster.getName());
-        }
-        mSelectedSlave = Slave.getSlave(getArguments().getString(Slave.UUID));
-        if (mSelectedSlave != null) {
-            mSelectedSlaveView.setText(mSelectedSlave.getName());
+            mSelectedSlave = Slave.getSlave(mSelectedMaster.getId(), getArguments().getInt(Slave.ID));
+            if (mSelectedSlave != null) {
+                mSelectedSlaveView.setText(mSelectedSlave.getName());
+            }
         }
         String oldSlave = String.valueOf(getArguments().getInt(PERMISSION_OLD_SLAVE, -1));
         mOldSlaveId = Integer.valueOf(oldSlave);

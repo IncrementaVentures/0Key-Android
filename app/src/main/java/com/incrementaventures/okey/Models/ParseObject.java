@@ -5,5 +5,4 @@ public interface ParseObject {
     String getObjectId();
     void deleteFromLocal();
     void save();
-    String getUUID();
 }

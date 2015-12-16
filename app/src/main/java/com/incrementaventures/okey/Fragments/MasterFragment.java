@@ -99,7 +99,6 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     }
 
     private void setMasters() {
-        Master.fetchMasters(this);
         setLocalMasters();
     }
 

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.Views.Adapters.PermissionAdapter;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
@@ -57,7 +58,7 @@ public class PermissionsFragment extends Fragment {
     }
 
     private void setPermissions() {
-        mMaster = Master.getMaster(getArguments().getString(Master.UUID));
+        mMaster = Master.getMaster(getArguments().getString(Master.ID), User.getLoggedUser().getUUID());
         if (mMaster == null) return;
         mPermissions = mMaster.getAllPermissions();
     }
