@@ -68,7 +68,7 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
                 String password = mPassword.getText().toString();
                 String email = mEmail.getText().toString();
                 String phone = mPhone.getText().toString();
-                String birthday = mBirthday.getText().toString();
+                String birthday = mBirthday.getText().toString() + "T00:01";
                 int selectedId = mRadioGroupSex.getCheckedRadioButtonId();
                 String sex;
                 switch (selectedId) {
