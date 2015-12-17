@@ -249,12 +249,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     private void startScan(int time){
         mScanning = true;
-        if (mMode == SCAN_MODE){
-            mBluetoothAdapter.startLeScan(this);
-        } else {
-            mBluetoothAdapter.startLeScan(new UUID[]
-                    {UUID.fromString(BluetoothProtocol.DOOR_SERVICE_UUID)}, this);
-        }
+        mBluetoothAdapter.startLeScan(this);
         // Stop the scanning after NORMAL_SCAN_TIME miliseconds. Saves battery.
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -288,7 +283,16 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 || (mMode == EDIT_PERMISSION_MODE && device.getName().endsWith(mMasterId))
                 || (mMode == PAIR_SLAVES_MODE && device.getName().equals(mMasterId))) {
             mDevices.put(device.hashCode(), device);
-            device.connectGatt(mContext, true, mGattCallback);
+            device.connectGatt(mContext, false, mGattCallback);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mWaitingResponse || mSending) {
+                        mListener.error(TIMEOUT);
+                    }
+                }
+            }, 8000);
+
         } else if (mMode == SCAN_MODE) {
             mListener.deviceFound(device, rssi, scanRecord);
         }
@@ -383,7 +387,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         public void onCharacteristicChanged(final BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             mWaitingResponse = false;
-
             String response = new String(characteristic.getValue());
             Log.d("BLUETOOTH MESSAGE", response);
             if (mReceivedMessageParts == null) mReceivedMessageParts = new LinkedList<>();
@@ -417,6 +420,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     mListener.error(RESPONSE_INCORRECT);
                     break;
             }
+            gatt.disconnect();
+            gatt.close();
         }
 
         /*
@@ -425,22 +430,10 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         @Override
         public void onCharacteristicWrite(final BluetoothGatt gatt,
                                           BluetoothGattCharacteristic characteristic, int status) {
-            /*
-                Disconnect after 8 seconds
-             */
+
             if (mToSendMessageParts.size() == 0){
                 mWaitingResponse = true;
                 mSending = false;
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        gatt.disconnect();
-                        gatt.close();
-                        if (mWaitingResponse || mSending){
-                            mListener.error(TIMEOUT);
-                        }
-                    }
-                }, 8000);
                 return;
             }
             // Sends the message until is finished
