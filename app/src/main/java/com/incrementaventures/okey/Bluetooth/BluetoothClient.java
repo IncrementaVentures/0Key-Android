@@ -96,14 +96,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private String mMasterId;
     private int mSlaveId;
     private int mNewSlaveId;
-    private String mPermissionType;
-    private String mEndDate;
-    private String mEndHour;
-    private String mStartDate;
-    private String mStartHour;
-    private String mToEditPermissionKey;
     private Permission mPermission;
-    private Permission mNewPermission;
     private Master mMaster;
 
     /**
@@ -111,7 +104,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
      * @param context context of the call
      * @param listener Usually a user, or any who implements OnBluetoothToUserResponse
      */
-    public BluetoothClient(Context context,  OnBluetoothToUserResponse listener){
+    public BluetoothClient(Context context,  OnBluetoothToUserResponse listener) {
         mListener = listener;
         mContext = context;
         BluetoothManager bluetoothManager =
@@ -199,10 +192,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         mPermission = permission;
         mMasterId = doorId;
         mSlaveId = permission.getSlaveId();
-        mPermissionType = permission.getType();
         mPermissionKey = permissionKey;
-        mEndDate = permission.getEndDate();
-        mStartDate = permission.getStartDate();
         startScan(NORMAL_SCAN_TIME);
     }
 
