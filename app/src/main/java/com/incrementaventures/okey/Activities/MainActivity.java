@@ -190,8 +190,7 @@ public class MainActivity extends AppCompatActivity implements
     private void checkBluetoothLeSupport(){
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-            // TODO: 14-12-2015 UNCOMMENT
-            // finish();
+            finish();
         }
     }
 
