@@ -6,6 +6,7 @@ import android.content.Context;
 
 import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
+import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
@@ -62,10 +63,17 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         mParseUser.saveEventually();
     }
 
+    public void saveLocal() {
+        mParseUser.pinInBackground();
+    }
+
     public String getId() {
         return getObjectId();
     }
 
+    public interface OnParseUserGetted {
+        void onUserGetted(User user);
+    }
 
     public interface OnParseUserLoginResponse {
         void userSignedUp();
@@ -304,7 +312,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     /**
      * Opens a door via bluetooth.
      */
-    public void openDoor(Master master, Slave slave){
+    public void openDoor(Master master, Slave slave) {
 
         Permission p = slave.getPermission(this);
 
@@ -474,6 +482,32 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
 
     public static User getUser(String email) {
         ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
+        query.whereEqualTo(EMAIL, email);
+        try {
+            ParseUser parseUser = query.getFirst();
+            return User.create(parseUser);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void fetchUser(String id, final OnParseUserGetted listener) {
+        ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
+        query.whereEqualTo(User.OBJECT_ID, id);
+        query.getFirstInBackground(new GetCallback<ParseUser>() {
+            @Override
+            public void done(ParseUser parseUser, ParseException e) {
+                if (e == null) {
+                    listener.onUserGetted(User.create(parseUser));
+                }
+            }
+        });
+    }
+
+    public static User getUserLocal(String email) {
+        ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
+        query.fromLocalDatastore();
         query.whereEqualTo(EMAIL, email);
         try {
             ParseUser parseUser = query.getFirst();

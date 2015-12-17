@@ -66,7 +66,11 @@ public class PreferencesFragment extends Fragment {
         mUser = User.getLoggedUser();
         mUserName.setText(mUser.getName());
         mUserEmail.setText(mUser.getEmail());
-        mUserBirthday.setText(mUser.getBirthday());
+        String birthday = mUser.getBirthday();
+        if (birthday.indexOf('T') > 0) {
+            birthday = birthday.substring(0, birthday.indexOf('T'));
+        }
+        mUserBirthday.setText(birthday);
         mUserPassword.setText("secret key");
         mOkButton.setOnClickListener(mRefreshSettingsListener);
         if (mUser.isMale()) {

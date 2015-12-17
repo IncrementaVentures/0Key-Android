@@ -25,7 +25,7 @@
         android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
         android:padding="10dp"
         android:text="@string/add_new_0key"
-        android:id="@+id/textView5"
+        android:id="@+id/modify_permission_screen_title"
         fontPath="fonts/avenir.ttf"
         android:layout_alignBottom="@+id/ok_button"
         android:layout_centerHorizontal="true" />
@@ -50,7 +50,7 @@
         android:text="@string/name"
         android:padding="5dp"
         android:id="@+id/textView14"
-        android:layout_below="@+id/textView5"
+        android:layout_below="@+id/modify_permission_screen_title"
         android:layout_alignStart="@+id/cancel_button"
         android:layout_marginTop="32dp" />
 

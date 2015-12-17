@@ -156,5 +156,10 @@
     <string name="refresh_data">Refresh data</string>
     <string name="verification_email_sent">Verification email sent</string>
     <string name="new_permissions">New permissions</string>
+    <string name="update_permissions">Update Permissions</string>
+    <string name="updating_data">Updating data</string>
+    <string name="edit">Edit</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="unknown">Unknown</string>
 
 </resources>

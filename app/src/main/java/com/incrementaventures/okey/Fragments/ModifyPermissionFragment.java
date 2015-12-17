@@ -23,6 +23,7 @@ import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
 import com.incrementaventures.okey.Models.User;
+import com.incrementaventures.okey.Networking.NetworkingUtils;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
@@ -70,8 +71,16 @@ public class ModifyPermissionFragment extends Fragment {
     TextView mSelectedSlaveView;
     @Bind(R.id.selected_master)
     TextView mSelectedMasterView;
-    @Bind(R.id.permission_name)
-    TextView mPermissionNameView;
+    @Bind(R.id.permission_email)
+    TextView mPermissionEmailView;
+    @Bind(R.id.modify_permission_screen_title)
+    TextView mScreenTitle;
+    @Bind(R.id.slave_title)
+    TextView mSlaveTitle;
+    @Bind(R.id.separator2)
+    View mSeparator2;
+    @Bind(R.id.separator3)
+    View mSeparator3;
 
     private CharSequence mPermissionTypes[];
     private String mEndDate;
@@ -127,6 +136,7 @@ public class ModifyPermissionFragment extends Fragment {
     private void setSlaves() {
         mSlaves = new ArrayList<>(mSelectedMaster.getSlaves());
         if (mSlaves.size() == 0) {
+            mSelectedSlave = null;
             mSelectedSlaveView.setText(R.string.no_slaves_found_yet);
             mSelectedSlaveView.setClickable(false);
         } else {
@@ -136,6 +146,9 @@ public class ModifyPermissionFragment extends Fragment {
 
     private void getArgumentsData() {
         mKey = getArguments().getString(Permission.KEY);
+        if (mKey != null) {
+            mScreenTitle.setText(R.string.edit_permission);
+        }
         User user = User.getLoggedUser();
         mSelectedMaster = Master.getMaster(getArguments().getString(Master.ID), user.getId());
         if (mSelectedMaster != null) {
@@ -152,7 +165,7 @@ public class ModifyPermissionFragment extends Fragment {
             mToEditPermission = Permission.getPermission(getArguments().getString(Permission.OBJECT_ID));
         }
         if (!TextUtils.isEmpty(mPermissionName)) {
-            mPermissionNameView.setText(mPermissionName);
+            mPermissionEmailView.setText(mPermissionName);
         }
     }
 
@@ -172,9 +185,26 @@ public class ModifyPermissionFragment extends Fragment {
                             mDueHourLayout.setVisibility(LinearLayout.VISIBLE);
                             mStartDateLayout.setVisibility(LinearLayout.VISIBLE);
                             mStartHourLayout.setVisibility(LinearLayout.VISIBLE);
-                        } else{
+                            mSlaveTitle.setVisibility(TextView.VISIBLE);
+                            mSelectedSlaveView.setVisibility(TextView.VISIBLE);
+                            mSeparator2.setVisibility(View.VISIBLE);
+                            mSeparator3.setVisibility(View.VISIBLE);
+                        } else if (mPermissionTypes[which].equals(getResources()
+                                .getString(R.string.permission_type_permanent))){
                             mDueDateLayout.setVisibility(LinearLayout.GONE);
                             mDueHourLayout.setVisibility(LinearLayout.GONE);
+                            mSlaveTitle.setVisibility(TextView.VISIBLE);
+                            mSelectedSlaveView.setVisibility(TextView.VISIBLE);
+                            mSeparator2.setVisibility(View.GONE);
+                            mSeparator3.setVisibility(View.VISIBLE);
+                        } else if (mPermissionTypes[which].equals(getResources()
+                                .getString(R.string.permission_type_admin))){
+                            mSlaveTitle.setVisibility(TextView.GONE);
+                            mSelectedSlaveView.setVisibility(TextView.GONE);
+                            mDueDateLayout.setVisibility(LinearLayout.GONE);
+                            mDueHourLayout.setVisibility(LinearLayout.GONE);
+                            mSeparator2.setVisibility(View.GONE);
+                            mSeparator3.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -265,19 +295,24 @@ public class ModifyPermissionFragment extends Fragment {
         mNewPermissionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User user = User.getUser(mPermissionNameView.getText().toString());
+                if (!NetworkingUtils.isOnline(getContext())) {
+                    Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_LONG ).show();
+                    return;
+                }
+                User user = User.getUser(mPermissionEmailView.getText().toString());
                 if (user == null) {
                     Snackbar.make(getView(), getString(R.string.invalid_email),
                             Snackbar.LENGTH_LONG ).show();
                     return;
                 }
+                user.saveLocal();
                 int slaveId = 0;
                 if (mSelectedSlave != null) {
                     slaveId = mSelectedSlave.getId();
                 }
                 // If creating new permission
-                Permission adminPermission = Permission.getPermission(User.getLoggedUser().getId(),
-                        mSelectedMaster.getId(), 0);
+
+                Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
                 if (adminPermission == null) {
                     Snackbar.make(getView(), R.string.no_permission, Snackbar.LENGTH_LONG).show();
                     return;
@@ -341,11 +376,7 @@ public class ModifyPermissionFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         mSelectedMaster = mMasters.get(which);
                         mSelectedMasterView.setText(mastersNames[which]);
-                        mSlaves = new ArrayList<>(mSelectedMaster.getSlaves());
-                        if (mSlaves.size() > 0) {
-                            mSelectedSlave = mSlaves.get(0);
-                            mSelectedSlaveView.setText(mSelectedSlave.getName());
-                        }
+                        setSlaves();
                     }
                 });
                 builder.show();

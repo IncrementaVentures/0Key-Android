@@ -37,6 +37,7 @@ import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IllegalFormatCodePointException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -114,8 +115,15 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void checkNewPermissions() {
+    public void checkNewPermissions() {
         Permission.fetchPermissions(this, mCurrentUser);
+    }
+
+    public void updateData(View view) {
+        getSupportFragmentManager().popBackStack();
+        Snackbar.make(mRootView, R.string.updating_data, Snackbar.LENGTH_LONG).show();
+        checkNewPermissions();
+        showToolbar();
     }
 
     private void checkPreferences(){
@@ -131,13 +139,15 @@ public class MainActivity extends AppCompatActivity implements
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             finish();
         } else {
-            super.onBackPressed();
-            getSupportFragmentManager().popBackStack();
-            MasterFragment masterFragment = (MasterFragment)
-                    getSupportFragmentManager().findFragmentByTag(MasterFragment.TAG);
-            if (masterFragment != null && masterFragment.isVisible()) {
-                showToolbar();
-            }
+            try {
+                super.onBackPressed();
+                getSupportFragmentManager().popBackStack();
+                MasterFragment masterFragment = (MasterFragment)
+                        getSupportFragmentManager().findFragmentByTag(MasterFragment.TAG);
+                if (masterFragment != null && masterFragment.isVisible()) {
+                    showToolbar();
+                }
+            } catch (IllegalStateException e) { }
         }
     }
 
@@ -160,10 +170,6 @@ public class MainActivity extends AppCompatActivity implements
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace( R.id.container, new MenuFragment())
                     .addToBackStack(MenuFragment.TAG).commit();
-            return true;
-        }
-        else if (id == R.id.refresh_data) {
-            checkNewPermissions();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -203,19 +209,20 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
         final String deviceName = (device.getName() == null) ? device.getAddress() : device.getName();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mScannedMasters.add(deviceName);
-                mScannedMastersAdapter.notifyDataSetChanged();
-            }
-        });
+        if (Master.getMaster(deviceName, User.getLoggedUser().getId()) == null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mScannedMasters.add(deviceName);
+                    mScannedMastersAdapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     @Override
     public void deviceNotFound() {
-        Snackbar.make(mRootView,
-                R.string.device_not_found, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRootView,  R.string.device_not_found, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -406,8 +413,9 @@ public class MainActivity extends AppCompatActivity implements
         ArrayList<Slave> slaves = new ArrayList<>();
         ArrayList<Master> masters = new ArrayList<>();
         for (Permission permission : permissions) {
-            masters.add(permission.getMaster());
-            if (permission.getSlave() != null)
+            if (permission.getMaster() != null && !masters.contains(permission.getMaster()))
+                masters.add(permission.getMaster());
+            if (permission.getSlave() != null && !slaves.contains(permission.getSlave()))
                 slaves.add(permission.getSlave());
         }
         mMasterFragment.onMastersReceived(masters);

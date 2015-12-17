@@ -29,8 +29,6 @@ public class MenuFragment extends Fragment {
     TextView mUserName;
     @Bind(R.id.user_email)
     TextView mUserEmail;
-    @Bind(R.id.go_home)
-    TextView mGoHome;
     @Bind(R.id.add_new_0key)
     TextView mAddNew0key;
     @Bind(R.id.add_new_door)

@@ -313,6 +313,18 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         }).start();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return ((Master)o).getId().equals(getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (getId() != null ? this.getId().hashCode() : 0);
+        return hash;
+    }
+
     public void addSlave(Slave slave){
         if (mSlaves == null) mSlaves = getSlaves();
         mSlaves.add(slave);

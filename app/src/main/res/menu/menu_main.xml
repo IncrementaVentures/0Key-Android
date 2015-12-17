@@ -3,7 +3,4 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
-    <item android:id="@+id/refresh_data" android:icon="@drawable/ic_action_autorenew"
-        app:showAsAction="ifRoom" android:title="@string/refresh_data"/>
-
 </menu>

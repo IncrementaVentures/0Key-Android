@@ -544,10 +544,10 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                         mListener.permissionCreated(key, mPermission);
                         break;
                     case EDIT_PERMISSION_MODE:
-                        mPermission.setSlaveId(mNewPermission.getSlaveId());
-                        mPermission.setStartDate(mNewPermission.getStartDate());
-                        mPermission.setEndDate(mNewPermission.getEndDate());
-                        mPermission.setType(Permission.getType(mNewPermission.getType()));
+                        mPermission.setSlaveId(mPermission.getSlaveId());
+                        mPermission.setStartDate(mPermission.getStartDate());
+                        mPermission.setEndDate(mPermission.getEndDate());
+                        mPermission.setType(Permission.getType(mPermission.getType()));
                         mListener.permissionEdited(key, mPermission);
                         break;
                     case DELETE_PERMISSION_MODE:
