@@ -37,7 +37,6 @@ import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.IllegalFormatCodePointException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -489,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().popBackStack();
         NewDoorFragment fragment = new NewDoorFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace( R.id.container, fragment)
+                .replace(R.id.container, fragment)
                 .addToBackStack(PermissionsFragment.TAG)
                 .commit();
     }
@@ -501,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements
         PermissionsFragment fragment = new PermissionsFragment();
         fragment.setArguments(args);
         fragmentManager.beginTransaction()
-                .replace( R.id.container, fragment)
+                .replace(R.id.container, fragment)
                 .addToBackStack(PermissionsFragment.TAG)
                 .commit();
     }
@@ -522,7 +521,7 @@ public class MainActivity extends AppCompatActivity implements
         ModifyPermissionFragment fragment = new ModifyPermissionFragment();
         fragment.setArguments(args);
         fragmentManager.beginTransaction()
-                .replace( R.id.container, fragment)
+                .replace(R.id.container, fragment)
                 .addToBackStack(ModifyPermissionFragment.TAG)
                 .commit();
     }
@@ -531,7 +530,7 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().popBackStack();
         PreferencesFragment fragment = new PreferencesFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace( R.id.container, fragment)
+                .replace(R.id.container, fragment)
                 .addToBackStack(ModifyPermissionFragment.TAG)
                 .commit();
     }
@@ -539,8 +538,9 @@ public class MainActivity extends AppCompatActivity implements
     public void onMenuItemClicked(View view) {
         getSupportFragmentManager().popBackStack();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, new MenuFragment())
-                .addToBackStack(MenuFragment.TAG).commit();
+        transaction.replace(R.id.container, new MenuFragment());
+        transaction.addToBackStack(MenuFragment.TAG);
+        transaction.commit();
     }
 
     public void onLogoutClicked(View view) {
