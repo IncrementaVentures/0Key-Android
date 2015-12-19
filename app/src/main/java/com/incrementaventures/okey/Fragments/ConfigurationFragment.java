@@ -19,6 +19,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ConfigurationFragment extends Fragment {
+    public static String TAG = "configuration_fragment_tag";
     @Bind(R.id.ok_button)
     ImageButton mOkButton;
     @Bind(R.id.cancel_button)

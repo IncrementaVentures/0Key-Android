@@ -28,6 +28,7 @@ import butterknife.OnClick;
  * A simple {@link Fragment} subclass.
  */
 public class NewDoorFragment extends Fragment {
+    public static String TAG = "new_door_fragment";
     @Bind(R.id.selected_master)
     TextView mSelectedMasterView;
 

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +27,7 @@ import com.incrementaventures.okey.Fragments.MasterFragment;
 import com.incrementaventures.okey.Fragments.InsertPinFragment;
 import com.incrementaventures.okey.Fragments.MenuFragment;
 import com.incrementaventures.okey.Fragments.ModifyPermissionFragment;
+import com.incrementaventures.okey.Fragments.NameHolderFragment;
 import com.incrementaventures.okey.Fragments.NewDoorFragment;
 import com.incrementaventures.okey.Fragments.PermissionsFragment;
 import com.incrementaventures.okey.Fragments.PreferencesFragment;
@@ -53,7 +55,8 @@ public class MainActivity extends AppCompatActivity implements
         ModifyPermissionFragment.OnPermissionModifiedListener,
         ConfigurationFragment.OnMasterConfigurationListener,
         PermissionsFragment.OnPermissionAdapterListener,
-        NewDoorFragment.OnPairRequestedListener {
+        NewDoorFragment.OnPairRequestedListener,
+        NameHolderFragment.OnTextHolderFragmentClick {
 
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
@@ -93,9 +96,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onMenuClick() {
-        getSupportFragmentManager().popBackStack();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, new MenuFragment()).
+        transaction.replace(R.id.container, new MenuFragment(), MenuFragment.TAG).
                 addToBackStack(MenuFragment.TAG).commit();
     }
 
@@ -140,10 +142,12 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             try {
                 super.onBackPressed();
-                getSupportFragmentManager().popBackStack();
                 MasterFragment masterFragment = (MasterFragment)
                         getSupportFragmentManager().findFragmentByTag(MasterFragment.TAG);
-                if (masterFragment != null && masterFragment.isVisible()) {
+                PermissionsFragment permissionsFragment = (PermissionsFragment)
+                        getSupportFragmentManager().findFragmentByTag(PermissionsFragment.TAG);
+                if ((masterFragment != null && masterFragment.isVisible()) ||
+                        permissionsFragment != null && permissionsFragment.isVisible()) {
                     showToolbar();
                 }
             } catch (IllegalStateException e) { }
@@ -167,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if (id == android.R.id.home) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace( R.id.container, new MenuFragment())
+            transaction.replace( R.id.container, new MenuFragment(), MenuFragment.TAG)
                     .addToBackStack(MenuFragment.TAG).commit();
             return true;
         }
@@ -244,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void doorOpening() {
-        Snackbar.make(mRootView, R.string.opening_door, Snackbar.LENGTH_INDEFINITE).show();
+        Snackbar.make(mRootView, R.string.opening_door, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -449,14 +453,13 @@ public class MainActivity extends AppCompatActivity implements
         builder.setAdapter(mScannedMastersAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                getSupportFragmentManager().popBackStack();
                 ConfigurationFragment fragment = new ConfigurationFragment();
                 Bundle args = new Bundle();
                 args.putString(Master.ID, mScannedMasters.get(which));
                 fragment.setArguments(args);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, fragment)
-                        .addToBackStack(ModifyPermissionFragment.TAG)
+                        .replace(R.id.container, fragment, ConfigurationFragment.TAG)
+                        .addToBackStack(ConfigurationFragment.TAG)
                         .commit();
             }
         });
@@ -485,11 +488,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onAddNewDoorClicked(View view) {
-        getSupportFragmentManager().popBackStack();
         NewDoorFragment fragment = new NewDoorFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment)
-                .addToBackStack(PermissionsFragment.TAG)
+                .replace(R.id.container, fragment, NewDoorFragment.TAG)
+                .addToBackStack(NewDoorFragment.TAG)
                 .commit();
     }
 
@@ -500,7 +502,7 @@ public class MainActivity extends AppCompatActivity implements
         PermissionsFragment fragment = new PermissionsFragment();
         fragment.setArguments(args);
         fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
+                .replace(R.id.container, fragment, PermissionsFragment.TAG)
                 .addToBackStack(PermissionsFragment.TAG)
                 .commit();
     }
@@ -511,7 +513,6 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.popBackStack();
         Bundle args = new Bundle();
         args.putString(Master.ID, mMasterFragment.getSelectedMaster().getId());
         Slave slave = mMasterFragment.getSelectedSlave();
@@ -521,24 +522,22 @@ public class MainActivity extends AppCompatActivity implements
         ModifyPermissionFragment fragment = new ModifyPermissionFragment();
         fragment.setArguments(args);
         fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
+                .replace(R.id.container, fragment, ModifyPermissionFragment.TAG)
                 .addToBackStack(ModifyPermissionFragment.TAG)
                 .commit();
     }
 
     public void onSettingsClicked(View view) {
-        getSupportFragmentManager().popBackStack();
         PreferencesFragment fragment = new PreferencesFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment)
-                .addToBackStack(ModifyPermissionFragment.TAG)
+                .replace(R.id.container, fragment, PermissionsFragment.TAG)
+                .addToBackStack(PreferencesFragment.TAG)
                 .commit();
     }
 
     public void onMenuItemClicked(View view) {
-        getSupportFragmentManager().popBackStack();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, new MenuFragment());
+        transaction.replace(R.id.container, new MenuFragment(), MenuFragment.TAG);
         transaction.addToBackStack(MenuFragment.TAG);
         transaction.commit();
     }
@@ -559,17 +558,21 @@ public class MainActivity extends AppCompatActivity implements
         onBackPressed();
     }
 
+    public void onGoBackToMain(View view) {
+        showMasterFragment();
+    }
+
     @Override
     public void onCreatePermissionClicked(Permission permission, String userKey) {
         Snackbar.make(mRootView, R.string.creating_permission,
-                Snackbar.LENGTH_INDEFINITE).show();
+                Snackbar.LENGTH_LONG).show();
         User.getLoggedUser().createNewPermission(permission, userKey, permission.getMaster().getId());
     }
 
     @Override
     public void onModifyPermissionClicked(Permission toEditPermission, int oldSlaveId,
                                           String userKey, String doorId) {
-        Snackbar.make(mRootView, R.string.editing_permission, Snackbar.LENGTH_INDEFINITE).show();
+        Snackbar.make(mRootView, R.string.editing_permission, Snackbar.LENGTH_LONG).show();
         mCurrentUser.editPermission(toEditPermission, oldSlaveId, userKey, doorId);
     }
 
@@ -580,14 +583,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConfigureMasterClick(String permissionKey, String defaultKey, Master master) {
-        Snackbar.make(mRootView, R.string.configuring_door_dialog, Snackbar.LENGTH_INDEFINITE).show();
+        Snackbar.make(mRootView, R.string.configuring_door_dialog, Snackbar.LENGTH_LONG).show();
         mCurrentUser.makeFirstAdminConnection(permissionKey, defaultKey, master);
     }
 
     @Override
     public void onModifyPermissionAdapterClicked(Permission permission) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.popBackStack();
         Bundle args = new Bundle();
         args.putString(Master.ID, permission.getMasterId());
         args.putInt(Slave.ID, permission.getSlaveId());
@@ -598,7 +600,7 @@ public class MainActivity extends AppCompatActivity implements
         ModifyPermissionFragment fragment = new ModifyPermissionFragment();
         fragment.setArguments(args);
         fragmentManager.beginTransaction()
-                .replace( R.id.container, fragment)
+                .replace(R.id.container, fragment, ModifyPermissionFragment.TAG)
                 .addToBackStack(ModifyPermissionFragment.TAG)
                 .commit();
     }
@@ -610,7 +612,7 @@ public class MainActivity extends AppCompatActivity implements
             mCurrentUser.deletePermission(permission.getMaster().getId(),
                     adminPermission.getKey(),
                     permission);
-            Snackbar.make(mRootView, R.string.deleting_permission, Snackbar.LENGTH_INDEFINITE).show();
+            Snackbar.make(mRootView, R.string.deleting_permission, Snackbar.LENGTH_LONG).show();
         } else {
             Snackbar.make(mRootView, R.string.no_permission, Snackbar.LENGTH_LONG).show();
         }
@@ -625,5 +627,15 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             Snackbar.make(mRootView, R.string.no_permission, Snackbar.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public void onMasterNameClick() {
+        mMasterFragment.onMasterNameClick();
+    }
+
+    @Override
+    public void onSlaveNameClick() {
+        mMasterFragment.onSlaveNameClick();
     }
 }

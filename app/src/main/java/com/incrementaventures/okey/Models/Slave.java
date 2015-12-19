@@ -134,6 +134,14 @@ public class Slave implements ParseObject, Nameable {
         return hash;
     }
 
+    public void setName(String name) {
+        mParseSlaveName.put(NAME, name);
+        mParseSlaveName.put(SLAVE_ID, getId());
+        mParseSlaveName.put(MASTER_ID, getMasterId());
+        mParseSlaveName.put(USER_ID, User.getLoggedUser().getId());
+        mParseSlaveName.pinInBackground();
+        mParseSlaveName.saveEventually();
+    }
 
     public static Slave fetchSlave(final String masterId, final int id) {
         if (TextUtils.isEmpty(masterId)) return null;

@@ -26,6 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class PreferencesFragment extends Fragment {
+    public static String TAG = "preferences_fragment";
     @Bind(R.id.user_name)
     EditText mUserName;
     @Bind(R.id.user_email)

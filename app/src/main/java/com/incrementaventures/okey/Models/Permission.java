@@ -10,8 +10,11 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class Permission implements com.incrementaventures.okey.Models.ParseObject {
@@ -329,12 +332,45 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         return mParsePermission.getString(START_DATE);
     }
 
+    public static String getFormattedDate(String stringDate) {
+        try {
+            Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm",
+                    Locale.getDefault()).parse(stringDate);
+            return new SimpleDateFormat("MMM dd, yyy",
+                    Locale.getDefault()).format(date);
+        } catch (java.text.ParseException e) {
+            return stringDate;
+        }
+    }
+
+    public static String getDefaultDateString(String formattedDate) {
+        try {
+            Date date = new SimpleDateFormat("MMM dd, yyyy",
+                    Locale.getDefault()).parse(formattedDate);
+            return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
+        } catch (java.text.ParseException e) {
+            return formattedDate;
+        }
+    }
+
+
     public void setStartDate(String startDate){
         mParsePermission.put(START_DATE, startDate);
     }
 
     public String getEndDate(){
         return mParsePermission.getString(END_DATE);
+    }
+
+    public String getFormattedEndDate() {
+        try {
+            Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm",
+                    Locale.getDefault()).parse(mParsePermission.getString(END_DATE));
+            return new SimpleDateFormat("MMM dd, yyy",
+                    Locale.getDefault()).format(date);
+        } catch (java.text.ParseException e) {
+            return mParsePermission.getString(END_DATE);
+        }
     }
 
     public void setEndDate(String endDate){

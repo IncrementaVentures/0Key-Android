@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.incrementaventures.okey.Models.User;
@@ -56,6 +57,12 @@ public class PermissionsFragment extends Fragment {
         mPermissionsAdapter = new PermissionAdapter(getActivity(), R.layout.permission_list_item,
             mPermissions, mListener);
         mPermissionsView.setAdapter(mPermissionsAdapter);
+        mPermissionsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mListener.onModifyPermissionAdapterClicked(mPermissions.get(position));
+            }
+        });
         return view;
     }
 

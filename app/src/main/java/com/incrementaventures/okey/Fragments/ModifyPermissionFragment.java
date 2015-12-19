@@ -117,6 +117,7 @@ public class ModifyPermissionFragment extends Fragment {
         setMasters();
         setSlaves();
         setListeners();
+        setUi();
         mPermissionTypes =  new CharSequence[]{
                 getResources().getString(R.string.permission_type_admin),
                 getResources().getString(R.string.permission_type_permanent),
@@ -126,11 +127,19 @@ public class ModifyPermissionFragment extends Fragment {
     }
 
     private void setMasters() {
+        if (mSelectedMaster != null) {
+            mSelectedMasterView.setText(mSelectedMaster.getName());
+            mSelectedSlave = Slave.getSlave(mSelectedMaster.getId(), getArguments().getInt(Slave.ID));
+            if (mSelectedSlave != null) {
+                mSelectedSlaveView.setText(mSelectedSlave.getName());
+            }
+        }
         mMasters = Master.getMasters();
-        if (mMasters.size() > 0) {
+        if (mMasters.size() > 0 && mSelectedMaster != null) {
             mSelectedMaster = mMasters.get(0);
             mSelectedMasterView.setText(mSelectedMaster.getName());
         }
+
     }
 
     private void setSlaves() {
@@ -151,21 +160,54 @@ public class ModifyPermissionFragment extends Fragment {
         }
         User user = User.getLoggedUser();
         mSelectedMaster = Master.getMaster(getArguments().getString(Master.ID), user.getId());
-        if (mSelectedMaster != null) {
-            mSelectedMasterView.setText(mSelectedMaster.getName());
-            mSelectedSlave = Slave.getSlave(mSelectedMaster.getId(), getArguments().getInt(Slave.ID));
-            if (mSelectedSlave != null) {
-                mSelectedSlaveView.setText(mSelectedSlave.getName());
-            }
-        }
         String oldSlave = String.valueOf(getArguments().getInt(PERMISSION_OLD_SLAVE, -1));
         mOldSlaveId = Integer.valueOf(oldSlave);
         mPermissionName = getArguments().getString(Permission.NAME);
         if (getArguments().getString(Permission.OBJECT_ID) != null) {
             mToEditPermission = Permission.getPermission(getArguments().getString(Permission.OBJECT_ID));
+            String startDate = mToEditPermission.getStartDate();
+            String endDate = mToEditPermission.getEndDate();
+            mStartHourView.setText(startDate.substring(startDate.indexOf('T') + 1, startDate.length()));
+            mEndHourView.setText(endDate.substring(endDate.indexOf('T') + 1, endDate.length()));
+            mStartDateView.setText(Permission.getFormattedDate(startDate));
+            mEndDateView.setText(Permission.getFormattedDate(endDate));
+            mPermissionTypeView.setText(mToEditPermission.getType());
+        } else {
+            mStartDateView.setText(Permission.getFormattedDate("2015-01-01T00:01"));
+            mEndDateView.setText(Permission.getFormattedDate("2015-01-01T00:01"));
         }
         if (!TextUtils.isEmpty(mPermissionName)) {
             mPermissionEmailView.setText(mPermissionName);
+        }
+    }
+
+    private void setUi() {
+        if (mPermissionTypeView.getText().toString().equals(getResources()
+                .getString(R.string.permission_type_temporal))) {
+            mDueDateLayout.setVisibility(LinearLayout.VISIBLE);
+            mDueHourLayout.setVisibility(LinearLayout.VISIBLE);
+            mStartDateLayout.setVisibility(LinearLayout.VISIBLE);
+            mStartHourLayout.setVisibility(LinearLayout.VISIBLE);
+            mSlaveTitle.setVisibility(TextView.VISIBLE);
+            mSelectedSlaveView.setVisibility(TextView.VISIBLE);
+            mSeparator2.setVisibility(View.VISIBLE);
+            mSeparator3.setVisibility(View.VISIBLE);
+        } else if (mPermissionTypeView.getText().toString().equals(getResources()
+                .getString(R.string.permission_type_permanent))){
+            mDueDateLayout.setVisibility(LinearLayout.GONE);
+            mDueHourLayout.setVisibility(LinearLayout.GONE);
+            mSlaveTitle.setVisibility(TextView.VISIBLE);
+            mSelectedSlaveView.setVisibility(TextView.VISIBLE);
+            mSeparator2.setVisibility(View.GONE);
+            mSeparator3.setVisibility(View.VISIBLE);
+        } else if (mPermissionTypeView.getText().toString().equals(getResources()
+                .getString(R.string.permission_type_admin))){
+            mSlaveTitle.setVisibility(TextView.GONE);
+            mSelectedSlaveView.setVisibility(TextView.GONE);
+            mDueDateLayout.setVisibility(LinearLayout.GONE);
+            mDueHourLayout.setVisibility(LinearLayout.GONE);
+            mSeparator2.setVisibility(View.GONE);
+            mSeparator3.setVisibility(View.GONE);
         }
     }
 
@@ -179,33 +221,7 @@ public class ModifyPermissionFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mPermissionTypeView.setText(mPermissionTypes[which]);
-                        if (mPermissionTypes[which].equals(getResources()
-                                .getString(R.string.permission_type_temporal))) {
-                            mDueDateLayout.setVisibility(LinearLayout.VISIBLE);
-                            mDueHourLayout.setVisibility(LinearLayout.VISIBLE);
-                            mStartDateLayout.setVisibility(LinearLayout.VISIBLE);
-                            mStartHourLayout.setVisibility(LinearLayout.VISIBLE);
-                            mSlaveTitle.setVisibility(TextView.VISIBLE);
-                            mSelectedSlaveView.setVisibility(TextView.VISIBLE);
-                            mSeparator2.setVisibility(View.VISIBLE);
-                            mSeparator3.setVisibility(View.VISIBLE);
-                        } else if (mPermissionTypes[which].equals(getResources()
-                                .getString(R.string.permission_type_permanent))){
-                            mDueDateLayout.setVisibility(LinearLayout.GONE);
-                            mDueHourLayout.setVisibility(LinearLayout.GONE);
-                            mSlaveTitle.setVisibility(TextView.VISIBLE);
-                            mSelectedSlaveView.setVisibility(TextView.VISIBLE);
-                            mSeparator2.setVisibility(View.GONE);
-                            mSeparator3.setVisibility(View.VISIBLE);
-                        } else if (mPermissionTypes[which].equals(getResources()
-                                .getString(R.string.permission_type_admin))){
-                            mSlaveTitle.setVisibility(TextView.GONE);
-                            mSelectedSlaveView.setVisibility(TextView.GONE);
-                            mDueDateLayout.setVisibility(LinearLayout.GONE);
-                            mDueHourLayout.setVisibility(LinearLayout.GONE);
-                            mSeparator2.setVisibility(View.GONE);
-                            mSeparator3.setVisibility(View.GONE);
-                        }
+                        setUi();
                     }
                 });
                 builder.show();
@@ -263,7 +279,7 @@ public class ModifyPermissionFragment extends Fragment {
                         mEndDate = yearString + "-"
                                 + monthString + "-"
                                 + dayString;
-                        mEndDateView.setText(mEndDate);
+                        mEndDateView.setText(Permission.getFormattedDate(mEndDate + "T00:00"));
                     }
                 };
                 newFragment.show(getActivity().getFragmentManager(), "datePicker");
@@ -285,7 +301,7 @@ public class ModifyPermissionFragment extends Fragment {
                         mStartDate = yearString + "-"
                                 + monthString + "-"
                                 + dayString;
-                        mStartDateView.setText(mStartDate);
+                        mStartDateView.setText(Permission.getFormattedDate(mStartDate + "T00:00"));
                     }
                 };
                 newFragment.show(getActivity().getFragmentManager(), "datePicker");
@@ -310,30 +326,36 @@ public class ModifyPermissionFragment extends Fragment {
                 if (mSelectedSlave != null) {
                     slaveId = mSelectedSlave.getId();
                 }
-                // If creating new permission
-
+                if (Permission.getType(mPermissionTypeView.getText().toString()) != Permission.ADMIN_PERMISSION
+                        && (mSlaves == null || mSlaves.size() == 0)) {
+                    Snackbar.make(getView(), R.string.master_without_slaves, Snackbar.LENGTH_LONG ).show();
+                    return;
+                }
                 Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
                 if (adminPermission == null) {
                     Snackbar.make(getView(), R.string.no_permission, Snackbar.LENGTH_LONG).show();
                     return;
                 }
                 String userKey = adminPermission.getKey();
+                String startDate =  Permission.getDefaultDateString(mStartDateView.getText().toString())
+                        + "T" + mStartHourView.getText().toString();
+                String endDate =  Permission.getDefaultDateString(mEndDateView.getText().toString())
+                        + "T" + mEndHourView.getText().toString();
                 if (TextUtils.isEmpty(mKey)) {
-                    Permission permission = Permission.create(user, mSelectedMaster,
+                    Permission permission = Permission.create(user,
+                            mSelectedMaster,
                             Permission.getType(mPermissionTypeView.getText().toString()),
                             "",
-                            mStartDateView.getText().toString() + "T" + mStartHourView.getText().toString(),
-                            mEndDateView.getText().toString() + "T" + mEndHourView.getText().toString(),
+                            startDate,
+                            endDate,
                             slaveId);
 
                     mPermissionModifiedListener.onCreatePermissionClicked(permission, userKey);
                 // If editing permission
                 } else {
                     mToEditPermission.setType(Permission.getType(mPermissionTypeView.getText().toString()));
-                    mToEditPermission.setStartDate(mStartDateView.getText().toString() + "T"
-                            + mStartHourView.getText().toString());
-                    mToEditPermission.setEndDate(mEndDateView.getText().toString() + "T" +
-                            mEndHourView.getText().toString());
+                    mToEditPermission.setStartDate(startDate);
+                    mToEditPermission.setEndDate(endDate);
                     mToEditPermission.setSlaveId(slaveId);
                     mPermissionModifiedListener.onModifyPermissionClicked(mToEditPermission, mOldSlaveId,
                             userKey, mSelectedMaster.getId());

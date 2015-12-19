@@ -1,16 +1,20 @@
 package com.incrementaventures.okey.Fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.incrementaventures.okey.Models.Master;
@@ -257,6 +261,74 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
                 moveViewPagerRight(mSlaveNameContainer, mSelectedSlaveIndex, mSlaves.size());
     }
 
+    public void onSlaveNameClick() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final EditText edittext = new EditText(getContext());
+        builder.setTitle(R.string.edit_slave_name);
+        builder.setView(edittext);        builder.setView(edittext);
+        builder.setPositiveButton(R.string.change_name, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) { }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) { }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface d) {
+                Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String name = edittext.getText().toString();
+                        if (name.length() > 0) {
+                            mSlaves.get(mSelectedSlaveIndex).setName(name);
+                            NameHolderFragment fragment = (NameHolderFragment)
+                                    (mMasterNameAdapter.getInstanceItem(mMasterNameContainer.getCurrentItem()));
+                            fragment.setText(name);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        dialog.show();
+    }
+
+    public void onMasterNameClick() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final EditText edittext = new EditText(getContext());
+        builder.setTitle(R.string.edit_master_name);
+        builder.setView(edittext);
+        builder.setPositiveButton(R.string.change_name, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) { }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) { }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface d) {
+                Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String name = edittext.getText().toString();
+                        if (name.length() > 0) {
+                            mMasters.get(mSelectedMasterIndex).setName(name);
+                            NameHolderFragment fragment = (NameHolderFragment)
+                                    (mMasterNameAdapter.getInstanceItem(mMasterNameContainer.getCurrentItem()));
+                            fragment.setText(name);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        dialog.show();
+    }
+
     private int moveViewPagerRight(ViewPager viewPager, int currentIndex, int listLength) {
         currentIndex++;
         if (currentIndex >= listLength) {
@@ -311,12 +383,14 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     private class TextViewPagerAdapter extends FragmentStatePagerAdapter {
         ArrayList<? extends Nameable> mObjects;
         private boolean mShowIcon;
+        HashMap<Integer, Fragment> mFragments;
 
         public TextViewPagerAdapter(FragmentManager fm, ArrayList<? extends Nameable> objects,
                                     boolean showIcon) {
             super(fm);
             mObjects = objects;
             mShowIcon = showIcon;
+            mFragments = new HashMap<>();
         }
 
         @Override
@@ -326,6 +400,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
             args.putBoolean(NameHolderFragment.SHOW_ICON, mShowIcon);
             NameHolderFragment nameHolderFragment = new NameHolderFragment();
             nameHolderFragment.setArguments(args);
+            mFragments.put(position, nameHolderFragment);
             return nameHolderFragment;
         }
 
@@ -333,6 +408,10 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         public int getCount() {
             if (mObjects == null) return 0;
             return mObjects.size();
+        }
+
+        public Fragment getInstanceItem(int position) {
+            return mFragments.get(position);
         }
     }
 }

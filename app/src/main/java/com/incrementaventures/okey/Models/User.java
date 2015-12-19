@@ -486,8 +486,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         try {
             ParseUser parseUser = query.getFirst();
             return User.create(parseUser);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
             return null;
         }
     }

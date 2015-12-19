@@ -6,6 +6,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,6 +75,14 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         return mParseMaster.getString(ID);
     }
 
+    public void setName(String name) {
+        mMasterName.put(NAME, name);
+        mMasterName.put(MASTER_ID, getId());
+        mMasterName.put(USER_ID, User.getLoggedUser().getId());
+        mMasterName.pinInBackground();
+        mMasterName.saveEventually();
+    }
+
     public static ArrayList<Master> getMasters() {
         ParseQuery<ParseObject> query = new ParseQuery<>(Master.MASTER_CLASS_NAME);
         query.fromLocalDatastore();
@@ -100,13 +109,13 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         try {
             masterName = query.getFirst();
             if (masterName == null) {
-                masterName = ParseObject.create(MASTER_NAME_CLASS_NAME);
+                masterName = new ParseObject(MASTER_NAME_CLASS_NAME);
                 masterName.put(USER_ID, userUuid);
                 masterName.put(MASTER_ID, master.getString(ID));
                 masterName.put(NAME, master.getString(ID));
             }
         } catch (ParseException e) {
-            masterName = ParseObject.create(MASTER_NAME_CLASS_NAME);
+            masterName = new ParseObject(MASTER_NAME_CLASS_NAME);
             masterName.put(USER_ID, userUuid);
             masterName.put(MASTER_ID, master.getString(ID));
             masterName.put(NAME, master.getString(ID));

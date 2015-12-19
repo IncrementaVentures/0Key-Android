@@ -11,10 +11,9 @@
         android:textAppearance="@style/TextAppearance.AvenirGreySmall"
         android:text="Tipo de permiso"
         android:padding="2dp"
-        android:layout_marginLeft="10dp"
         android:id="@+id/permission_type_edit"
-        android:layout_alignTop="@+id/user_name"
-        android:layout_toEndOf="@+id/user_name" />
+        android:layout_below="@+id/user_name"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,8 +22,8 @@
         android:textAppearance="@style/TextAppearance.AvenirGreySmall"
         android:text="Fecha inicio"
         android:id="@+id/permission_start_date_edit"
-        android:layout_below="@+id/permission_type_edit"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -34,7 +33,7 @@
         android:text="Fecha termino"
         android:id="@+id/permission_end_date_edit"
         android:layout_below="@+id/permission_start_date_edit"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,25 +44,6 @@
         android:id="@+id/permission_slave_edit"
         android:layout_below="@+id/permission_end_date_edit"
         android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="70dp"
-        android:layout_height="wrap_content"
-        android:text="@string/delete_permission"
-        android:textAppearance="@style/TextAppearance.AvenirGreySmall"
-        android:id="@+id/delete_permission_button"
-        android:layout_alignTop="@+id/edit_permission_button"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="70dp"
-        android:layout_height="wrap_content"
-        android:text="@string/edit"
-        android:id="@+id/edit_permission_button"
-        android:textAppearance="@style/TextAppearance.AvenirGreySmall"
-        android:layout_alignTop="@+id/permission_type_edit"
-        android:layout_toStartOf="@+id/delete_permission_button" />
 
     <TextView
         android:layout_width="wrap_content"

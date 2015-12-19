@@ -19,7 +19,7 @@
             android:src="@drawable/ic_arrow_back_gray"
             android:background="@android:color/transparent"
             android:id="@+id/menu_button"
-            android:onClick="onMenuItemClicked"
+            android:onClick="onGoBackClicked"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true" />
 

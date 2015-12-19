@@ -5,4 +5,5 @@ package com.incrementaventures.okey.Models;
  */
 public interface Nameable {
     String getName();
+    void setName(String name);
 }

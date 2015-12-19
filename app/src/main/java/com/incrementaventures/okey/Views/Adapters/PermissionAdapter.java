@@ -31,13 +31,7 @@ public class PermissionAdapter extends ArrayAdapter<Permission> {
         mListener = listener;
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        if (view == null){
-            view = mLayoutInflater.inflate(R.layout.permission_list_item, parent, false);
-        }
-        final Permission permission = getItem(position);
+    private void setUser(View view, Permission permission) {
         User user = permission.getUser();
         final TextView userNameView = (TextView) view.findViewById(R.id.user_name);
         if (user == null) {
@@ -45,43 +39,35 @@ public class PermissionAdapter extends ArrayAdapter<Permission> {
                 @Override
                 public void onUserGetted(User user) {
                     user.saveLocal();
-                    userNameView.setText(user.getName().substring(0, user.getName().indexOf(' ')));
+                    userNameView.setText(user.getName());
                 }
             });
         } else {
             userNameView.setText(user.getName().substring(0, user.getName().indexOf(' ')));
         }
 
+    }
+
+    private void setPermissionType(View view, Permission permission) {
         TextView permissionTypeView = (TextView) view.findViewById(R.id.permission_type_edit);
         permissionTypeView.setText(permission.getType());
+    }
 
+    private void setDates(View view, Permission permission) {
         TextView startDateView = (TextView) view.findViewById(R.id.permission_start_date_edit);
-        startDateView.setText(permission.getStartDate());
+        startDateView.setText(Permission.getFormattedDate(permission.getStartDate()));
         TextView endDateView = (TextView) view.findViewById(R.id.permission_end_date_edit);
 
         if (permission.getType().equals(mContext.getString(R.string.permission_type_admin)) ||
                 permission.getType().equals(mContext.getString(R.string.permission_type_permanent))) {
             endDateView.setVisibility(TextView.GONE);
         } else {
-            endDateView.setText(permission.getEndDate());
+            endDateView.setText(Permission.getFormattedDate(permission.getEndDate()));
             endDateView.setVisibility(TextView.VISIBLE);
         }
+    }
 
-
-        Button deleteButton = (Button) view.findViewById(R.id.delete_permission_button);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onDeletePermissionAdapterClicked(permission);
-            }
-        });
-        Button editButton = (Button) view.findViewById(R.id.edit_permission_button);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onModifyPermissionAdapterClicked(permission);
-            }
-        });
+    private void setSlave(View view, Permission permission) {
         Slave slave = permission.getSlave();
         TextView slaveView = (TextView) view.findViewById(R.id.permission_slave_edit);
 
@@ -91,6 +77,19 @@ public class PermissionAdapter extends ArrayAdapter<Permission> {
             slaveView.setVisibility(TextView.VISIBLE);
             slaveView.setText(String.valueOf(slave.getName()));
         }
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view = convertView;
+        if (view == null){
+            view = mLayoutInflater.inflate(R.layout.permission_list_item, parent, false);
+        }
+        final Permission permission = getItem(position);
+        setUser(view, permission);
+        setPermissionType(view, permission);
+        setDates(view, permission);
+        setSlave(view, permission);
         return view;
     }
 }
