@@ -9,7 +9,7 @@
     <android.support.v7.preference.EditTextPreference
         android:key="protect_pin"
         android:title="@string/pin"
-        android:defaultValue=""
+        android:defaultValue="EMPTY"
         android:password="true"
         android:numeric="integer"
         android:maxLength="4"

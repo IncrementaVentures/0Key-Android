@@ -1,20 +1,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="4dp"
-    android:layout_marginLeft="4dp"
-    android:layout_marginRight="4dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     >
-
-    <EditText
-        android:id="@+id/pin"
-        android:inputType="textPassword"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/pin_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
+        android:orientation="vertical"
+        >
+        <EditText
+            android:id="@+id/pin"
+            android:inputType="numberPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:maxLength="4"
+            />
+    </android.support.design.widget.TextInputLayout>
 
-        android:fontFamily="sans-serif"
-        android:hint="@string/pin"/>
 </LinearLayout>

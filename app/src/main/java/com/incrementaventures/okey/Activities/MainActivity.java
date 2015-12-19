@@ -129,8 +129,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private void checkPreferences(){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
         if (sharedPref.getBoolean("protect_with_pin", false)){
             InsertPinFragment dialog = new InsertPinFragment();
+            dialog.setCancelable(false);
             dialog.show(getFragmentManager(), "dialog_pin");
         }
     }
