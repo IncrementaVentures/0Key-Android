@@ -164,5 +164,7 @@
     <string name="unknown">Unknown</string>
     <string name="master_without_slaves">Master without slaves</string>
     <string name="change_name">Change name</string>
+    <string name="set_pin">Set pin</string>
+    <string name="different_keys">Different keys</string>
 
 </resources>

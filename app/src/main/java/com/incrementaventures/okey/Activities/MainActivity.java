@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity implements
         setUpToolbar();
         authenticateUser();
         if (mCurrentUser == null) return;
-        checkNewPermissions();
         checkPreferences();
+        checkNewPermissions();
         checkBluetoothLeSupport();
         mMasterFragment = new MasterFragment();
         getSupportFragmentManager().beginTransaction()
@@ -129,8 +129,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void checkPreferences(){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if (sharedPref.getBoolean("protect_with_pin", false)){
+        if (sharedPref.getBoolean("protect_with_pin", true)){
             InsertPinFragment dialog = new InsertPinFragment();
             dialog.setCancelable(false);
             dialog.show(getFragmentManager(), "dialog_pin");
