@@ -1,11 +1,14 @@
 package com.incrementaventures.okey.Fragments;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,11 +51,22 @@ public class LoginFragment extends Fragment implements User.OnParseUserLoginResp
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View v = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.bind(this, v);
+        setUI();
         setListeners();
         return v;
+    }
+
+    private void setUI() {
+        mLoginButton.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.turquoise),
+                PorterDuff.Mode.MULTIPLY);
+        mToCreateButton.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.turquoise),
+                PorterDuff.Mode.MULTIPLY);
+        mLoginEmail.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.white),
+                PorterDuff.Mode.SRC_ATOP);
+        mLoginPassword.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.white),
+                PorterDuff.Mode.SRC_ATOP);
     }
 
     private void setListeners(){

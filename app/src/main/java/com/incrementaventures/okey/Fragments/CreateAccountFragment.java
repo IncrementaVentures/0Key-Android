@@ -1,11 +1,14 @@
 package com.incrementaventures.okey.Fragments;
 
+
 import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,8 +58,24 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_create_account, container, false);
         ButterKnife.bind(this, view);
+        setUI();
         setListeners();
         return view;
+    }
+
+    private void setUI() {
+        mCreateButton.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.turquoise),
+                PorterDuff.Mode.MULTIPLY);
+        mEmail.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.white),
+                PorterDuff.Mode.SRC_ATOP);
+        mPassword.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.white),
+                PorterDuff.Mode.SRC_ATOP);
+        mBirthday.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.white),
+                PorterDuff.Mode.SRC_ATOP);
+        mName.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.white),
+                PorterDuff.Mode.SRC_ATOP);
+        mPhone.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.white),
+                PorterDuff.Mode.SRC_ATOP);
     }
 
 
@@ -116,6 +135,7 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
                 Snackbar.LENGTH_LONG).show();
         // Create new fragment and transaction
         LoginFragment newFragment = new LoginFragment();
+
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack if needed
