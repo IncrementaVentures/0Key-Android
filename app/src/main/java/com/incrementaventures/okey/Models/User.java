@@ -30,7 +30,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     public static final String MALE = "m";
     public static final String FEMALE = "f";
     public static final String EMAIL_VERIFIED = "emailVerified";
-
+    public static final String BACKUP_EMAIL = "backupEmail";
 
     private ParseUser mParseUser;
     private BluetoothClient mBluetoothClient;
@@ -191,6 +191,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         mParseUser.put(BIRTHDAY, birthday);
         mParseUser.setEmail(email);
         mParseUser.setPassword(password);
+        mParseUser.put(BACKUP_EMAIL, email);
     }
 
     private User(ParseUser parseUser){

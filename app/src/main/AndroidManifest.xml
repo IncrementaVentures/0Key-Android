@@ -56,6 +56,9 @@
             android:label="@string/title_activity_share_key"
             android:parentActivityName=".Activities.DoorActivity" >
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="d6c5fb7c298d35bbea50ef09cd0d44e1c06d1401" />
     </application>
 
 </manifest>

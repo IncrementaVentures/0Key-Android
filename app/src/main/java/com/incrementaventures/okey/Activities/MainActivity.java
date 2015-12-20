@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements
         User.OnActionMasterResponse,
         User.OnPermissionsResponse,
         Permission.OnNetworkResponseListener,
-        MasterFragment.OnSlaveSelectedListener,
+        MasterFragment.OnMasterFragmentListener,
         MenuFragment.OnMenuButtonClicked,
         ModifyPermissionFragment.OnPermissionModifiedListener,
         ConfigurationFragment.OnMasterConfigurationListener,
@@ -211,7 +210,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
-        final String deviceName = (device.getName() == null) ? device.getAddress() : device.getName();
+        final String deviceName =
+                (device.getName() == null) ? device.getAddress() : device.getName();
         if (Master.getMaster(deviceName, User.getLoggedUser().getId()) == null) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -425,18 +425,21 @@ public class MainActivity extends AppCompatActivity implements
         mMasterFragment.onSlavesReceived(slaves);
     }
 
-    @Override
-    public void openDoorSelected(Master master, Slave slave) {
 
+    @Override
+    public void shareKeySelected(Master master) {
+        Bundle args = new Bundle();
+        args.putString(Master.ID, master.getId());
+        ModifyPermissionFragment fragment = new ModifyPermissionFragment();
+        fragment.setArguments(args);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, fragment, ModifyPermissionFragment.TAG)
+                .addToBackStack(ModifyPermissionFragment.TAG)
+                .commit();
     }
 
     @Override
-    public void readMyPermissionSelected(Master master, Slave slave, String permissionKey) {
-
-    }
-
-    @Override
-    public void readAllPermissionsSelected(Master master, Slave slave, String permissionKey) {
+    public void get0keySelected() {
 
     }
 

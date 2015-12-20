@@ -2,10 +2,12 @@ package com.incrementaventures.okey;
 
 import android.app.Application;
 
+import com.crashlytics.android.Crashlytics;
 import com.incrementaventures.okey.Views.Adapters.FontsOverride;
 import com.parse.Parse;
 import com.parse.ParseCrashReporting;
 
+import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
@@ -16,6 +18,7 @@ public class OkeyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         FontsOverride.setDefaultFont(this, "MONOSPACE", "avenir.ttf");
 
         // Enable Local Datastore.

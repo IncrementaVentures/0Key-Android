@@ -3,19 +3,20 @@ package com.incrementaventures.okey.Fragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Nameable;
@@ -26,7 +27,6 @@ import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -54,25 +54,43 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     ImageButton mLeftArrowSlave;
     @Bind(R.id.open_button)
     ImageButton mOpenButton;
+    @Bind(R.id.bottom_text)
+    TextView mBottomText;
+    @Bind(R.id.share_image)
+    ImageView mShareImage;
+    @Bind(R.id.share_virtual_key)
+    LinearLayout mBottomLayout;
 
     @Bind(R.id.show_permissions_button)
     Button mShowPermissionsButton;
-
 
     private ArrayList<Master> mMasters;
     private int mSelectedMasterIndex;
     private ArrayList<Slave> mSlaves;
     private ArrayList<Permission> mPermissions;
     private boolean mScannedDoor;
-    private OnSlaveSelectedListener mSlaveSelectionListener;
+    private OnMasterFragmentListener mMasterFragmentListener;
     private int mSelectedSlaveIndex;
 
-    public interface OnSlaveSelectedListener {
-        void openDoorSelected(Master master, Slave slave);
-        void readMyPermissionSelected(Master master, Slave slave, String permissionKey);
-        void readAllPermissionsSelected(Master master, Slave slave, String permissionKey);
+    public interface OnMasterFragmentListener {
+        void shareKeySelected(Master master);
+        void get0keySelected();
         void openWhenCloseSelected(Master master, Slave slave, String permissionKey);
     }
+
+    View.OnClickListener mShareKeyListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mMasterFragmentListener.shareKeySelected(mMasters.get(mSelectedMasterIndex));
+        }
+    };
+
+    View.OnClickListener mGet0keyListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mMasterFragmentListener.get0keySelected();
+        }
+    };
 
     public MasterFragment() { }
 
@@ -84,6 +102,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         setPermissions();
         setMasters();
         setSlaves();
+        setBottomText();
         setNameableHolderAdapters();
         setUI();
         return v;
@@ -95,6 +114,28 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         if (mSlaves.size() > 0) {
             mSelectedSlaveIndex = 0;
         }
+    }
+
+    private void setBottomText() {
+        if (mMasters == null || mMasters.size() == 0)
+            return;
+        if (User.getLoggedUser().getAdminPermission(mMasters.get(mSelectedMasterIndex)) != null) {
+            mBottomLayout.setOnClickListener(mShareKeyListener);
+            changeBottomTextToShareKey();
+        } else {
+            mBottomLayout.setOnClickListener(mGet0keyListener);
+            changeBottomTextToGet0key();
+        }
+    }
+
+    private void changeBottomTextToGet0key() {
+        mShareImage.setVisibility(ImageView.GONE);
+        mBottomText.setText(R.string.get_an_0key);
+    }
+
+    private void changeBottomTextToShareKey() {
+        mShareImage.setVisibility(ImageView.VISIBLE);
+        mBottomText.setText(R.string.share_a_virtual_key);
     }
 
     private void setMasters() {
@@ -181,11 +222,14 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
             mSelectedMasterIndex = position;
             setSlaves();
             setSlaveHolderAdapter();
+            setBottomText();
         }
 
         @Override
         public void onPageScrollStateChanged(int state) { }
     };
+
+
 
     private void setMasterHolderAdapter() {
         mMasterNameAdapter = new TextViewPagerAdapter(getChildFragmentManager(),
@@ -238,6 +282,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         mSelectedMasterIndex =
                 moveViewPagerLeft(mMasterNameContainer, mSelectedMasterIndex);
         setSlaves();
+        setBottomText();
         setSlaveHolderAdapter();
     }
 
@@ -246,6 +291,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         mSelectedMasterIndex =
                 moveViewPagerRight(mMasterNameContainer, mSelectedMasterIndex, mMasters.size());
         setSlaves();
+        setBottomText();
         setSlaveHolderAdapter();
     }
 
@@ -284,7 +330,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
                         if (name.length() > 0) {
                             mSlaves.get(mSelectedSlaveIndex).setName(name);
                             NameHolderFragment fragment = (NameHolderFragment)
-                                    (mMasterNameAdapter.getInstanceItem(mMasterNameContainer.getCurrentItem()));
+                                    (mSlaveNameAdapter.getInstanceItem(mSlaveNameContainer.getCurrentItem()));
                             fragment.setText(name);
                         }
                         dialog.dismiss();
@@ -355,9 +401,9 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mSlaveSelectionListener = (OnSlaveSelectedListener) context;
+            mMasterFragmentListener = (OnMasterFragmentListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnSlaveSelectedListener");
+            throw new ClassCastException(context.toString() + " must implement OnMasterFragmentListener");
         }
     }
 
@@ -367,6 +413,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         if (mMasters.size() == 1) {
             mSelectedMasterIndex = 0;
             setSlaves();
+            setBottomText();
             setPermissions();
             setNameableHolderAdapters();
         }

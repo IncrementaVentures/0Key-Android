@@ -136,7 +136,6 @@ public class ModifyPermissionFragment extends Fragment {
         }
         mMasters = Master.getMasters();
         if (mMasters.size() > 0 && mSelectedMaster != null) {
-            mSelectedMaster = mMasters.get(0);
             mSelectedMasterView.setText(mSelectedMaster.getName());
         }
 
@@ -149,7 +148,9 @@ public class ModifyPermissionFragment extends Fragment {
             mSelectedSlaveView.setText(R.string.no_slaves_found_yet);
             mSelectedSlaveView.setClickable(false);
         } else {
+            mSelectedSlaveView.setClickable(true);
             mSelectedSlave = mSlaves.get(0);
+            mSelectedSlaveView.setText(mSelectedSlave.getName());
         }
     }
 
@@ -349,7 +350,6 @@ public class ModifyPermissionFragment extends Fragment {
                             startDate,
                             endDate,
                             slaveId);
-
                     mPermissionModifiedListener.onCreatePermissionClicked(permission, userKey);
                 // If editing permission
                 } else {

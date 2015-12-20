@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.util.List;
 
@@ -43,7 +44,6 @@ public class Slave implements ParseObject, Nameable {
         mParseSlave = parseSlave;
         mParseSlaveName = getParseSlaveName(User.getLoggedUser().getId(), parseSlave.getString(MASTER_ID),
                 parseSlave.getInt(SLAVE_ID));
-        mParseSlaveName.put(NAME, DEFAULT_NAME + " " + String.valueOf(mParseSlave.getInt(SLAVE_ID)));
     }
 
     public static Slave create(String masterId, String name, int type, int id, String userUuid) {
@@ -139,7 +139,14 @@ public class Slave implements ParseObject, Nameable {
         mParseSlaveName.put(SLAVE_ID, getId());
         mParseSlaveName.put(MASTER_ID, getMasterId());
         mParseSlaveName.put(USER_ID, User.getLoggedUser().getId());
-        mParseSlaveName.pinInBackground();
+        mParseSlaveName.pinInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    e.toString();
+                }
+            }
+        });
         mParseSlaveName.saveEventually();
     }
 

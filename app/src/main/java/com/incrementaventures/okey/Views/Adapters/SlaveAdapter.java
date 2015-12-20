@@ -27,13 +27,13 @@ public class SlaveAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMen
     private Slave mSelectedSlave;
     private Master mMaster;
     private Permission mPermission;
-    private MasterFragment.OnSlaveSelectedListener mListener;
+    private MasterFragment.OnMasterFragmentListener mListener;
 
     public SlaveAdapter(Context context, int resource, List<Slave> objects, Master master){
         super(context, resource, objects);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMaster = master;
-        mListener = (MasterFragment.OnSlaveSelectedListener) context;
+        mListener = (MasterFragment.OnMasterFragmentListener) context;
     }
 
     @Override
@@ -61,14 +61,6 @@ public class SlaveAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMen
                 popup.show();
             }
         });
-
-        LinearLayout openButton = (LinearLayout) view.findViewById(R.id.open_slave_layout);
-        openButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.openDoorSelected(mMaster, slave);
-            }
-        });
         return view;
     }
 
@@ -76,12 +68,6 @@ public class SlaveAdapter extends ArrayAdapter<Slave> implements PopupMenu.OnMen
     public boolean onMenuItemClick(MenuItem item) {
         mPermission = mSelectedSlave.getPermission(User.getLoggedUser());
         switch (item.getItemId()) {
-            case R.id.action_read_my_permission:
-                mListener.readMyPermissionSelected(mMaster, mSelectedSlave, mPermission.getKey());
-                return true;
-            case R.id.action_read_all_permissions:
-                mListener.readAllPermissionsSelected(mMaster, mSelectedSlave, mPermission.getKey());
-                return true;
             case R.id.action_open_when_close:
                 mListener.openWhenCloseSelected(mMaster, mSelectedSlave, mPermission.getKey());
                 return true;
