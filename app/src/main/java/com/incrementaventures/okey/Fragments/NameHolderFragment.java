@@ -4,6 +4,8 @@ package com.incrementaventures.okey.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +70,10 @@ public class NameHolderFragment extends Fragment {
 
     public void setText(String text) {
         mName.setText(text);
+    }
+
+    public void showInRange() {
+        mName.setTextColor(ContextCompat.getColor(getContext(), R.color.md_grey_900));
     }
 
     @Override

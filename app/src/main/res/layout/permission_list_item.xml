@@ -13,7 +13,7 @@
         android:padding="2dp"
         android:id="@+id/permission_type_edit"
         android:layout_below="@+id/user_name"
-        android:layout_alignParentStart="true" />
+        android:layout_toEndOf="@+id/permission_type_image" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -33,7 +33,7 @@
         android:text="Fecha termino"
         android:id="@+id/permission_end_date_edit"
         android:layout_below="@+id/permission_start_date_edit"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignEnd="@+id/permission_start_date_edit" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -42,8 +42,8 @@
         android:padding="2dp"
         android:text="Slave"
         android:id="@+id/permission_slave_edit"
-        android:layout_below="@+id/permission_end_date_edit"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/permission_type_edit"
+        android:layout_alignStart="@+id/permission_type_edit" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -54,6 +54,25 @@
         android:id="@+id/user_name"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/slave_image"
+        android:src="@drawable/location_icon"
+        android:layout_below="@+id/permission_type_image"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/permission_slave_edit" />
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/permission_type_image"
+        android:padding="1dp"
+        android:src="@drawable/time_icon"
+        android:layout_below="@+id/user_name"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/permission_type_edit" />
 
 
 </RelativeLayout>

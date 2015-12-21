@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.incrementaventures.okey.Fragments.PermissionsFragment;
@@ -57,7 +58,6 @@ public class PermissionAdapter extends ArrayAdapter<Permission> {
         TextView startDateView = (TextView) view.findViewById(R.id.permission_start_date_edit);
         startDateView.setText(Permission.getFormattedDate(permission.getStartDate()));
         TextView endDateView = (TextView) view.findViewById(R.id.permission_end_date_edit);
-
         if (permission.getType().equals(mContext.getString(R.string.permission_type_admin)) ||
                 permission.getType().equals(mContext.getString(R.string.permission_type_permanent))) {
             endDateView.setVisibility(TextView.GONE);
@@ -70,11 +70,13 @@ public class PermissionAdapter extends ArrayAdapter<Permission> {
     private void setSlave(View view, Permission permission) {
         Slave slave = permission.getSlave();
         TextView slaveView = (TextView) view.findViewById(R.id.permission_slave_edit);
-
+        ImageView slaveImageView = (ImageView) view.findViewById(R.id.slave_image);
         if (slave == null) {
             slaveView.setVisibility(TextView.GONE);
+            slaveImageView.setVisibility(ImageView.GONE);
         } else {
             slaveView.setVisibility(TextView.VISIBLE);
+            slaveImageView.setVisibility(ImageView.VISIBLE);
             slaveView.setText(String.valueOf(slave.getName()));
         }
     }

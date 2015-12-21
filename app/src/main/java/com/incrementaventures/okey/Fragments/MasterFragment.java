@@ -68,9 +68,9 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     private int mSelectedMasterIndex;
     private ArrayList<Slave> mSlaves;
     private ArrayList<Permission> mPermissions;
-    private boolean mScannedDoor;
     private OnMasterFragmentListener mMasterFragmentListener;
     private int mSelectedSlaveIndex;
+    private View mView;
 
     public interface OnMasterFragmentListener {
         void shareKeySelected(Master master);
@@ -97,15 +97,20 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_master, container, false);
-        ButterKnife.bind(this, v);
+        if (mView == null) {
+            mView = inflater.inflate(R.layout.fragment_master, container, false);
+            ButterKnife.bind(this, mView);
+        } else {
+            ButterKnife.bind(this, mView);
+            return mView;
+        }
         setPermissions();
         setMasters();
         setSlaves();
         setBottomText();
         setNameableHolderAdapters();
         setUI();
-        return v;
+        return mView;
     }
 
     private void setSlaves() {
@@ -182,7 +187,8 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         mMasters = new ArrayList<>();
         mMasters.addAll(masters);
         mSelectedMasterIndex = 0;
-        if (mMasterNameAdapter == null) return;
+        if (mMasterNameAdapter == null || getActivity() == null)
+            return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -425,6 +431,18 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
 
     public Slave getSelectedSlave() {
         return (mSlaves != null && mSlaves.size() > 0) ? mSlaves.get(mSelectedSlaveIndex) : null;
+    }
+
+    public void addMasterInRange(Master foundMaster) {
+        for (int i = 0; i < mMasters.size(); i++) {
+            Master master = mMasters.get(i);
+            if (master.getId().equals(foundMaster.getId())) {
+                // TODO: 21-12-2015  Put master name more dark. Soy darks.
+                if ((mMasterNameAdapter.getInstanceItem(i)) != null) {
+                    ((NameHolderFragment)mMasterNameAdapter.getInstanceItem(i)).showInRange();
+                }
+            }
+        }
     }
 
     private class TextViewPagerAdapter extends FragmentStatePagerAdapter {

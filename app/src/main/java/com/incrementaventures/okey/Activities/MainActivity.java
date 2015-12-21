@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements
     private ArrayList<String> mScannedMasters;
     private ArrayAdapter<String> mScannedMastersAdapter;
     private AlertDialog mScannedMastersDialog;
+    private boolean mAddingNewMaster;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,14 +213,19 @@ public class MainActivity extends AppCompatActivity implements
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
         final String deviceName =
                 (device.getName() == null) ? device.getAddress() : device.getName();
-        if (Master.getMaster(deviceName, User.getLoggedUser().getId()) == null) {
+        Master foundMaster = Master.getMaster(deviceName, User.getLoggedUser().getId());
+        if (foundMaster == null) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mScannedMasters.add(deviceName);
-                    mScannedMastersAdapter.notifyDataSetChanged();
+                    if (mAddingNewMaster) {
+                        mScannedMasters.add(deviceName);
+                        mScannedMastersAdapter.notifyDataSetChanged();
+                    }
                 }
             });
+        } else {
+            mMasterFragment.addMasterInRange(foundMaster);
         }
     }
 
@@ -230,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void stopScanning() {
+        mAddingNewMaster = false;
         if (mScannedMasters != null && mScannedMasters.size() == 0) {
             if (mScannedMastersDialog != null) mScannedMastersDialog.dismiss();
             Snackbar.make(mRootView, R.string.devices_not_found, Snackbar.LENGTH_LONG).show();
@@ -487,6 +494,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onAddNew0keyClicked(View view) {
+        mAddingNewMaster = true;
         mCurrentUser.scanDevices();
         showScannedMastersDialog();
     }

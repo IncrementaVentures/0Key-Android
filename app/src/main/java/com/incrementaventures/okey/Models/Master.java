@@ -80,7 +80,14 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         mMasterName.put(MASTER_ID, getId());
         mMasterName.put(USER_ID, User.getLoggedUser().getId());
         mMasterName.pinInBackground();
-        mMasterName.saveEventually();
+        mMasterName.saveEventually(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    e.toString();
+                }
+            }
+        });
     }
 
     public static ArrayList<Master> getMasters() {
