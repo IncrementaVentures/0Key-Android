@@ -325,6 +325,17 @@
         android:layout_below="@+id/due_date_layout"
         android:layout_alignBottom="@+id/due_date_layout"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_permission"
+        android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+        android:id="@+id/delete_permission_button"
+        android:visibility="gone"
+        android:layout_below="@+id/due_hour_layout"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
 
 </ScrollView>

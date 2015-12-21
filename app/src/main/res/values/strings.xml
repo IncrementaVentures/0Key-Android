@@ -100,7 +100,7 @@
     <string name="permission_edited"> Permission edited </string>
     <string name="permission_deleted"> Permission deleted </string>
     <string name="permissions"> Permissions</string>
-    <string name="delete_permission"> Delete</string>
+    <string name="delete_permission"> Delete permission</string>
     <string name="user_doesnt_exist"> User doesn\'t exist.</string>
     <string name="key_will_be_shared"> Key will be shared.</string>
     <string name="name"> Name</string>

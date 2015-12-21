@@ -40,14 +40,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9a6c9b70-452a-44ee-abca-a13015392538" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/time_icon.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/location_icon.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/location_icon.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/Master.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/Master.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/NameHolderFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/NameHolderFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Views/Adapters/PermissionAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Views/Adapters/PermissionAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/permission_list_item.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/permission_list_item.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/ModifyPermissionFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/ModifyPermissionFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_modify_permission.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_modify_permission.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Okey.iws" />
@@ -78,10 +74,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="MasterFragment.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MasterFragment.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.48464912">
+            <state vertical-scroll-proportion="0.0">
               <caret line="103" column="42" selection-start-line="103" selection-start-column="42" selection-end-line="103" selection-end-column="42" />
               <folding>
                 <element signature="e#4645#4673#0" expanded="true" />
@@ -96,6 +92,34 @@
                 <element signature="e#12085#12086#0" expanded="true" />
                 <element signature="e#12111#12112#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fragment_modify_permission.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_modify_permission.xml">
+          <provider selected="true" editor-type-id="android-designer">
+            <state />
+          </provider>
+          <provider editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="327" column="0" selection-start-line="327" selection-start-column="0" selection-end-line="327" selection-end-column="0" />
+              <folding>
+                <element signature="e#12202#12229#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fragment_preferences.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_preferences.xml">
+          <provider editor-type-id="android-designer">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.9746835">
+              <caret line="53" column="74" selection-start-line="53" selection-start-column="58" selection-end-line="53" selection-end-column="74" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -117,12 +141,83 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="219" column="35" selection-start-line="219" selection-start-column="35" selection-end-line="219" selection-end-column="35" />
+              <caret line="594" column="5" selection-start-line="594" selection-start-column="5" selection-end-line="594" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#4699#4721#0" expanded="true" />
+                <element signature="e#7488#7514#0" expanded="true" />
+                <element signature="e#7876#7916#0" expanded="true" />
+                <element signature="e#8801#8826#0" expanded="true" />
                 <element signature="e#9133#9159#0" expanded="true" />
+                <element signature="e#9402#9422#0" expanded="true" />
+                <element signature="e#9590#9611#0" expanded="true" />
+                <element signature="e#9730#9752#0" expanded="true" />
+                <element signature="e#10425#10452#0" expanded="true" />
+                <element signature="e#10848#10874#0" expanded="true" />
+                <element signature="e#11287#11313#0" expanded="true" />
+                <element signature="e#11614#11641#0" expanded="true" />
+                <element signature="e#12193#12224#0" expanded="true" />
+                <element signature="e#12429#12461#0" expanded="true" />
+                <element signature="e#12657#12680#0" expanded="true" />
+                <element signature="e#12881#12909#0" expanded="true" />
+                <element signature="e#13118#13149#0" expanded="true" />
+                <element signature="e#13357#13387#0" expanded="true" />
+                <element signature="e#13594#13616#0" expanded="true" />
+                <element signature="e#13833#13865#0" expanded="true" />
+                <element signature="e#14061#14085#0" expanded="true" />
+                <element signature="e#14291#14319#0" expanded="true" />
+                <element signature="e#14956#14995#0" expanded="true" />
+                <element signature="e#15327#15349#0" expanded="true" />
                 <element signature="e#15475#15476#0" expanded="true" />
                 <element signature="e#15499#15500#0" expanded="true" />
+                <element signature="e#15726#15750#0" expanded="true" />
+                <element signature="e#17165#17187#0" expanded="true" />
+                <element signature="e#18142#18160#0" expanded="true" />
+                <element signature="e#19945#19968#0" expanded="true" />
+                <element signature="e#21726#21746#0" expanded="true" />
+                <element signature="e#22073#22101#0" expanded="true" />
+                <element signature="e#22468#22495#0" expanded="true" />
+                <element signature="e#22840#22868#0" expanded="true" />
+                <element signature="e#23051#23083#0" expanded="true" />
+                <element signature="e#24554#24582#0" expanded="true" />
+                <element signature="e#24668#24690#0" expanded="true" />
+                <element signature="e#25105#25127#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ModifyPermissionFragment.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/ModifyPermissionFragment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="397" column="90" selection-start-line="397" selection-start-column="90" selection-end-line="397" selection-end-column="90" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#4519#4575#0" expanded="true" />
+                <element signature="e#4593#4653#0" expanded="true" />
+                <element signature="e#4671#4730#0" expanded="true" />
+                <element signature="e#5537#5565#0" expanded="true" />
+                <element signature="e#5972#5996#0" expanded="true" />
+                <element signature="e#7553#7629#0" expanded="true" />
+                <element signature="e#8188#8265#0" expanded="true" />
+                <element signature="e#8682#8755#0" expanded="true" />
+                <element signature="e#9300#9324#0" expanded="true" />
+                <element signature="e#10425#10900#0" expanded="true" />
+                <element signature="e#10899#10900#0" expanded="true" />
+                <element signature="e#11092#11794#0" expanded="true" />
+                <element signature="e#11793#11794#0" expanded="true" />
+                <element signature="e#11990#12698#0" expanded="true" />
+                <element signature="e#12697#12698#0" expanded="true" />
+                <element signature="e#12945#12976#0" expanded="true" />
+                <element signature="e#13181#13214#0" expanded="true" />
+                <element signature="e#13646#13676#0" expanded="true" />
+                <element signature="e#13910#13932#0" expanded="true" />
+                <element signature="e#15437#15451#0" expanded="true" />
+                <element signature="e#16170#16186#0" expanded="true" />
+                <element signature="e#16426#16730#0" expanded="true" />
+                <element signature="e#16729#16730#0" expanded="true" />
+                <element signature="e#17023#17045#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -175,19 +270,6 @@
                 <element signature="e#4578#4942#0" expanded="true" />
                 <element signature="e#4941#4942#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fragment_master.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_master.xml">
-          <provider editor-type-id="android-designer">
-            <state />
-          </provider>
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-9.965517">
-              <caret line="133" column="48" selection-start-line="133" selection-start-column="48" selection-end-line="133" selection-end-column="48" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -1833,7 +1915,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/NewDoorFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/ConfigurationFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_menu.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_modify_permission.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/PermissionsFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_permissions.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/Nameable.java" />
@@ -1851,18 +1932,19 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/AuthActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_master.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Views/Adapters/SlaveAdapter.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/ModifyPermissionFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/User.java" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/LoginFragment.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/Master.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Views/Adapters/PermissionAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/NameHolderFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/permission_list_item.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/Slave.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/ModifyPermissionFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_modify_permission.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -2315,7 +2397,7 @@
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="TA094065DI" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="AVD_GalaxyNexus_ToolsForApacheCordova" />
     <property name="FullScreen" value="false" />
-    <property name="SearchEverywhereHistoryKey" value="master&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java&#10;listi&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/permission_list_item.xml&#10;masterfr&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java&#10;name&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/NameHolderFragment.java&#10;main&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java&#10;login&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/LoginFragment.java&#10;maste&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_master.xml&#10;mast&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java&#10;mas&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java&#10;ma&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java&#10;creat&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_create_account.xml&#10;aut&#9;PSI&#9;JAVA://com.incrementaventures.okey.Activities.AuthActivity&#10;creac&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/CreateAccountFragment.java&#10;loginfra&#9;PSI&#9;JAVA://com.incrementaventures.okey.Fragments.LoginFragment&#10;fragment_me&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_menu.xml&#10;menu_f&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/menu/menu_first_admin_config.xml&#10;prefer&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/xml/preferences.xml&#10;prefe&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/xml/preferences.xml&#10;PREFE&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/PreferencesFragment.java&#10;MAIN&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java&#10;pre&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_preferences.xml&#10;mod&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_modify_permission.xml&#10;slave&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Models/Slave.java&#10;fragment_mas&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_master.xml&#10;Strings.&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/values/strings.xml&#10;hold&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/NameHolderFragment.java&#10;list&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/permission_list_item.xml&#10;permissions&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_permissions.xml&#10;menu&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_menu.xml&#10;pref&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/PreferencesFragment.java&#10;permissionsF&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/PermissionsFragment.java&#10;list_&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/permission_list_item.xml&#10;adapt&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Views/Adapters/PermissionAdapter.java&#10;permissionada&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Views/Adapters/PermissionAdapter.java&#10;user&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Models/User.java&#10;mastef&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java&#10;fragment_log&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_login.xml&#10;preferen&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/PreferencesFragment.java" />
+    <property name="SearchEverywhereHistoryKey" value="prefer&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_preferences.xml&#10;prefe&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/xml/preferences.xml&#10;mod&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/ModifyPermissionFragment.java&#10;master&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java&#10;listi&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/permission_list_item.xml&#10;masterfr&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java&#10;name&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/NameHolderFragment.java&#10;main&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java&#10;login&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/LoginFragment.java&#10;maste&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_master.xml&#10;mast&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java&#10;mas&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java&#10;ma&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java&#10;creat&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_create_account.xml&#10;aut&#9;PSI&#9;JAVA://com.incrementaventures.okey.Activities.AuthActivity&#10;creac&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/CreateAccountFragment.java&#10;loginfra&#9;PSI&#9;JAVA://com.incrementaventures.okey.Fragments.LoginFragment&#10;fragment_me&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_menu.xml&#10;menu_f&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/menu/menu_first_admin_config.xml&#10;PREFE&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/PreferencesFragment.java&#10;MAIN&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java&#10;pre&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_preferences.xml&#10;slave&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Models/Slave.java&#10;fragment_mas&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_master.xml&#10;Strings.&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/values/strings.xml&#10;hold&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/NameHolderFragment.java&#10;list&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/permission_list_item.xml&#10;permissions&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_permissions.xml&#10;menu&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_menu.xml&#10;pref&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/PreferencesFragment.java&#10;permissionsF&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/PermissionsFragment.java&#10;list_&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/permission_list_item.xml&#10;adapt&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Views/Adapters/PermissionAdapter.java&#10;permissionada&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Views/Adapters/PermissionAdapter.java&#10;user&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Models/User.java&#10;mastef&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java&#10;fragment_log&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/res/layout/fragment_login.xml&#10;preferen&#9;FILE&#9;file://C:/StudioProjects/Okey/app/src/main/java/com/incrementaventures/okey/Fragments/PreferencesFragment.java" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
   </component>
@@ -2547,7 +2629,7 @@
       <window_info id="CheckStyle" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17546849" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.6337308" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24810892" sideWeight="0.49187934" order="0" side_tool="false" content_ui="combo" />
@@ -2742,6 +2824,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334">
           <caret line="105" column="22" selection-start-line="105" selection-start-column="22" selection-end-line="105" selection-end-column="22" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2749,6 +2832,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="30" column="51" selection-start-line="30" selection-start-column="51" selection-end-line="30" selection-end-column="51" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2785,17 +2869,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_preferences.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="182" column="40" selection-start-line="182" selection-start-column="40" selection-end-line="182" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Views/Adapters/CharacterCountWatcher.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -2807,6 +2880,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="89" column="73" selection-start-line="89" selection-start-column="73" selection-end-line="89" selection-end-column="73" />
+          <folding>
+            <element signature="e#3088#3304#0" expanded="true" />
+            <element signature="e#3303#3304#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2818,17 +2895,6 @@
         <state vertical-scroll-proportion="-9.965517">
           <caret line="37" column="38" selection-start-line="37" selection-start-column="38" selection-end-line="37" selection-end-column="38" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/xml/preferences.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="16" column="10" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
-          <folding>
-            <element signature="e#263#289#0" expanded="false" />
-            <element signature="e#447#460#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2847,17 +2913,25 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.34085777">
           <caret line="96" column="30" selection-start-line="96" selection-start-column="30" selection-end-line="96" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_modify_permission.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="94" column="0" selection-start-line="94" selection-start-column="0" selection-end-line="100" selection-end-column="49" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1139#1953#0" expanded="true" />
+            <element signature="e#1660#1682#0" expanded="true" />
+            <element signature="e#1952#1953#0" expanded="true" />
+            <element signature="e#2016#3007#0" expanded="true" />
+            <element signature="e#2257#2989#0" expanded="true" />
+            <element signature="e#2880#2903#0" expanded="true" />
+            <element signature="e#2988#2989#0" expanded="true" />
+            <element signature="e#3006#3007#0" expanded="true" />
+            <element signature="e#4597#4610#0" expanded="true" />
+            <element signature="e#4812#4827#0" expanded="true" />
+            <element signature="e#4829#5113#0" expanded="true" />
+            <element signature="e#5112#5113#0" expanded="true" />
+            <element signature="e#6046#6059#0" expanded="true" />
+            <element signature="e#6261#6276#0" expanded="true" />
+            <element signature="e#6278#6562#0" expanded="true" />
+            <element signature="e#6561#6562#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2973,14 +3047,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.62068963">
-          <caret line="169" column="61" selection-start-line="169" selection-start-column="61" selection-end-line="169" selection-end-column="61" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Models/User.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.6594828">
@@ -2996,16 +3062,6 @@
         <state vertical-scroll-proportion="0.5862069">
           <caret line="24" column="41" selection-start-line="24" selection-start-column="41" selection-end-line="24" selection-end-column="41" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/ModifyPermissionFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="152" column="65" selection-start-line="152" selection-start-column="65" selection-end-line="152" selection-end-column="65" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3043,19 +3099,6 @@
             <element signature="imports" expanded="true" />
             <element signature="e#4578#4942#0" expanded="true" />
             <element signature="e#4941#4942#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="219" column="35" selection-start-line="219" selection-start-column="35" selection-end-line="219" selection-end-column="35" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#9133#9159#0" expanded="true" />
-            <element signature="e#15475#15476#0" expanded="true" />
-            <element signature="e#15499#15500#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3100,7 +3143,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/MasterFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.48464912">
+        <state vertical-scroll-proportion="0.0">
           <caret line="103" column="42" selection-start-line="103" selection-start-column="42" selection-end-line="103" selection-end-column="42" />
           <folding>
             <element signature="e#4645#4673#0" expanded="true" />
@@ -3115,6 +3158,128 @@
             <element signature="e#12085#12086#0" expanded="true" />
             <element signature="e#12111#12112#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.35431236">
+          <caret line="102" column="55" selection-start-line="102" selection-start-column="55" selection-end-line="102" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Fragments/ModifyPermissionFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="397" column="90" selection-start-line="397" selection-start-column="90" selection-end-line="397" selection-end-column="90" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4519#4575#0" expanded="true" />
+            <element signature="e#4593#4653#0" expanded="true" />
+            <element signature="e#4671#4730#0" expanded="true" />
+            <element signature="e#5537#5565#0" expanded="true" />
+            <element signature="e#5972#5996#0" expanded="true" />
+            <element signature="e#7553#7629#0" expanded="true" />
+            <element signature="e#8188#8265#0" expanded="true" />
+            <element signature="e#8682#8755#0" expanded="true" />
+            <element signature="e#9300#9324#0" expanded="true" />
+            <element signature="e#10425#10900#0" expanded="true" />
+            <element signature="e#10899#10900#0" expanded="true" />
+            <element signature="e#11092#11794#0" expanded="true" />
+            <element signature="e#11793#11794#0" expanded="true" />
+            <element signature="e#11990#12698#0" expanded="true" />
+            <element signature="e#12697#12698#0" expanded="true" />
+            <element signature="e#12945#12976#0" expanded="true" />
+            <element signature="e#13181#13214#0" expanded="true" />
+            <element signature="e#13646#13676#0" expanded="true" />
+            <element signature="e#13910#13932#0" expanded="true" />
+            <element signature="e#15437#15451#0" expanded="true" />
+            <element signature="e#16170#16186#0" expanded="true" />
+            <element signature="e#16426#16730#0" expanded="true" />
+            <element signature="e#16729#16730#0" expanded="true" />
+            <element signature="e#17023#17045#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/incrementaventures/okey/Activities/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="594" column="5" selection-start-line="594" selection-start-column="5" selection-end-line="594" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4699#4721#0" expanded="true" />
+            <element signature="e#7488#7514#0" expanded="true" />
+            <element signature="e#7876#7916#0" expanded="true" />
+            <element signature="e#8801#8826#0" expanded="true" />
+            <element signature="e#9133#9159#0" expanded="true" />
+            <element signature="e#9402#9422#0" expanded="true" />
+            <element signature="e#9590#9611#0" expanded="true" />
+            <element signature="e#9730#9752#0" expanded="true" />
+            <element signature="e#10425#10452#0" expanded="true" />
+            <element signature="e#10848#10874#0" expanded="true" />
+            <element signature="e#11287#11313#0" expanded="true" />
+            <element signature="e#11614#11641#0" expanded="true" />
+            <element signature="e#12193#12224#0" expanded="true" />
+            <element signature="e#12429#12461#0" expanded="true" />
+            <element signature="e#12657#12680#0" expanded="true" />
+            <element signature="e#12881#12909#0" expanded="true" />
+            <element signature="e#13118#13149#0" expanded="true" />
+            <element signature="e#13357#13387#0" expanded="true" />
+            <element signature="e#13594#13616#0" expanded="true" />
+            <element signature="e#13833#13865#0" expanded="true" />
+            <element signature="e#14061#14085#0" expanded="true" />
+            <element signature="e#14291#14319#0" expanded="true" />
+            <element signature="e#14956#14995#0" expanded="true" />
+            <element signature="e#15327#15349#0" expanded="true" />
+            <element signature="e#15475#15476#0" expanded="true" />
+            <element signature="e#15499#15500#0" expanded="true" />
+            <element signature="e#15726#15750#0" expanded="true" />
+            <element signature="e#17165#17187#0" expanded="true" />
+            <element signature="e#18142#18160#0" expanded="true" />
+            <element signature="e#19945#19968#0" expanded="true" />
+            <element signature="e#21726#21746#0" expanded="true" />
+            <element signature="e#22073#22101#0" expanded="true" />
+            <element signature="e#22468#22495#0" expanded="true" />
+            <element signature="e#22840#22868#0" expanded="true" />
+            <element signature="e#23051#23083#0" expanded="true" />
+            <element signature="e#24554#24582#0" expanded="true" />
+            <element signature="e#24668#24690#0" expanded="true" />
+            <element signature="e#25105#25127#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/xml/preferences.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.67830426">
+          <caret line="16" column="10" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_modify_permission.xml">
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="327" column="0" selection-start-line="327" selection-start-column="0" selection-end-line="327" selection-end-column="0" />
+          <folding>
+            <element signature="e#12202#12229#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_preferences.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.9746835">
+          <caret line="53" column="74" selection-start-line="53" selection-start-column="58" selection-end-line="53" selection-end-column="74" />
+          <folding />
         </state>
       </provider>
     </entry>

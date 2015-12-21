@@ -590,7 +590,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onDeletePermissionClicked(Permission permission, String userKey) {
-
+        mCurrentUser.deletePermission(permission.getMaster().getId(), userKey, permission);
+        Snackbar.make(mRootView, R.string.deleting_permission, Snackbar.LENGTH_LONG).show();
     }
 
     @Override

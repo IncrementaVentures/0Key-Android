@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -81,6 +83,8 @@ public class ModifyPermissionFragment extends Fragment {
     View mSeparator2;
     @Bind(R.id.separator3)
     View mSeparator3;
+    @Bind(R.id.delete_permission_button)
+    View mDeletePermissionButton;
 
     private CharSequence mPermissionTypes[];
     private String mEndDate;
@@ -116,7 +120,6 @@ public class ModifyPermissionFragment extends Fragment {
         getArgumentsData();
         setMasters();
         setSlaves();
-        setListeners();
         setUi();
         mPermissionTypes =  new CharSequence[]{
                 getResources().getString(R.string.permission_type_admin),
@@ -158,6 +161,7 @@ public class ModifyPermissionFragment extends Fragment {
         mKey = getArguments().getString(Permission.KEY);
         if (mKey != null) {
             mScreenTitle.setText(R.string.edit_permission);
+            mDeletePermissionButton.setVisibility(Button.VISIBLE);
         }
         User user = User.getLoggedUser();
         mSelectedMaster = Master.getMaster(getArguments().getString(Master.ID), user.getId());
@@ -212,200 +216,192 @@ public class ModifyPermissionFragment extends Fragment {
         }
     }
 
-    private void setListeners(){
-        mPermissionTypeLayout.setOnClickListener(new View.OnClickListener() {
+    @OnClick(R.id.permission_type_layout)
+    public void permissionTypeClicked() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.permission_type);
+        builder.setItems(mPermissionTypes, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(R.string.permission_type);
-                builder.setItems(mPermissionTypes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mPermissionTypeView.setText(mPermissionTypes[which]);
-                        setUi();
-                    }
-                });
-                builder.show();
+            public void onClick(DialogInterface dialog, int which) {
+                mPermissionTypeView.setText(mPermissionTypes[which]);
+                setUi();
             }
         });
-
-        mDueHourLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment newFragment = new TimePickerFragment(){
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        String hour = String.valueOf(hourOfDay);
-                        String min = String.valueOf(minute);
-                        if (hour.length() == 1) hour = "0" + hour;
-                        if (min.length() == 1) min = "0" + min;
-                        mEndHour = hour + ":" + min;
-                        mEndHourView.setText(mEndHour);
-                    }
-                };
-                newFragment.show(getActivity().getFragmentManager(), "datePicker");
-            }
-        });
-
-        mStartHourLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment newFragment = new TimePickerFragment(){
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        String hour = String.valueOf(hourOfDay);
-                        String min = String.valueOf(minute);
-                        if (hour.length() == 1) hour = "0" + hour;
-                        if (min.length() == 1) min = "0" + min;
-                        mStartHour = hour + ":" + min;
-                        mStartHourView.setText(mStartHour);
-                    }
-                };
-                newFragment.show(getActivity().getFragmentManager(), "datePicker");
-            }
-        });
-
-        mDueDateLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment newFragment = new DatePickerFragment(){
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int day) {
-                        String yearString = String.valueOf(year);
-                        String monthString = String.valueOf(month + 1);
-                        String dayString = String.valueOf(day);
-
-                        if (monthString.length() == 1 ) monthString = "0" + monthString;
-                        if (dayString.length() == 1 ) dayString = "0" + dayString;
-                        mEndDate = yearString + "-"
-                                + monthString + "-"
-                                + dayString;
-                        mEndDateView.setText(Permission.getFormattedDate(mEndDate + "T00:00"));
-                    }
-                };
-                newFragment.show(getActivity().getFragmentManager(), "datePicker");
-            }
-        });
-
-        mStartDateLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment newFragment = new DatePickerFragment(){
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int day) {
-                        String yearString = String.valueOf(year);
-                        String monthString = String.valueOf(month + 1);
-                        String dayString = String.valueOf(day);
-
-                        if (monthString.length() == 1 ) monthString = "0" + monthString;
-                        if (dayString.length() == 1 ) dayString = "0" + dayString;
-                        mStartDate = yearString + "-"
-                                + monthString + "-"
-                                + dayString;
-                        mStartDateView.setText(Permission.getFormattedDate(mStartDate + "T00:00"));
-                    }
-                };
-                newFragment.show(getActivity().getFragmentManager(), "datePicker");
-            }
-        });
-
-        mNewPermissionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!NetworkingUtils.isOnline(getContext())) {
-                    Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_LONG ).show();
-                    return;
-                }
-                User user = User.getUser(mPermissionEmailView.getText().toString());
-                if (user == null) {
-                    Snackbar.make(getView(), getString(R.string.invalid_email),
-                            Snackbar.LENGTH_LONG ).show();
-                    return;
-                }
-                user.saveLocal();
-                int slaveId = 0;
-                if (mSelectedSlave != null) {
-                    slaveId = mSelectedSlave.getId();
-                }
-                if (Permission.getType(mPermissionTypeView.getText().toString()) != Permission.ADMIN_PERMISSION
-                        && (mSlaves == null || mSlaves.size() == 0)) {
-                    Snackbar.make(getView(), R.string.master_without_slaves, Snackbar.LENGTH_LONG ).show();
-                    return;
-                }
-                Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
-                if (adminPermission == null) {
-                    Snackbar.make(getView(), R.string.no_permission, Snackbar.LENGTH_LONG).show();
-                    return;
-                }
-                String userKey = adminPermission.getKey();
-                String startDate =  Permission.getDefaultDateString(mStartDateView.getText().toString())
-                        + "T" + mStartHourView.getText().toString();
-                String endDate =  Permission.getDefaultDateString(mEndDateView.getText().toString())
-                        + "T" + mEndHourView.getText().toString();
-                if (TextUtils.isEmpty(mKey)) {
-                    Permission permission = Permission.create(user,
-                            mSelectedMaster,
-                            Permission.getType(mPermissionTypeView.getText().toString()),
-                            "",
-                            startDate,
-                            endDate,
-                            slaveId);
-                    mPermissionModifiedListener.onCreatePermissionClicked(permission, userKey);
-                // If editing permission
-                } else {
-                    mToEditPermission.setType(Permission.getType(mPermissionTypeView.getText().toString()));
-                    mToEditPermission.setStartDate(startDate);
-                    mToEditPermission.setEndDate(endDate);
-                    mToEditPermission.setSlaveId(slaveId);
-                    mPermissionModifiedListener.onModifyPermissionClicked(mToEditPermission, mOldSlaveId,
-                            userKey, mSelectedMaster.getId());
-                }
-
-            }
-        });
-
-        mSelectedSlaveView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(R.string.doors);
-                final CharSequence[] slavesNames = new CharSequence[mSlaves.size()];
-                for (int i = 0; i < mSlaves.size(); i++) {
-                    slavesNames[i] = mSlaves.get(i).getName();
-                }
-                builder.setItems(slavesNames, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mSelectedSlave = mSlaves.get(which);
-                        mSelectedSlaveView.setText(slavesNames[which]);
-                    }
-                });
-                builder.show();
-            }
-        });
-
-        mSelectedMasterView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(R.string.masters);
-                final CharSequence[] mastersNames = new CharSequence[mMasters.size()];
-                for (int i = 0; i < mMasters.size(); i++) {
-                    mastersNames[i] = mMasters.get(i).getName();
-                }
-                builder.setItems(mastersNames, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mSelectedMaster = mMasters.get(which);
-                        mSelectedMasterView.setText(mastersNames[which]);
-                        setSlaves();
-                    }
-                });
-                builder.show();
-            }
-        });
+        builder.show();
     }
 
+    @OnClick(R.id.due_hour_layout)
+    public void dueHourClicked() {
+        DialogFragment newFragment = new TimePickerFragment(){
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                String hour = String.valueOf(hourOfDay);
+                String min = String.valueOf(minute);
+                if (hour.length() == 1) hour = "0" + hour;
+                if (min.length() == 1) min = "0" + min;
+                mEndHour = hour + ":" + min;
+                mEndHourView.setText(mEndHour);
+            }
+        };
+        newFragment.show(getActivity().getFragmentManager(), "datePicker");
+    }
+
+    @OnClick(R.id.start_hour_layout)
+    public void startHourClicked() {
+        DialogFragment newFragment = new TimePickerFragment(){
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                String hour = String.valueOf(hourOfDay);
+                String min = String.valueOf(minute);
+                if (hour.length() == 1) hour = "0" + hour;
+                if (min.length() == 1) min = "0" + min;
+                mStartHour = hour + ":" + min;
+                mStartHourView.setText(mStartHour);
+            }
+        };
+        newFragment.show(getActivity().getFragmentManager(), "datePicker");
+    }
+
+    @OnClick(R.id.due_date_layout)
+    public void dueDateClicked() {
+        DialogFragment newFragment = new DatePickerFragment(){
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                String yearString = String.valueOf(year);
+                String monthString = String.valueOf(month + 1);
+                String dayString = String.valueOf(day);
+
+                if (monthString.length() == 1 ) monthString = "0" + monthString;
+                if (dayString.length() == 1 ) dayString = "0" + dayString;
+                mEndDate = yearString + "-"
+                        + monthString + "-"
+                        + dayString;
+                mEndDateView.setText(Permission.getFormattedDate(mEndDate + "T00:00"));
+            }
+        };
+        newFragment.show(getActivity().getFragmentManager(), "datePicker");
+    }
+
+    @OnClick(R.id.start_date_layout)
+    public void startDateClicked() {
+        DialogFragment newFragment = new DatePickerFragment(){
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                String yearString = String.valueOf(year);
+                String monthString = String.valueOf(month + 1);
+                String dayString = String.valueOf(day);
+
+                if (monthString.length() == 1 ) monthString = "0" + monthString;
+                if (dayString.length() == 1 ) dayString = "0" + dayString;
+                mStartDate = yearString + "-"
+                        + monthString + "-"
+                        + dayString;
+                mStartDateView.setText(Permission.getFormattedDate(mStartDate + "T00:00"));
+            }
+        };
+        newFragment.show(getActivity().getFragmentManager(), "datePicker");
+    }
+
+    @OnClick(R.id.ok_button)
+    public void newPermissionClicked() {
+        if (!NetworkingUtils.isOnline(getContext())) {
+            Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_LONG ).show();
+            return;
+        }
+        User user = User.getUser(mPermissionEmailView.getText().toString());
+        if (user == null) {
+            Snackbar.make(getView(), getString(R.string.invalid_email),
+                    Snackbar.LENGTH_LONG ).show();
+            return;
+        }
+        user.saveLocal();
+        int slaveId = 0;
+        if (mSelectedSlave != null) {
+            slaveId = mSelectedSlave.getId();
+        }
+        if (Permission.getType(mPermissionTypeView.getText().toString()) != Permission.ADMIN_PERMISSION
+                && (mSlaves == null || mSlaves.size() == 0)) {
+            Snackbar.make(getView(), R.string.master_without_slaves, Snackbar.LENGTH_LONG ).show();
+            return;
+        }
+        Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
+        if (adminPermission == null) {
+            Snackbar.make(getView(), R.string.no_permission, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        String userKey = adminPermission.getKey();
+        String startDate =  Permission.getDefaultDateString(mStartDateView.getText().toString())
+                + "T" + mStartHourView.getText().toString();
+        String endDate =  Permission.getDefaultDateString(mEndDateView.getText().toString())
+                + "T" + mEndHourView.getText().toString();
+        if (TextUtils.isEmpty(mKey)) {
+            Permission permission = Permission.create(user,
+                    mSelectedMaster,
+                    Permission.getType(mPermissionTypeView.getText().toString()),
+                    "",
+                    startDate,
+                    endDate,
+                    slaveId);
+            mPermissionModifiedListener.onCreatePermissionClicked(permission, userKey);
+            // If editing permission
+        } else {
+            mToEditPermission.setType(Permission.getType(mPermissionTypeView.getText().toString()));
+            mToEditPermission.setStartDate(startDate);
+            mToEditPermission.setEndDate(endDate);
+            mToEditPermission.setSlaveId(slaveId);
+            mPermissionModifiedListener.onModifyPermissionClicked(mToEditPermission, mOldSlaveId,
+                    userKey, mSelectedMaster.getId());
+        }
+    }
+
+    @OnClick(R.id.permission_slave)
+    public void selectedSlaveClicked() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.doors);
+        final CharSequence[] slavesNames = new CharSequence[mSlaves.size()];
+        for (int i = 0; i < mSlaves.size(); i++) {
+            slavesNames[i] = mSlaves.get(i).getName();
+        }
+        builder.setItems(slavesNames, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mSelectedSlave = mSlaves.get(which);
+                mSelectedSlaveView.setText(slavesNames[which]);
+            }
+        });
+        builder.show();
+    }
+
+    @OnClick(R.id.selected_master)
+    public void selectedMasterClicked() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.masters);
+        final CharSequence[] mastersNames = new CharSequence[mMasters.size()];
+        for (int i = 0; i < mMasters.size(); i++) {
+            mastersNames[i] = mMasters.get(i).getName();
+        }
+        builder.setItems(mastersNames, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mSelectedMaster = mMasters.get(which);
+                mSelectedMasterView.setText(mastersNames[which]);
+                setSlaves();
+            }
+        });
+        builder.show();
+    }
+
+    @OnClick(R.id.delete_permission_button)
+    public void deletePermissionClicked() {
+        Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
+        if (adminPermission == null) {
+            Snackbar.make(getView(), R.string.no_permission, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        mPermissionModifiedListener.onDeletePermissionClicked(mToEditPermission,
+                adminPermission.getKey());
+
+    }
 
     private void hideToolbar() {
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
