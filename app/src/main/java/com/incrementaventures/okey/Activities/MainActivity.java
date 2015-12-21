@@ -127,9 +127,9 @@ public class MainActivity extends AppCompatActivity implements
         showToolbar();
     }
 
-    private void checkPreferences(){
+    private void checkPreferences() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sharedPref.getBoolean("protect_with_pin", true)){
+        if (sharedPref.getBoolean("protect_with_pin", true)) {
             InsertPinFragment dialog = new InsertPinFragment();
             dialog.setCancelable(false);
             dialog.show(getFragmentManager(), "dialog_pin");
@@ -151,7 +151,8 @@ public class MainActivity extends AppCompatActivity implements
                         permissionsFragment != null && permissionsFragment.isVisible()) {
                     showToolbar();
                 }
-            } catch (IllegalStateException e) { }
+            } catch (IllegalStateException e) {
+            }
         }
     }
 
@@ -172,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if (id == android.R.id.home) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace( R.id.container, new MenuFragment(), MenuFragment.TAG)
+            transaction.replace(R.id.container, new MenuFragment(), MenuFragment.TAG)
                     .addToBackStack(MenuFragment.TAG).commit();
             return true;
         }
@@ -182,16 +183,16 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Gets the current user, and if it's null, starts AuthActivity and finishes this activity
      */
-    private void authenticateUser(){
+    private void authenticateUser() {
         mCurrentUser = User.getLoggedUser(this);
-        if (mCurrentUser == null){
+        if (mCurrentUser == null) {
             Intent intent = new Intent(this, AuthActivity.class);
             startActivity(intent);
             finish();
         }
     }
 
-    private void checkBluetoothLeSupport(){
+    private void checkBluetoothLeSupport() {
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
             finish();
@@ -213,20 +214,13 @@ public class MainActivity extends AppCompatActivity implements
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
         final String deviceName =
                 (device.getName() == null) ? device.getAddress() : device.getName();
-        Master foundMaster = Master.getMaster(deviceName, User.getLoggedUser().getId());
-        if (foundMaster == null) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mAddingNewMaster) {
-                        mScannedMasters.add(deviceName);
-                        mScannedMastersAdapter.notifyDataSetChanged();
-                    }
-                }
-            });
-        } else {
-            mMasterFragment.addMasterInRange(foundMaster);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mScannedMasters.add(deviceName);
+                mScannedMastersAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -271,6 +265,12 @@ public class MainActivity extends AppCompatActivity implements
             slave.save();
         }
         mMasterFragment.onSlavesReceived(slaves);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Snackbar.make(mRootView, R.string.slave_paired, Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

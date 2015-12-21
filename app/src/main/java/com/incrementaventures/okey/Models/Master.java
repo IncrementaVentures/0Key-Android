@@ -302,33 +302,28 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         }).start();
     }
 
-    public void fetchSlaves(final OnNetworkResponseListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ParseQuery query = new ParseQuery(Slave.SLAVE_CLASS_NAME);
-                query.whereEqualTo(Slave.MASTER_ID, getId());
-                query.orderByAscending(Slave.ID);
-                mSlaves = new ArrayList<>();
-                try {
-                    List<ParseObject> objects = query.find();
-                    Slave slave;
-                    for (ParseObject o : objects) {
-                        slave = Slave.getSlave(getId(), o.getInt(Slave.ID));
-                        if (slave == null) {
-                            slave = Slave.create(o);
-                            mSlaves.add(slave);
-                        }
-                        slave.save();
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
+    public void fetchSlaves() {
+        ParseQuery query = new ParseQuery(Slave.SLAVE_CLASS_NAME);
+        query.whereEqualTo(Slave.MASTER_ID, getId());
+        query.orderByAscending(Slave.ID);
+        mSlaves = new ArrayList<>();
+        try {
+            List<ParseObject> objects = query.find();
+            Slave slave;
+            for (ParseObject o : objects) {
+                slave = Slave.getSlave(getId(), o.getInt(Slave.ID));
+                if (slave == null) {
+                    slave = Slave.create(o);
+                    mSlaves.add(slave);
                 }
-                listener.onSlavesReceived(new ArrayList<>(mSlaves));
+                slave.save();
             }
-        }).start();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
+    
     @Override
     public boolean equals(Object o) {
         return ((Master)o).getId().equals(getId());

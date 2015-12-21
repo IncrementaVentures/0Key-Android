@@ -315,13 +315,16 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
      */
     public void openDoor(Master master, Slave slave) {
 
-        Permission p = slave.getPermission(this);
-
-        // TODO: 21-12-2015 Add isValid
-        if (p == null){
+        HashMap<Integer, Permission> permissions = master.getPermissions(this);
+        if (permissions == null || permissions.size() == 0) {
             mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
             return;
         }
+        Permission permission = permissions.get(0);
+        if (permission == null) {
+            permission = (Permission) permissions.values().toArray()[0];
+        }
+
         mBluetoothClient = new BluetoothClient(mContext, this);
 
         if (!mBluetoothClient.isSupported()){
@@ -333,7 +336,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
             return;
         }
         mMasterListener.doorOpening();
-        mBluetoothClient.executeOpenDoor(p.getKey(), master.getId(), slave.getId());
+        mBluetoothClient.executeOpenDoor(permission, master.getId(), slave.getId());
     }
 
     public void makeFirstAdminConnection(String permissionKey, String defaultKey, Master master) {

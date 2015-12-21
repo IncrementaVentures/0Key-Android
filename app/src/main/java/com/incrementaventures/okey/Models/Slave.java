@@ -71,11 +71,8 @@ public class Slave implements ParseObject, Nameable {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Slave slave = fetchSlave(mParseSlave.getString(MASTER_ID), getId());
-                if (slave != null) {
-                    mParseSlave.saveEventually();
-                    mParseSlaveName.saveEventually();
-                }
+                mParseSlave.saveEventually();
+                mParseSlaveName.saveEventually();
             }
         }).start();
     }

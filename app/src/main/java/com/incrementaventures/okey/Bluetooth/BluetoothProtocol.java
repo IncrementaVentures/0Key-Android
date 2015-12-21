@@ -62,7 +62,7 @@ public class BluetoothProtocol {
     public static final String
             CHARACTERISTIC_UPDATE_NOTIFICATION_DESCRIPTOR_UUID ="00002902-0000-1000-8000-00805f9b34fb";
 
-    public static String buildOpenMessage(String permissionKey, int slaveId){
+    public static String buildOpenMessage(String permissionKey, int permissionSlaveId, int slaveId){
 
         StringBuilder builder = new StringBuilder();
         Time now = new Time();
@@ -80,15 +80,19 @@ public class BluetoothProtocol {
         builder.append(permissionKey);
         builder.append(SEPARATOR);
 
-        // "01;date;key;slaveId;
+        // "01;date;key;adminSlaveId;"
+        builder.append(permissionSlaveId);
+        builder.append(SEPARATOR);
+
+        // "01;date;key;adminSlaveId;slaveId;
         builder.append(slaveId);
         builder.append(SEPARATOR);
 
-        // "01;date;key;slaveId;1;
+        // "01;date;key;adminSlaveId;slaveId;1;
         builder.append(1);
         builder.append(SEPARATOR);
 
-        // "01;date;key;slaveId;1;*
+        // "01;date;key;adminSlaveId;slaveId;1;*
         builder.append(MESSAGE_END);
 
         return builder.toString();
@@ -147,11 +151,12 @@ public class BluetoothProtocol {
         builder.append(EMPTY);
         builder.append(SEPARATOR);
 
-        // "02;date;key;0;0;"
+        // "02;date;key;0;"
         builder.append(EMPTY);
         builder.append(SEPARATOR);
 
-        builder.append(permission.getKey());
+        // "02;date;key;0;0;"
+        builder.append(permission.getSlaveId());
         builder.append(SEPARATOR);
 
         // "02;date;key;0;0;slaveid;0;"

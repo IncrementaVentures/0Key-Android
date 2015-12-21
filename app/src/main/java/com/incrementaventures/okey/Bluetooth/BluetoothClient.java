@@ -160,8 +160,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         startScan(NORMAL_SCAN_TIME);
     }
 
-    public void executeOpenDoor(String key, String masterName, int slaveId) {
-        mPermissionKey = key;
+    public void executeOpenDoor(Permission adminPermission, String masterName, int slaveId) {
+        mPermission = adminPermission;
+        mPermissionKey = adminPermission.getKey();
         mSlaveId = slaveId;
         mMasterId = masterName;
         mMode = OPEN_MODE;
@@ -239,6 +240,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     }
 
     public void executePairSlaves(String masterId, String adminKey, int keySlaveId, int pairSlaveId) {
+        mMaster = Master.getMaster(masterId, User.getLoggedUser().getId());
         mPermissionKey = adminKey;
         mSlaveId = keySlaveId;
         mNewSlaveId = pairSlaveId;
@@ -337,7 +339,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             switch (mMode){
                 case OPEN_MODE:
                     // Separate the messsage in 20 bytes parts, then send each part
-                    message = BluetoothProtocol.buildOpenMessage(mPermissionKey, mSlaveId);
+                    message = BluetoothProtocol.buildOpenMessage(mPermissionKey, mPermission.getSlaveId(), mSlaveId);
                     break;
                 case FIRST_ADMIN_CONNECTION_MODE:
                     message = BluetoothProtocol.buildFirstConfigurationMessage(mPermissionKey,
@@ -435,6 +437,13 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             if (mToSendMessageParts.size() == 0){
                 mWaitingResponse = true;
                 mSending = false;
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        gatt.disconnect();
+                        gatt.close();
+                    }
+                }, 5000);
                 return;
             }
             // Sends the message until is finished
