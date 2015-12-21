@@ -317,7 +317,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
 
         Permission p = slave.getPermission(this);
 
-        if (p == null || !p.isValid()){
+        // TODO: 21-12-2015 Add isValid
+        if (p == null){
             mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
             return;
         }

@@ -273,6 +273,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
      */
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+        if (device.getName() == null) return;
         if ((mMode == OPEN_MODE && device.getName().equals(mMasterId))
                 || (mMode == CREATE_NEW_PERMISSION_MODE && device.getName().equals(mMasterId))
                 || (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(mMasterId))
