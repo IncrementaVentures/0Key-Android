@@ -401,7 +401,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         mBluetoothClient.executeCreateNewPermission(permission, permissionKey, masterId);
     }
 
-    public void openWhenClose(Master master, Slave slave, String key){
+    public void openWhenClose(Master master, Slave slave, String key) {
         Permission p = slave.getPermission(this);
         if (p == null || !p.isValid()){
             mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);

@@ -145,16 +145,19 @@ public class ModifyPermissionFragment extends Fragment {
     }
 
     private void setSlaves() {
-        mSlaves = new ArrayList<>(mSelectedMaster.getSlaves());
-        if (mSlaves.size() == 0) {
-            mSelectedSlave = null;
-            mSelectedSlaveView.setText(R.string.no_slaves_found_yet);
-            mSelectedSlaveView.setClickable(false);
-        } else {
-            mSelectedSlaveView.setClickable(true);
-            mSelectedSlave = mSlaves.get(0);
-            mSelectedSlaveView.setText(mSelectedSlave.getName());
-        }
+        if (mSelectedMaster == null)
+            return;
+        mSlaves = new ArrayList<>();
+        mSlaves.add(getAllSlavesRepresentative());
+        mSlaves.addAll(mSelectedMaster.getSlaves());
+        mSelectedSlaveView.setClickable(true);
+        mSelectedSlave = mSlaves.get(0);
+        mSelectedSlaveView.setText(mSelectedSlave.getName());
+    }
+
+    private Slave getAllSlavesRepresentative() {
+        return Slave.create(mSelectedMaster.getId(), getString(R.string.all_slaves), 0, 0,
+                User.getLoggedUser().getId());
     }
 
     private void getArgumentsData() {
@@ -416,7 +419,8 @@ public class ModifyPermissionFragment extends Fragment {
         try {
             mPermissionModifiedListener = (OnPermissionModifiedListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnPermissionModifiedListener");
+            throw new ClassCastException(context.toString()
+                    + " must implement OnPermissionModifiedListener");
         }
     }
 }
