@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Models.User;
@@ -91,7 +90,7 @@ public class LoginFragment extends Fragment implements User.OnParseUserLoginResp
                 String password = mLoginPassword.getText().toString();
                 String email = mLoginEmail.getText().toString();
                 User.logIn(thisFragment, email, password);
-                mProgressDialog = ProgressDialog.show(getActivity(), null, getResources().getString(R.string.logging));
+                Snackbar.make(getView(), R.string.logging, Snackbar.LENGTH_SHORT).show();
             }
         });
     }
@@ -101,7 +100,6 @@ public class LoginFragment extends Fragment implements User.OnParseUserLoginResp
 
     @Override
     public void userLoggedIn(final ParseUser parseUser) {
-        if (mProgressDialog != null) mProgressDialog.dismiss();
         if (parseUser.getEmail().equals("")) {
             parseUser.setEmail(parseUser.getString(User.BACKUP_EMAIL));
             parseUser.saveInBackground();
@@ -151,7 +149,6 @@ public class LoginFragment extends Fragment implements User.OnParseUserLoginResp
     @Override
     public void authError(ParseException e) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
-        Toast.makeText(getActivity().getApplicationContext(), R.string.auth_error,
-                Toast.LENGTH_SHORT).show();
+        Snackbar.make(getView(), R.string.auth_error, Snackbar.LENGTH_SHORT).show();
     }
 }

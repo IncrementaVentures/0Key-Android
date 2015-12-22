@@ -2,9 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_menu"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:padding="16dp"
     tools:context="com.incrementaventures.okey.Fragments.LoginFragment">
 
 
@@ -13,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout"
-        android:layout_above="@+id/login_button"
-        android:layout_alignStart="@+id/login_email"
-        android:layout_marginBottom="40dp">
+        android:layout_below="@+id/login_email"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true">
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,6 +28,7 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:textColor="@color/white"
+            android:textCursorDrawable = "@null"
             android:ems="10"
             android:id="@+id/login_password"
             android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
@@ -64,12 +63,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
+        android:textCursorDrawable = "@null"
         android:ems="10"
         android:textColor="@color/white"
         android:id="@+id/login_email"
         android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
-        android:layout_above="@+id/linearLayout"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/textView26"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -90,8 +91,8 @@
         android:text="@string/email"
         android:id="@+id/textView26"
         android:textColor="@color/white"
-        android:layout_above="@+id/login_email"
-        android:layout_alignStart="@+id/login_email" />
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
 
     <ImageView
         android:layout_width="200dp"
@@ -99,6 +100,18 @@
         android:id="@+id/imageView2"
         android:src="@drawable/logo"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/forgot_your_password_click_here"
+        android:padding="10dp"
+        android:onClick="forgotPasswordClicked"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:textColor="@color/white"
+        android:id="@+id/button"
+        android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

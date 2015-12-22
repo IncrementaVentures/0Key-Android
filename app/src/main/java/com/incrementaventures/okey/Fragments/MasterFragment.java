@@ -113,6 +113,17 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         return mView;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mView != null) {
+            ViewGroup parentViewGroup = (ViewGroup) mView.getParent();
+            if (parentViewGroup != null) {
+                parentViewGroup.removeAllViews();
+            }
+        }
+    }
+
     private void setSlaves() {
         if (mMasters == null || mMasters.size() == 0) return;
         mSlaves = new ArrayList<>(mMasters.get(mSelectedMasterIndex).getSlaves());

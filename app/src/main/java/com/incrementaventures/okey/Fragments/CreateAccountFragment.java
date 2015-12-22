@@ -17,8 +17,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 import com.parse.ParseException;
@@ -87,7 +87,8 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
                 String password = mPassword.getText().toString();
                 String email = mEmail.getText().toString();
                 String phone = mPhone.getText().toString();
-                String birthday = mBirthday.getText().toString() + "T00:01";
+                String birthday = Permission.getDefaultDateString(mBirthday.getText().toString())
+                        + "T00:01";
                 int selectedId = mRadioGroupSex.getCheckedRadioButtonId();
                 String sex;
                 switch (selectedId) {
@@ -101,7 +102,7 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
                         sex = User.MALE;
                 }
                 User.signUp(thisFragment, name, password, email, phone, sex, birthday);
-                mProgressDialog = ProgressDialog.show(getActivity(), null, getResources().getString(R.string.creating_account));
+                Snackbar.make(getView(), R.string.creating_account, Snackbar.LENGTH_SHORT).show();
             }
         });
 
@@ -120,7 +121,7 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
                         String birthday = yearString + "-"
                                 + monthString + "-"
                                 + dayString;
-                        mBirthday.setText(birthday);
+                        mBirthday.setText(Permission.getFormattedDate(birthday + "T00:01"));
                     }
                 };
                 newFragment.show(getActivity().getFragmentManager(), "datePicker");
@@ -130,7 +131,6 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
 
     @Override
     public void userSignedUp() {
-        if (mProgressDialog != null) mProgressDialog.dismiss();
         Snackbar.make(getActivity().findViewById(R.id.auth_container), R.string.verification_email_sent,
                 Snackbar.LENGTH_LONG).show();
         // Create new fragment and transaction
@@ -153,7 +153,7 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
     @Override
     public void authError(ParseException e) {
         if (mProgressDialog != null) mProgressDialog.dismiss();
-        Toast.makeText(getActivity().getApplicationContext(), R.string.auth_error,
-                Toast.LENGTH_SHORT).show();
+        Snackbar.make(getView(), R.string.auth_error, Snackbar.LENGTH_SHORT).show();
+
     }
 }
