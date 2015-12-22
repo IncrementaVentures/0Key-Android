@@ -149,9 +149,11 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
 
     private void setLocalMasters() {
         mMasters = new ArrayList<>();
+        Master master;
         for (Permission permission : mPermissions) {
-            if (permission.getMaster() != null) {
-                mMasters.add(permission.getMaster());
+            master = permission.getMaster();
+            if (master != null && !mMasters.contains(master)) {
+                mMasters.add(master);
             }
         }
         if (mMasters.size() > 0) {

@@ -69,13 +69,8 @@ public class Slave implements ParseObject, Nameable {
     @Override
     public void save() {
         saveLocal();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mParseSlave.saveEventually();
-                mParseSlaveName.saveEventually();
-            }
-        }).start();
+        mParseSlave.saveEventually();
+        mParseSlaveName.saveEventually();
     }
 
     public void saveLocal() {

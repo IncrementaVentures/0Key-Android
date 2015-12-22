@@ -484,8 +484,8 @@ public class BluetoothProtocol {
             part = part.substring(1, part.length()-1);
             String id = part.split(SEPARATOR)[0];
             String type = part.split(SEPARATOR)[1];
-            slaves.add(Slave.create("", id, Integer.valueOf(type), Integer.valueOf(id),
-                    User.getLoggedUser().getId()));
+            slaves.add(Slave.create("", Slave.DEFAULT_NAME + " " + id, Integer.valueOf(type),
+                    Integer.valueOf(id), User.getLoggedUser().getId()));
         }
         return slaves;
     }

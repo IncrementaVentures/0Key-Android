@@ -425,8 +425,9 @@ public class MainActivity extends AppCompatActivity implements
         Master master;
         for (Permission permission : permissions) {
             master = permission.getMaster();
-            if (master != null && !masters.contains(master)) {
-                masters.add(master);
+            if (master != null) {
+                if (!masters.contains(master))
+                    masters.add(master);
                 if (permission.getSlaveId() == Slave.ALL_SLAVES) {
                     ArrayList<Slave> masterSlaves = new ArrayList<>(master.getSlaves());
                     for (Slave slave : masterSlaves) {
