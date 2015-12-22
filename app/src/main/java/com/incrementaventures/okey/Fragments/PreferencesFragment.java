@@ -22,6 +22,7 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
@@ -38,8 +39,6 @@ public class PreferencesFragment extends Fragment {
     EditText mUserEmail;
     @Bind(R.id.user_birthday)
     TextView mUserBirthday;
-    @Bind(R.id.user_password)
-    EditText mUserPassword;
     @Bind(R.id.user_sex_group)
     RadioGroup mUserSexGroup;
     @Bind(R.id.user_sex_male)
@@ -54,7 +53,7 @@ public class PreferencesFragment extends Fragment {
     Switch mKeyAtStart;
 
     private User mUser;
-    private MenuFragment.OnMenuButtonClicked mClickToolbarMenuListener;
+
 
     public PreferencesFragment() {
         // Required empty public constructor
@@ -74,12 +73,8 @@ public class PreferencesFragment extends Fragment {
         mUser = User.getLoggedUser();
         mUserName.setText(mUser.getName());
         mUserEmail.setText(mUser.getEmail());
-        String birthday = mUser.getBirthday();
-        if (birthday.indexOf('T') > 0) {
-            birthday = birthday.substring(0, birthday.indexOf('T'));
-        }
+        String birthday = Permission.getFormattedDate(mUser.getBirthday());
         mUserBirthday.setText(birthday);
-        mUserPassword.setText("secret key");
         mOkButton.setOnClickListener(mRefreshSettingsListener);
         if (mUser.isMale()) {
             mUserMale.setSelected(true);
@@ -110,7 +105,7 @@ public class PreferencesFragment extends Fragment {
     }
 
 
-    @OnClick(R.id.user_birthday)
+    //@OnClick(R.id.user_birthday)
     public void onBirthdayTextClick() {
         DialogFragment newFragment = new DatePickerFragment(){
             @Override
@@ -129,13 +124,4 @@ public class PreferencesFragment extends Fragment {
         };
         newFragment.show(getActivity().getFragmentManager(), "datePicker");
     }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mClickToolbarMenuListener = (MenuFragment.OnMenuButtonClicked) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnMenuButtonClicked");
-        }    }
 }
