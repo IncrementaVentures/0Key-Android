@@ -422,11 +422,22 @@ public class MainActivity extends AppCompatActivity implements
         }
         ArrayList<Slave> slaves = new ArrayList<>();
         ArrayList<Master> masters = new ArrayList<>();
+        Master master;
         for (Permission permission : permissions) {
-            if (permission.getMaster() != null && !masters.contains(permission.getMaster()))
-                masters.add(permission.getMaster());
-            if (permission.getSlave() != null && !slaves.contains(permission.getSlave()))
+            master = permission.getMaster();
+            if (master != null && !masters.contains(master)) {
+                masters.add(master);
+                if (permission.getSlaveId() == Slave.ALL_SLAVES) {
+                    ArrayList<Slave> masterSlaves = new ArrayList<>(master.getSlaves());
+                    for (Slave slave : masterSlaves) {
+                        if (!slaves.contains(slave))
+                            slaves.add(slave);
+                    }
+                }
+            }
+            if (permission.getSlave() != null && !slaves.contains(permission.getSlave())) {
                 slaves.add(permission.getSlave());
+            }
         }
         mMasterFragment.onMastersReceived(masters);
         mMasterFragment.onSlavesReceived(slaves);

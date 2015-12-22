@@ -19,6 +19,7 @@ public class Slave implements ParseObject, Nameable {
     public static final String NAME = "name";
     public static final String TYPE = "type";
     public static final String DEFAULT_NAME = "Slave";
+    public static final int ALL_SLAVES = 0;
 
     private com.parse.ParseObject mParseSlave;
     private com.parse.ParseObject mParseSlaveName;

@@ -530,8 +530,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
                             master = Master.fetchMaster(permission.getMasterId());
                             slave = Slave.fetchSlave(permission.getMasterId(), permission.getSlaveId());
                         }
-                        if (master != null &&
-                                Permission.getType(permission.getType()) == ADMIN_PERMISSION) {
+                        if (master != null && permission.getSlaveId() == Slave.ALL_SLAVES) {
                             master.fetchSlaves();
                         }
                         if (User.getLoggedUser().getAdminPermission(master) != null) {

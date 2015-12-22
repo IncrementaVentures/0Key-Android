@@ -316,11 +316,15 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
             return null;
         }
         Permission permission = permissions.get(0);
-        if (permission == null) {
+        if (permission == null ||
+                Permission.getType(permission.getType()) != Permission.ADMIN_PERMISSION) {
+            permission = null;
             Object[] permissionsArray  = permissions.values().toArray();
             for (int i = 0; i < permissionsArray.length; i++) {
                 Permission p = (Permission) permissionsArray[i];
-                if (p.isValid() && p.getSlaveId() == slave.getId()) {
+                // If it is valid and (the permission is associated with the same slave id OR it is
+                // for all slaves)
+                if (p.isValid() && (p.getSlaveId() == slave.getId() || p.getSlaveId() == Slave.ALL_SLAVES)) {
                     permission = (Permission) permissionsArray[i];
                     break;
                 }
@@ -330,15 +334,16 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     /**
-     * Opens a door via bluetooth.
+     * Opens a door if the user has a valid permission.
      */
     public void openDoor(Master master, Slave slave) {
 
         Permission permission = getValidPermission(master, slave);
         if (permission == null) {
             mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
+            return;
         }
-        
+
         mBluetoothClient = new BluetoothClient(mContext, this);
 
         if (!mBluetoothClient.isSupported()){
