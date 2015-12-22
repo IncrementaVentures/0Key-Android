@@ -310,21 +310,35 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         return mParseUser.getEmail();
     }
 
+    private Permission getValidPermission(Master master, Slave slave) {
+        HashMap<Integer, Permission> permissions = master.getPermissions(this);
+        if (permissions == null || permissions.size() == 0) {
+            return null;
+        }
+        Permission permission = permissions.get(0);
+        if (permission == null) {
+            Object[] permissionsArray  = permissions.values().toArray();
+            for (int i = 0; i < permissionsArray.length; i++) {
+                Permission p = (Permission) permissionsArray[i];
+                if (p.isValid() && p.getSlaveId() == slave.getId()) {
+                    permission = (Permission) permissionsArray[i];
+                    break;
+                }
+            }
+        }
+        return permission;
+    }
+
     /**
      * Opens a door via bluetooth.
      */
     public void openDoor(Master master, Slave slave) {
 
-        HashMap<Integer, Permission> permissions = master.getPermissions(this);
-        if (permissions == null || permissions.size() == 0) {
-            mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
-            return;
-        }
-        Permission permission = permissions.get(0);
+        Permission permission = getValidPermission(master, slave);
         if (permission == null) {
-            permission = (Permission) permissions.values().toArray()[0];
+            mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
         }
-
+        
         mBluetoothClient = new BluetoothClient(mContext, this);
 
         if (!mBluetoothClient.isSupported()){

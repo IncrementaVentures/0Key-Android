@@ -322,7 +322,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         else if (mParsePermission.getInt(TYPE) == TEMPORAL_PERMISSION && started(time) && !finished(time)){
             return true;
         }
-        else if (mParsePermission.getInt(TYPE) == UNKNOWN_PERMISSION){
+        else if (mParsePermission.getInt(TYPE) == UNKNOWN_PERMISSION) {
             return true;
         }
         return false;
