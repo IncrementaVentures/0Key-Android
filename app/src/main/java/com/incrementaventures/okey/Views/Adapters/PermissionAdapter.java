@@ -70,13 +70,9 @@ public class PermissionAdapter extends ArrayAdapter<Permission> {
     private void setSlave(View view, Permission permission) {
         Slave slave = permission.getSlave();
         TextView slaveView = (TextView) view.findViewById(R.id.permission_slave_edit);
-        ImageView slaveImageView = (ImageView) view.findViewById(R.id.slave_image);
-        if (slave == null) {
-            slaveView.setVisibility(TextView.GONE);
-            slaveImageView.setVisibility(ImageView.GONE);
+        if (slave == null || permission.getSlaveId() == 0) {
+            slaveView.setText(R.string.all_slaves);
         } else {
-            slaveView.setVisibility(TextView.VISIBLE);
-            slaveImageView.setVisibility(ImageView.VISIBLE);
             slaveView.setText(String.valueOf(slave.getName()));
         }
     }
