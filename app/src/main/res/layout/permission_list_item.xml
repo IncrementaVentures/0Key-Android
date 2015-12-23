@@ -22,7 +22,7 @@
         android:textAppearance="@style/TextAppearance.AvenirGreySmall"
         android:text="Fecha inicio"
         android:id="@+id/permission_start_date_edit"
-        android:layout_alignParentTop="true"
+        android:layout_alignTop="@+id/permission_type_edit"
         android:layout_alignParentEnd="true" />
 
     <TextView

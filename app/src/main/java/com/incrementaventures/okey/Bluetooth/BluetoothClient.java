@@ -294,7 +294,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                         mListener.error(TIMEOUT);
                     }
                 }
-            }, 8000);
+            }, 10000);
 
         } else if (mMode == SCAN_MODE) {
             mListener.deviceFound(device, rssi, scanRecord);

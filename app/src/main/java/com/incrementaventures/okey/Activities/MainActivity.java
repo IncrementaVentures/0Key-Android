@@ -225,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void deviceNotFound() {
+        enableOpenButton();
         Snackbar.make(mRootView,  R.string.device_not_found, Snackbar.LENGTH_LONG).show();
     }
 
@@ -237,13 +238,17 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    private void enableOpenButton() {
+        mMasterFragment.enableOpenButton(R.drawable.app_icon_placeholder);
+    }
+
     @Override
     public void doorOpened(final int state) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Snackbar.make(mRootView, R.string.door_opened,
-                        Snackbar.LENGTH_LONG).show();
+                enableOpenButton();
+                Snackbar.make(mRootView, R.string.door_opened, Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -338,6 +343,7 @@ public class MainActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                enableOpenButton();
                 switch (code) {
                     case BluetoothClient.TIMEOUT:
                         Snackbar.make(mRootView, R.string.door_cant_open_timeout,
