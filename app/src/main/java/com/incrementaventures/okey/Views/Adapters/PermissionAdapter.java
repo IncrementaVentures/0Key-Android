@@ -44,9 +44,8 @@ public class PermissionAdapter extends ArrayAdapter<Permission> {
                 }
             });
         } else {
-            userNameView.setText(user.getName().substring(0, user.getName().indexOf(' ')));
+            userNameView.setText(user.getName());
         }
-
     }
 
     private void setPermissionType(View view, Permission permission) {
