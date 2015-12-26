@@ -176,5 +176,6 @@
     <string name="an_error_occurred">An error occurred</string>
     <string name="email_sent">Email sent</string>
     <string name="we_will_send_you_email_reset">We will send you an email to reset your password.</string>
+    <string name="key_too_short">Key too short</string>
 
 </resources>

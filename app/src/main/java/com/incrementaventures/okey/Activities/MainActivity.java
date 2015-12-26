@@ -578,6 +578,11 @@ public class MainActivity extends AppCompatActivity implements
         mCurrentUser.logout(new User.OnParseUserLogoutListener() {
             @Override
             public void userLoggedOut() {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("protect_with_pin", true);
+                editor.putString(InsertPinFragment.PROTECT_PIN, "EMPTY");
+                editor.apply();
                 Intent intent = new Intent(MainActivity.this, AuthActivity.class);
                 startActivity(intent);
                 finish();

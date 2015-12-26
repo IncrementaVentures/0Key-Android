@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.incrementaventures.okey.R;
-import com.incrementaventures.okey.Views.Adapters.CharacterCountWatcher;
 
 
 public class InsertPinFragment extends DialogFragment {
@@ -61,11 +60,13 @@ public class InsertPinFragment extends DialogFragment {
                 public void onClick(View v) {
                     String pin = mPinEditText.getText().toString();
                     String confirmPin = mPinConfirmEditText.getText().toString();
-                    if (pin.equals(confirmPin)) {
+                    if (pin.equals(confirmPin) && pin.length() == 4) {
                         mSharedPref.edit().putString(PROTECT_PIN, mPinEditText.getText().toString())
                                 .commit();
                         mListener.onPinDialogPositiveClick(pin);
                         mDialog.dismiss();
+                    } else if (pin.length() < 4){
+                        Snackbar.make(v, R.string.key_too_short, Snackbar.LENGTH_SHORT).show();
                     } else {
                         Snackbar.make(v, R.string.different_keys, Snackbar.LENGTH_SHORT).show();
                     }
@@ -95,7 +96,7 @@ public class InsertPinFragment extends DialogFragment {
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         builder.setTitle(" ");
-        View view = inflater.inflate(R.layout.set_pin_dialog, null);
+        View view = inflater.inflate(R.layout.set_pin_dialog, null, false);
         mPinEditText = (EditText) view.findViewById(R.id.pin);
         mPinConfirmEditText = (EditText) view.findViewById(R.id.pin_confirm);
         // TextInputLayout pinInput = (TextInputLayout) view.findViewById(R.id.pin_input);
@@ -126,7 +127,7 @@ public class InsertPinFragment extends DialogFragment {
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         builder.setTitle(" ");
-        View view = inflater.inflate(R.layout.dialog_pin, null);
+        View view = inflater.inflate(R.layout.dialog_pin, null, false);
         mPinEditText = (EditText) view.findViewById(R.id.pin);
         TextInputLayout pinInput = (TextInputLayout) view.findViewById(R.id.pin_input);
         //pinInput.getEditText().addTextChangedListener(new CharacterCountWatcher(pinInput, 4, 4));
