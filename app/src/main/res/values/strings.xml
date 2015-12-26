@@ -1,13 +1,8 @@
 <resources>
     <string name="app_name">0key</string>
-
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_create_account">CreateAccountActivity</string>
     <string name="auth_error">Can\'t authenticate, try again</string>
     <string name="door_opened">Door opened</string>
-    <string name="door_closed">Door closed</string>
     <string name="edit_permission">Edit permission</string>
     <string name="editing_permission">Editing permission</string>
     <string name="edit_slave_name">Edit slave name</string>
@@ -19,7 +14,6 @@
     <string name="ble_not_supported">Bluetooth LE not supported</string>
     <string name="device_found">Device found</string>
     <string name="device_not_found">Device not found</string>
-    <string name="service_discovered">Service discovered</string>
     <string name="door_cant_open">Can\'t open</string>
     <string name="door_cant_open_timeout">The door does not respond</string>
     <string name="door_cant_open_bad_code">The door is not responding as expected. Contact support.</string>
@@ -30,28 +24,17 @@
     <string name="open">Open</string>
     <string name="close_door">Close door</string>
     <string name="email">Email</string>
-
-    <string name="door_already_opened"> Already opened </string>
-    <string name="door_already_closed"> Already closed </string>
     <string name="door_already_configured"> Door already configured </string>
     <string name="getting_slaves"> Getting slaves </string>
     <string name="you_are_not_admin"> You are not an administrator </string>
-
     <string name="protect_with_key"> Protect app with key</string>
     <string name="pin"> PIN </string>
-
-    <string name="title_activity_preferences">PreferencesActivity</string>
     <string name="enter_pin">Insert pin</string>
     <string name="okey">Ok</string>
     <string name="cancel">Cancel</string>
     <string name="read_my_permission">My permission</string>
     <string name="read_all_permissions">All permissions</string>
-
     <string name="pin_incorrect">Pin incorrect</string>
-
-    <string name="get_slaves">Get slaves</string>
-
-    <string name="gonna_be_admin">I will be the house administrator</string>
     <string name="insert_default_key">Insert the default key.</string>
     <string name="insert_new_key">Insert a custom new key.</string>
     <string name="insert_door_name">Insert the door name.</string>
@@ -75,24 +58,21 @@
     <string name="permission_not_created">Permission not created</string>
     <string name="permission_not_edited">Permission not edited</string>
     <string name="doors">Doors</string>
-
     <string name="permission_type"> Permission</string>
     <string name="permission_type_admin"> Administrator</string>
     <string name="permission_type_temporal"> Temporal </string>
     <string name="permission_type_permanent"> Permanent </string>
     <string name="permission_type_unknown"> Unknown </string>
-
     <string name="searching_door">Searching door</string>
     <string name="reading_permission">Reading permission</string>
     <string name="reading_permissions">Reading permissions</string>
-
     <string name="door_cant_configure"> Can\'t configure</string>
     <string name="open_when_close"> Open when door is close</string>
     <string name="set_key_permission"> Set permission key</string>
     <string name="permission_key_setted"> Permission key setted</string>
     <string name="no_devices_found_yet"> No devices found </string>
     <string name="masters"> Masters </string>
-    <string name="logging"> Logging </string>
+    <string name="logging"> Logging in </string>
     <string name="creating_account"> Creating account </string>
     <string name="configure_or_set_key_first"> Configure master or set key first. </string>
     <string name="door_not_configured"> Configure master or set key first. </string>
@@ -105,11 +85,6 @@
     <string name="key_will_be_shared"> Key will be shared.</string>
     <string name="name"> Name</string>
     <string name="location"> Location </string>
-
-
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_door">Door</string>
     <string name="title_activity_new_permission">New permission</string>
     <string name="title_activity_share_key">Share permission</string>
@@ -140,7 +115,7 @@
     <string name="searching">Searching</string>
     <string name="deleting_permission">Deleting permission</string>
     <string name="master_configured">Master configured</string>
-    <string name="verifiy_account">Verify your account</string>
+    <string name="verify_account">Verify your account</string>
     <string name="no_masters_yet">No masters yet</string>
     <string name="pairing_slave">Pairing slave</string>
     <string name="slaves_added">Slaves added</string>
@@ -149,6 +124,7 @@
     <string name="phone_number">Phone number</string>
     <string name="create_account">Create account</string>
     <string name="login">Log in</string>
+    <string name="title_activity_create_account">Log in</string>
     <string name="from_hour">From hour</string>
     <string name="from_date">From date</string>
     <string name="to_hour">To hour</string>

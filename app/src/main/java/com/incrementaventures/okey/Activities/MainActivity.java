@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity implements
     private ArrayList<String> mScannedMasters;
     private ArrayAdapter<String> mScannedMastersAdapter;
     private AlertDialog mScannedMastersDialog;
-    private boolean mAddingNewMaster;
     private InsertPinFragment mPinDialog;
+    private boolean mActivatingBluetooth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +96,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onResume() {
+        if (!mActivatingBluetooth) {
+            checkPreferences();
+        }
         super.onResume();
-        checkPreferences();
     }
 
     @Override
@@ -209,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void enableBluetooth() {
+        mActivatingBluetooth = true;
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
@@ -239,7 +242,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void stopScanning() {
-        mAddingNewMaster = false;
         if (mScannedMasters != null && mScannedMasters.size() == 0) {
             if (mScannedMastersDialog != null) mScannedMastersDialog.dismiss();
             Snackbar.make(mRootView, R.string.devices_not_found, Snackbar.LENGTH_LONG).show();
@@ -522,7 +524,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onAddNew0keyClicked(View view) {
-        mAddingNewMaster = true;
         mCurrentUser.scanDevices();
         showScannedMastersDialog();
     }

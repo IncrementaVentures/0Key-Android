@@ -27,35 +27,7 @@
             android:name=".Activities.AuthActivity"
             android:label="@string/title_activity_create_account" >
         </activity>
-        <activity
-            android:name=".Activities.PreferencesActivity"
-            android:label="@string/title_activity_preferences" >
-        </activity>
-        <activity
-            android:name=".Activities.DoorConfigurationActivity"
-            android:label="@string/title_activity_first_admin_config" >
-        </activity>
-        <activity
-            android:name=".Activities.DoorActivity"
-            android:label="@string/title_activity_door"
-            android:parentActivityName=".Activities.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.incrementaventures.okey.Activities.MainActivity" />
-        </activity>
-        <activity
-            android:name=".Activities.ModifyPermissionActivity"
-            android:label="@string/title_activity_new_permission"
-            android:parentActivityName=".Activities.DoorActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.incrementaventures.okey.Activities.DoorActivity" />
-        </activity>
-        <activity
-            android:name=".Activities.ShareKeyActivity"
-            android:label="@string/title_activity_share_key"
-            android:parentActivityName=".Activities.DoorActivity" >
-        </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="d6c5fb7c298d35bbea50ef09cd0d44e1c06d1401" />
