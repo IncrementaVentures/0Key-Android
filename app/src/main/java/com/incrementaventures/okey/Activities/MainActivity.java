@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements
         setUpToolbar();
         authenticateUser();
         if (mCurrentUser == null) return;
-        checkPreferences();
         checkNewPermissions();
         checkBluetoothLeSupport();
         mMasterFragment = new MasterFragment();
@@ -92,6 +91,12 @@ public class MainActivity extends AppCompatActivity implements
                 .add(R.id.container, mMasterFragment, MasterFragment.TAG)
                 .commit();
         setUpToolbar();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPreferences();
     }
 
     @Override
