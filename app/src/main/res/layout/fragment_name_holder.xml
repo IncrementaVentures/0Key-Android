@@ -10,18 +10,19 @@
         android:layout_centerHorizontal="true">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:id="@+id/ic_house"
             android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/master_name"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
             android:src="@drawable/ic_action_home" />
 
         <TextView android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/master_name"
             android:padding="5dp"
+            android:gravity="center_vertical"
             android:textAppearance="@style/TextAppearance.AvenirGreyLarge"
             android:text="Door name"
             />

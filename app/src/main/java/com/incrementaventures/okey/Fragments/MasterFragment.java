@@ -63,7 +63,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     LinearLayout mBottomLayout;
 
     @Bind(R.id.show_permissions_button)
-    Button mShowPermissionsButton;
+    ImageButton mShowPermissionsButton;
 
     private ArrayList<Master> mMasters;
     private int mSelectedMasterIndex;
@@ -134,8 +134,10 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     }
 
     private void setBottomText() {
-        if (mMasters == null || mMasters.size() == 0)
+        if (mMasters == null || mMasters.size() == 0) {
+            changeBottomTextToGet0key();
             return;
+        }
         if (User.getLoggedUser().getAdminPermission(mMasters.get(mSelectedMasterIndex)) != null) {
             mBottomLayout.setOnClickListener(mShareKeyListener);
             changeBottomTextToShareKey();

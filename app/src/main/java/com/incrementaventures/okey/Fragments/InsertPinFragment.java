@@ -98,10 +98,10 @@ public class InsertPinFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.set_pin_dialog, null);
         mPinEditText = (EditText) view.findViewById(R.id.pin);
         mPinConfirmEditText = (EditText) view.findViewById(R.id.pin_confirm);
-        TextInputLayout pinInput = (TextInputLayout) view.findViewById(R.id.pin_input);
-        pinInput.getEditText().addTextChangedListener(new CharacterCountWatcher(pinInput, 4, 4));
-        TextInputLayout pinInputConfirm = (TextInputLayout) view.findViewById(R.id.pin_input_confirm);
-        pinInput.getEditText().addTextChangedListener(new CharacterCountWatcher(pinInputConfirm, 4, 4));
+        // TextInputLayout pinInput = (TextInputLayout) view.findViewById(R.id.pin_input);
+        // pinInput.getEditText().addTextChangedListener(new CharacterCountWatcher(pinInput, 4, 4));
+        // TextInputLayout pinInputConfirm = (TextInputLayout) view.findViewById(R.id.pin_input_confirm);
+        // pinInput.getEditText().addTextChangedListener(new CharacterCountWatcher(pinInputConfirm, 4, 4));
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(view)
@@ -129,7 +129,7 @@ public class InsertPinFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_pin, null);
         mPinEditText = (EditText) view.findViewById(R.id.pin);
         TextInputLayout pinInput = (TextInputLayout) view.findViewById(R.id.pin_input);
-        pinInput.getEditText().addTextChangedListener(new CharacterCountWatcher(pinInput, 4, 4));
+        //pinInput.getEditText().addTextChangedListener(new CharacterCountWatcher(pinInput, 4, 4));
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(view)

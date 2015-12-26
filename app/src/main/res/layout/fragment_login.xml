@@ -98,7 +98,10 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:id="@+id/imageView2"
-        android:src="@drawable/logo"
+        android:src="@drawable/app_icon_placeholder"
+        android:scaleType="fitCenter"
+        android:padding="10dp"
+        android:adjustViewBounds="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 

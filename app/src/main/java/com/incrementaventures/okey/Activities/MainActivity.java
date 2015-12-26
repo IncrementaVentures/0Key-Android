@@ -399,7 +399,9 @@ public class MainActivity extends AppCompatActivity implements
                 if (mScannedMastersDialog != null) {
                     mScannedMastersDialog.cancel();
                 }
-                if (resultCode == RESULT_OK) { }
+                if (mMasterFragment != null) {
+                    mMasterFragment.enableOpenButton(R.drawable.app_icon_placeholder);
+                }
                 break;
             default:
                 Toast.makeText(this, R.string.not_implemented_code_on_result,
