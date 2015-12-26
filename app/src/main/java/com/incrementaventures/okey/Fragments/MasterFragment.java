@@ -3,6 +3,7 @@ package com.incrementaventures.okey.Fragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -497,6 +498,11 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         public int getCount() {
             if (mObjects == null) return 0;
             return mObjects.size();
+        }
+
+        @Override
+        public Parcelable saveState() {
+            return null;
         }
 
         public Fragment getInstanceItem(int position) {
