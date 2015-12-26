@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements
     private ArrayAdapter<String> mScannedMastersAdapter;
     private AlertDialog mScannedMastersDialog;
     private boolean mAddingNewMaster;
+    private InsertPinFragment mPinDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,10 +135,12 @@ public class MainActivity extends AppCompatActivity implements
 
     private void checkPreferences() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sharedPref.getBoolean("protect_with_pin", true)) {
-            InsertPinFragment dialog = new InsertPinFragment();
-            dialog.setCancelable(false);
-            dialog.show(getFragmentManager(), "dialog_pin");
+        if (mPinDialog == null) {
+            mPinDialog = new InsertPinFragment();
+            mPinDialog.setCancelable(false);
+        }
+        if (sharedPref.getBoolean("protect_with_pin", true) && !mPinDialog.isAdded()) {
+            mPinDialog.show(getFragmentManager(), "dialog_pin");
         }
     }
 
