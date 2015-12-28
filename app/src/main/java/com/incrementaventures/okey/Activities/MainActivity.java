@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements
     View mRootView;
 
     private MasterFragment mMasterFragment;
+    private PermissionsFragment mPermissionsFragment;
     private User mCurrentUser;
     private ArrayList<String> mScannedMasters;
     private ArrayAdapter<String> mScannedMastersAdapter;
@@ -160,21 +161,23 @@ public class MainActivity extends AppCompatActivity implements
                         getSupportFragmentManager().findFragmentByTag(PermissionsFragment.TAG);
                 if ((masterFragment != null && masterFragment.isVisible())) {
                     showToolbar();
-                    hideAddPermissionButton();
+                    hideAddPermissionAndRefreshButtons();
                 } else if (permissionsFragment != null && permissionsFragment.isVisible()) {
                     showToolbar();
-                    showAddPermissionButton();
+                    showAddPermissionAndRefreshButtons();
                 }
             } catch (IllegalStateException e) { }
         }
     }
 
-    private void showAddPermissionButton() {
+    private void showAddPermissionAndRefreshButtons() {
         mOptionsMenu.findItem(R.id.action_add_permission).setVisible(true);
+        mOptionsMenu.findItem(R.id.action_refresh_data).setVisible(true);
     }
 
-    private void hideAddPermissionButton() {
+    private void hideAddPermissionAndRefreshButtons() {
         mOptionsMenu.findItem(R.id.action_add_permission).setVisible(false);
+        mOptionsMenu.findItem(R.id.action_refresh_data).setVisible(false);
     }
 
     @Override
@@ -200,6 +203,8 @@ public class MainActivity extends AppCompatActivity implements
             return true;
         } else if (id == R.id.action_add_permission) {
             onAddNewPermissionClicked(null);
+        } else if (id == R.id.action_refresh_data) {
+            checkNewPermissions();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -474,6 +479,9 @@ public class MainActivity extends AppCompatActivity implements
         }
         mMasterFragment.onMastersReceived(masters);
         mMasterFragment.onSlavesReceived(slaves);
+        if (mPermissionsFragment != null && mPermissionsFragment.isVisible()) {
+            mPermissionsFragment.onPermissionsReceived(permissions);
+        }
     }
 
 
@@ -554,13 +562,13 @@ public class MainActivity extends AppCompatActivity implements
         FragmentManager fragmentManager = getSupportFragmentManager();
         Bundle args = new Bundle();
         args.putString(Master.ID, mMasterFragment.getSelectedMaster().getId());
-        PermissionsFragment fragment = new PermissionsFragment();
-        fragment.setArguments(args);
+        mPermissionsFragment = new PermissionsFragment();
+        mPermissionsFragment.setArguments(args);
         fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment, PermissionsFragment.TAG)
+                .replace(R.id.container, mPermissionsFragment, PermissionsFragment.TAG)
                 .addToBackStack(PermissionsFragment.TAG)
                 .commit();
-        showAddPermissionButton();
+        showAddPermissionAndRefreshButtons();
     }
 
     public void onAddNewPermissionClicked(View view) {

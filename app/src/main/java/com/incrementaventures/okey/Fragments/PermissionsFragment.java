@@ -80,6 +80,23 @@ public class PermissionsFragment extends Fragment {
         }
     }
 
+    public void onPermissionsReceived(ArrayList<Permission> permissions) {
+        mPermissions.clear();
+        for (Permission permission : permissions) {
+            if (permission.getMasterId().equals(mMaster.getId())) {
+                mPermissions.add(permission);
+            }
+        }
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mPermissionsAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
