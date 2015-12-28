@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements
     private AlertDialog mScannedMastersDialog;
     private InsertPinFragment mPinDialog;
     private boolean mActivatingBluetooth;
+    private Menu mOptionsMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,18 +158,29 @@ public class MainActivity extends AppCompatActivity implements
                         getSupportFragmentManager().findFragmentByTag(MasterFragment.TAG);
                 PermissionsFragment permissionsFragment = (PermissionsFragment)
                         getSupportFragmentManager().findFragmentByTag(PermissionsFragment.TAG);
-                if ((masterFragment != null && masterFragment.isVisible()) ||
-                        permissionsFragment != null && permissionsFragment.isVisible()) {
+                if ((masterFragment != null && masterFragment.isVisible())) {
                     showToolbar();
+                    hideAddPermissionButton();
+                } else if (permissionsFragment != null && permissionsFragment.isVisible()) {
+                    showToolbar();
+                    showAddPermissionButton();
                 }
-            } catch (IllegalStateException e) {
-            }
+            } catch (IllegalStateException e) { }
         }
+    }
+
+    private void showAddPermissionButton() {
+        mOptionsMenu.findItem(R.id.action_add_permission).setVisible(true);
+    }
+
+    private void hideAddPermissionButton() {
+        mOptionsMenu.findItem(R.id.action_add_permission).setVisible(false);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        mOptionsMenu = menu;
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -186,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements
             transaction.replace(R.id.container, new MenuFragment(), MenuFragment.TAG)
                     .addToBackStack(MenuFragment.TAG).commit();
             return true;
+        } else if (id == R.id.action_add_permission) {
+            onAddNewPermissionClicked(null);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -546,6 +560,7 @@ public class MainActivity extends AppCompatActivity implements
                 .replace(R.id.container, fragment, PermissionsFragment.TAG)
                 .addToBackStack(PermissionsFragment.TAG)
                 .commit();
+        showAddPermissionButton();
     }
 
     public void onAddNewPermissionClicked(View view) {

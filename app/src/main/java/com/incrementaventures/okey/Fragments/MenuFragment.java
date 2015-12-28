@@ -33,8 +33,6 @@ public class MenuFragment extends Fragment {
     TextView mAddNew0key;
     @Bind(R.id.add_new_door)
     TextView mAddNewDoor;
-    @Bind(R.id.add_new_permission)
-    TextView mAddNewPermission;
     @Bind(R.id.settings)
     TextView mSettings;
 

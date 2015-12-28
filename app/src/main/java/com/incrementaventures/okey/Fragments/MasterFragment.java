@@ -63,8 +63,8 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     @Bind(R.id.share_virtual_key)
     LinearLayout mBottomLayout;
 
-    @Bind(R.id.show_permissions_button)
-    ImageButton mShowPermissionsButton;
+    @Bind(R.id.manage_virtual_keys)
+    LinearLayout mShowPermissionsButton;
 
     private ArrayList<Master> mMasters;
     private int mSelectedMasterIndex;
