@@ -80,7 +80,7 @@ public class PermissionsFragment extends Fragment {
         }
     }
 
-    public void onPermissionsReceived(ArrayList<Permission> permissions) {
+    public void onPermissionsReceived(ArrayList<Permission> permissions, final boolean newPermissions) {
         mPermissions.clear();
         for (Permission permission : permissions) {
             if (permission.getMasterId().equals(mMaster.getId())) {
@@ -91,6 +91,9 @@ public class PermissionsFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    if (newPermissions && getView() != null) {
+                        Snackbar.make(getView(), R.string.new_virtual_keys, Snackbar.LENGTH_LONG).show();
+                    }
                     mPermissionsAdapter.notifyDataSetChanged();
                 }
             });

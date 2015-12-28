@@ -122,9 +122,9 @@ public class ModifyPermissionFragment extends Fragment {
         setSlaves();
         setUi();
         mPermissionTypes =  new CharSequence[]{
-                getResources().getString(R.string.permission_type_admin),
-                getResources().getString(R.string.permission_type_permanent),
-                getResources().getString(R.string.permission_type_temporal)
+                getResources().getString(R.string.virtual_key_type_admin),
+                getResources().getString(R.string.virtual_key_type_permanent),
+                getResources().getString(R.string.virtual_key_type_temporal)
         };
         return v;
     }
@@ -163,7 +163,7 @@ public class ModifyPermissionFragment extends Fragment {
     private void getArgumentsData() {
         mKey = getArguments().getString(Permission.KEY);
         if (mKey != null) {
-            mScreenTitle.setText(R.string.edit_permission);
+            mScreenTitle.setText(R.string.edit_virtual_key);
             mDeletePermissionButton.setVisibility(Button.VISIBLE);
         }
         User user = User.getLoggedUser();
@@ -191,7 +191,7 @@ public class ModifyPermissionFragment extends Fragment {
 
     private void setUi() {
         if (mPermissionTypeView.getText().toString().equals(getResources()
-                .getString(R.string.permission_type_temporal))) {
+                .getString(R.string.virtual_key_type_temporal))) {
             mDueDateLayout.setVisibility(LinearLayout.VISIBLE);
             mDueHourLayout.setVisibility(LinearLayout.VISIBLE);
             mStartDateLayout.setVisibility(LinearLayout.VISIBLE);
@@ -201,7 +201,7 @@ public class ModifyPermissionFragment extends Fragment {
             mSeparator2.setVisibility(View.VISIBLE);
             mSeparator3.setVisibility(View.VISIBLE);
         } else if (mPermissionTypeView.getText().toString().equals(getResources()
-                .getString(R.string.permission_type_permanent))){
+                .getString(R.string.virtual_key_type_permanent))){
             mDueDateLayout.setVisibility(LinearLayout.GONE);
             mDueHourLayout.setVisibility(LinearLayout.GONE);
             mSlaveTitle.setVisibility(TextView.VISIBLE);
@@ -209,7 +209,7 @@ public class ModifyPermissionFragment extends Fragment {
             mSeparator2.setVisibility(View.GONE);
             mSeparator3.setVisibility(View.VISIBLE);
         } else if (mPermissionTypeView.getText().toString().equals(getResources()
-                .getString(R.string.permission_type_admin))){
+                .getString(R.string.virtual_key_type_admin))){
             mSlaveTitle.setVisibility(TextView.GONE);
             mSelectedSlaveView.setVisibility(TextView.GONE);
             mDueDateLayout.setVisibility(LinearLayout.GONE);
@@ -222,7 +222,7 @@ public class ModifyPermissionFragment extends Fragment {
     @OnClick(R.id.permission_type_layout)
     public void permissionTypeClicked() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.permission_type);
+        builder.setTitle(R.string.virtual_key_type);
         builder.setItems(mPermissionTypes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -329,7 +329,7 @@ public class ModifyPermissionFragment extends Fragment {
         }
         Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
         if (adminPermission == null) {
-            Snackbar.make(getView(), R.string.no_permission, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(getView(), R.string.no_virtual_key, Snackbar.LENGTH_LONG).show();
             return;
         }
         String userKey = adminPermission.getKey();
@@ -398,7 +398,7 @@ public class ModifyPermissionFragment extends Fragment {
     public void deletePermissionClicked() {
         Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
         if (adminPermission == null) {
-            Snackbar.make(getView(), R.string.no_permission, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(getView(), R.string.no_virtual_key, Snackbar.LENGTH_LONG).show();
             return;
         }
         mPermissionModifiedListener.onDeletePermissionClicked(mToEditPermission,

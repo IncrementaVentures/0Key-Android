@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
         android:padding="15dp"
-        android:text="@string/add_new_permission"
+        android:text="@string/add_new_virtual_key"
         android:id="@+id/modify_permission_screen_title"
         android:layout_alignBottom="@+id/ok_button"
         android:layout_centerHorizontal="true" />
@@ -117,7 +117,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
-            android:text="@string/permission_type"
+            android:text="@string/virtual_key_type"
             android:id="@+id/permission_type_text_view" />
         <TextView
             android:layout_width="match_parent"
@@ -126,7 +126,7 @@
             android:paddingBottom="5dp"
             android:id="@+id/permission_type_new"
             android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
-            android:text="@string/permission_type_temporal"/>
+            android:text="@string/virtual_key_type_temporal"/>
 
     </LinearLayout>
 
@@ -329,7 +329,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/delete_permission"
+        android:text="@string/delete_virtual_key"
         android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
         android:id="@+id/delete_permission_button"
         android:visibility="gone"

@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void noPermission() {
-        Snackbar.make(mRootView, R.string.no_permission, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRootView, R.string.no_virtual_key, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 showMasterFragment();
-                Snackbar.make(mRootView, R.string.permission_created, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mRootView, R.string.virtual_key_created, Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 showMasterFragment();
-                Snackbar.make(mRootView, R.string.permission_edited, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mRootView, R.string.virtual_key_edited, Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -356,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Snackbar.make(mRootView, R.string.permission_deleted, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mRootView, R.string.virtual_key_deleted, Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -391,19 +391,19 @@ public class MainActivity extends AppCompatActivity implements
                                 Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.PERMISSION_NOT_CREATED:
-                        Snackbar.make(mRootView, R.string.permission_not_created,
+                        Snackbar.make(mRootView, R.string.virtual_key_not_created,
                                 Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.PERMISSION_NOT_EDITED:
-                        Snackbar.make(mRootView, R.string.permission_not_edited,
+                        Snackbar.make(mRootView, R.string.virtual_key_not_edited,
                                 Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.DONT_HAVE_PERMISSION:
-                        Snackbar.make(mRootView, R.string.no_permission,
+                        Snackbar.make(mRootView, R.string.no_virtual_key,
                                 Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.DONT_HAVE_PERMISSION_THIS_HOUR:
-                        Snackbar.make(mRootView, R.string.no_permission_this_hour,
+                        Snackbar.make(mRootView, R.string.no_virtual_key_this_hour,
                                 Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.BAD_INPUT:
@@ -455,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onNewPermissions(ArrayList<Permission> permissions, boolean newPermissions) {
         if (permissions != null && permissions.size() > 0 && newPermissions) {
-            Snackbar.make(mRootView, R.string.new_permissions, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mRootView, R.string.new_virtual_keys, Snackbar.LENGTH_LONG).show();
         }
         ArrayList<Slave> slaves = new ArrayList<>();
         ArrayList<Master> masters = new ArrayList<>();
@@ -480,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements
         mMasterFragment.onMastersReceived(masters);
         mMasterFragment.onSlavesReceived(slaves);
         if (mPermissionsFragment != null && mPermissionsFragment.isVisible()) {
-            mPermissionsFragment.onPermissionsReceived(permissions);
+            mPermissionsFragment.onPermissionsReceived(permissions, newPermissions);
         }
     }
 
@@ -633,7 +633,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onCreatePermissionClicked(Permission permission, String userKey) {
-        Snackbar.make(mRootView, R.string.creating_permission,
+        Snackbar.make(mRootView, R.string.creating_virtual_key,
                 Snackbar.LENGTH_LONG).show();
         User.getLoggedUser().createNewPermission(permission, userKey, permission.getMaster().getId());
     }
@@ -641,14 +641,14 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onModifyPermissionClicked(Permission toEditPermission, int oldSlaveId,
                                           String userKey, String doorId) {
-        Snackbar.make(mRootView, R.string.editing_permission, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRootView, R.string.editing_virtual_key, Snackbar.LENGTH_LONG).show();
         mCurrentUser.editPermission(toEditPermission, oldSlaveId, userKey, doorId);
     }
 
     @Override
     public void onDeletePermissionClicked(Permission permission, String userKey) {
         mCurrentUser.deletePermission(permission.getMaster().getId(), userKey, permission);
-        Snackbar.make(mRootView, R.string.deleting_permission, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRootView, R.string.deleting_virtual_key, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -682,9 +682,9 @@ public class MainActivity extends AppCompatActivity implements
             mCurrentUser.deletePermission(permission.getMaster().getId(),
                     adminPermission.getKey(),
                     permission);
-            Snackbar.make(mRootView, R.string.deleting_permission, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mRootView, R.string.deleting_virtual_key, Snackbar.LENGTH_LONG).show();
         } else {
-            Snackbar.make(mRootView, R.string.no_permission, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mRootView, R.string.no_virtual_key, Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -695,7 +695,7 @@ public class MainActivity extends AppCompatActivity implements
             mCurrentUser.pairSlaves(
                     master.getId(), permission.getKey(), permission.getSlaveId(), slaveId);
         } else {
-            Snackbar.make(mRootView, R.string.no_permission, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mRootView, R.string.no_virtual_key, Snackbar.LENGTH_LONG).show();
         }
     }
 

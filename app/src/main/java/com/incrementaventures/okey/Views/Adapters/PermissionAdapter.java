@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.incrementaventures.okey.Fragments.PermissionsFragment;
@@ -57,8 +55,8 @@ public class PermissionAdapter extends ArrayAdapter<Permission> {
         TextView startDateView = (TextView) view.findViewById(R.id.permission_start_date_edit);
         startDateView.setText(Permission.getFormattedDate(permission.getStartDate()));
         TextView endDateView = (TextView) view.findViewById(R.id.permission_end_date_edit);
-        if (permission.getType().equals(mContext.getString(R.string.permission_type_admin)) ||
-                permission.getType().equals(mContext.getString(R.string.permission_type_permanent))) {
+        if (permission.getType().equals(mContext.getString(R.string.virtual_key_type_admin)) ||
+                permission.getType().equals(mContext.getString(R.string.virtual_key_type_permanent))) {
             endDateView.setVisibility(TextView.GONE);
         } else {
             endDateView.setText(Permission.getFormattedDate(permission.getEndDate()));

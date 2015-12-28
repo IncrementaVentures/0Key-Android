@@ -98,7 +98,7 @@
         android:padding="10dp"
         android:onClick="updateData"
         android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
-        android:text="@string/update_permissions"
+        android:text="@string/update_virtual_keys"
         android:id="@+id/update_permissions"
         android:textColor="@color/white"
         android:layout_below="@+id/add_new_door"
