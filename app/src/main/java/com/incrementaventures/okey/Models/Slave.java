@@ -117,13 +117,13 @@ public class Slave implements ParseObject, Nameable {
 
     @Override
     public boolean equals(Object o) {
-        return ((Slave)o).getId() == getId();
+        return ((Slave)o).getId() == getId() && ((Slave)o).getMasterId().equals(getMasterId());
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 17 * hash + getId();
+        hash = 17 * hash + getId() + getMasterId().hashCode();
         return hash;
     }
 

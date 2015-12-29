@@ -186,7 +186,8 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
                 mSlaves.add(slave);
             }
         }
-        if (mSlaveNameAdapter == null) return;
+        if (mSlaveNameAdapter == null || getActivity() == null)
+            return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {

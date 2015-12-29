@@ -97,7 +97,7 @@
                 android:id="@+id/right_arrow_slave"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
-                android:layout_marginEnd="30dp"
+                android:layout_marginEnd="20dp"
                 android:layout_alignTop="@+id/left_arrow_slave"
                 android:layout_alignParentEnd="true" />
 
@@ -110,9 +110,9 @@
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:id="@+id/left_arrow_slave"
+                android:layout_marginStart="20dp"
                 android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="30dp" />
+                android:layout_alignParentStart="true" />
 
 
         </RelativeLayout>
