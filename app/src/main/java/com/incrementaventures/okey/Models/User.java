@@ -4,22 +4,33 @@ package com.incrementaventures.okey.Models;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
-import com.incrementaventures.okey.Activities.DoorActivity;
 import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
+import com.parse.GetCallback;
 import com.parse.LogInCallback;
+import com.parse.LogOutCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incrementaventures.okey.Models.ParseObject {
+public class User implements BluetoothClient.OnBluetoothToUserResponse,
+        com.incrementaventures.okey.Models.ParseObject {
 
     public static final String USER_CLASS_NAME = "User";
-    private final String NAME = "name";
-    private final String PHONE = "phone";
-    public static final String UUID = "uuid";
+    private static final String NAME = "name";
+    private static final String EMAIL = "email";
+    private static final String BIRTHDAY = "birthday";
+    private static final String SEX = "sex";
+    private static final String PHONE = "phone";
+    public static final String OBJECT_ID = "objectId";
+    public static final String MALE = "m";
+    public static final String FEMALE = "f";
+    public static final String EMAIL_VERIFIED = "emailVerified";
+    public static final String BACKUP_EMAIL = "backupEmail";
 
     private ParseUser mParseUser;
     private BluetoothClient mBluetoothClient;
@@ -29,6 +40,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     private OnPermissionsResponse mPermissionsListener;
 
     private Context mContext;
+
+    private static User sLoggedUser;
 
     @Override
     public String getObjectId() {
@@ -50,16 +63,26 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         mParseUser.saveEventually();
     }
 
-    @Override
-    public String getUUID() {
-        return mParseUser.getString(UUID);
+    public void saveLocal() {
+        mParseUser.pinInBackground();
     }
 
+    public String getId() {
+        return getObjectId();
+    }
 
-    public interface OnParseUserResponse{
+    public interface OnParseUserGetted {
+        void onUserGetted(User user);
+    }
+
+    public interface OnParseUserLoginResponse {
         void userSignedUp();
-        void userLoggedIn();
+        void userLoggedIn(ParseUser parseUser);
         void authError(ParseException e);
+    }
+
+    public interface OnParseUserLogoutListener {
+        void userLoggedOut();
     }
 
     public interface OnUserBluetoothToActivityResponse {
@@ -74,13 +97,17 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         void doorOpened(int state);
         void doorOpening();
         void noPermission();
-        void slaveFound(String id, String type, String name);
+        void slavesFound(Master master, ArrayList<Slave> slaves);
+        void masterWithNoSlaves();
         void error(int code);
     }
 
     public interface OnPermissionsResponse{
-        void permissionCreated(String key, int type);
-        void permissionEdited(String key, int type);
+        void permissionCreated(String key, Permission permission);
+        void masterConfigured(Master master, Permission adminPermission);
+        void permissionEdited(String key, Permission newPermission);
+        void permissionDeleted(Permission permission);
+        void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData);
         void permissionReceived(int type, String key, String start, String end);
         void error(int code);
     }
@@ -88,6 +115,11 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     @Override
     public void deviceFound(BluetoothDevice device, int rssi, byte[] scanRecord) {
         mBluetoothListener.deviceFound(device, rssi, scanRecord);
+    }
+
+    @Override
+    public void masterWithNoSlaves() {
+        mMasterListener.masterWithNoSlaves();
     }
 
     @Override
@@ -101,13 +133,23 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     }
 
     @Override
-    public void permissionCreated(String key, int type) {
-        mPermissionsListener.permissionCreated(key, type);
+    public void permissionCreated(String key, Permission permission) {
+        mPermissionsListener.permissionCreated(key, permission);
     }
 
     @Override
-    public void permissionEdited(String key, int type) {
-        mPermissionsListener.permissionEdited(key, type);
+    public void masterConfigured(Master master, Permission adminPermission) {
+        mPermissionsListener.masterConfigured(master, adminPermission);
+    }
+
+    @Override
+    public void permissionEdited(String key, Permission newPermission) {
+        mPermissionsListener.permissionEdited(key, newPermission);
+    }
+
+    @Override
+    public void permissionDeleted(Permission permission) {
+        mPermissionsListener.permissionDeleted(permission);
     }
 
     @Override
@@ -116,13 +158,18 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     }
 
     @Override
+    public void permissionsReceived(ArrayList<HashMap<String, String>> permissionsData) {
+        mPermissionsListener.permissionsReceived(permissionsData);
+    }
+
+    @Override
     public void stopScanning() {
         mBluetoothListener.stopScanning();
     }
 
     @Override
-    public void slaveFound(String id, String type, String name) {
-        mMasterListener.slaveFound(id, type, name);
+    public void slavesFound(Master master, ArrayList<Slave> slaves) {
+        mMasterListener.slavesFound(master, slaves);
     }
 
     @Override
@@ -134,14 +181,17 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     }
 
 
-    public User(String name, String password, String email, String phone){
+    public User(String name, String password, String email, String phone, String sex,
+                String birthday) {
         mParseUser = new ParseUser();
         mParseUser.put(NAME, name);
         mParseUser.put(PHONE, phone);
         mParseUser.setUsername(email);
+        mParseUser.put(SEX, sex);
+        mParseUser.put(BIRTHDAY, birthday);
         mParseUser.setEmail(email);
         mParseUser.setPassword(password);
-        mParseUser.put(UUID, java.util.UUID.randomUUID().toString());
+        mParseUser.put(BACKUP_EMAIL, email);
     }
 
     private User(ParseUser parseUser){
@@ -149,17 +199,18 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     }
 
     /**
-     * SignUp the user. OnParseUserResponse#userSignedUp(User) is called if it succeeds and
-     * OnParseUserResponse#authError(ParseException) is called if there was an error.
+     * SignUp the user. OnParseUserLoginResponse#userSignedUp(User) is called if it succeeds and
+     * OnParseUserLoginResponse#authError(ParseException) is called if there was an error.
      * @param listener Listener to alert the subscribed classes that the user is signed up
      * @param name User name
      * @param pass User password
      * @param email User email, the de username too
      * @param phone Device phone
      */
-    public static void signUp(final OnParseUserResponse listener, String name, String pass, String email, String phone){
+    public static void signUp(final OnParseUserLoginResponse listener, String name, String pass,
+                              String email, String phone, String sex, String birthday) {
 
-        final User user = new User(name, pass, email, phone);
+        final User user = new User(name, pass, email, phone, sex, birthday);
 
         // Try yo save
         user.mParseUser.signUpInBackground(new SignUpCallback() {
@@ -179,20 +230,20 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
     }
 
     /**
-     * Log in the user. OnParseUserResponse#userLoggedIn(User) is called if it succeeds.
-     * OnParseUserResponse#authError(ParseException) is called if it fails.
+     * Log in the user. OnParseUserLoginResponse#userLoggedIn(User) is called if it succeeds.
+     * OnParseUserLoginResponse#authError(ParseException) is called if it fails.
      * @param listener Listener to alert the subscribed classes that the user is logged in
      * @param email User email, the username too
      * @param pass User password
      */
-    public static void logIn(final OnParseUserResponse listener, String email, String pass){
+    public static void logIn(final OnParseUserLoginResponse listener, String email, String pass){
 
         ParseUser.logInInBackground(email, pass, new LogInCallback() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null) {
                     // IMPORTANT: use getLoggedUser() to obtain the user in the activity
-                    listener.userLoggedIn();
+                    listener.userLoggedIn(parseUser);
                 } else {
                     listener.authError(e);
                 }
@@ -214,26 +265,21 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         user.mMasterListener = activity;
         user.mPermissionsListener = activity;
         user.mContext = activity;
+        sLoggedUser = user;
         return user;
     }
 
-    public static User getLoggedUser(DoorActivity activity){
-        ParseUser current = ParseUser.getCurrentUser();
-        if (current == null){
-            return null;
-        }
-
-        User user = new User(current);
-        user.mBluetoothListener =  activity;
-        user.mMasterListener = activity;
-        user.mPermissionsListener = activity;
-        user.mContext = activity;
-        return user;
+    public static User getLoggedUser(){
+        return sLoggedUser;
     }
 
 
     protected static User create(ParseUser user){
-        return new User(user);
+        if (user == null) {
+            return null;
+        } else {
+            return new User(user);
+        }
     }
 
     protected ParseUser getParseUser(){
@@ -249,29 +295,55 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         return mParseUser.getString(PHONE);
     }
 
+    public String getBirthday() {
+        return mParseUser.getString(BIRTHDAY);
+    }
+
+    public boolean isMale() {
+        if (mParseUser.getString(SEX).equals(MALE)) {
+            return true;
+        }
+        return false;
+    }
+
     public String getEmail(){
         return mParseUser.getEmail();
     }
 
+    private Permission getValidPermission(Master master, Slave slave) {
+        HashMap<Integer, Permission> permissions = master.getPermissions(this);
+        if (permissions == null || permissions.size() == 0) {
+            return null;
+        }
+        Permission permission = permissions.get(0);
+        if (permission == null ||
+                Permission.getType(permission.getType()) != Permission.ADMIN_PERMISSION) {
+            permission = null;
+            Object[] permissionsArray  = permissions.values().toArray();
+            for (int i = 0; i < permissionsArray.length; i++) {
+                Permission p = (Permission) permissionsArray[i];
+                // If it is valid and (the permission is associated with the same slave id OR it is
+                // for all slaves)
+                if (p.isValid() && (p.getSlaveId() == slave.getId() || p.getSlaveId() == Slave.ALL_SLAVES)) {
+                    permission = (Permission) permissionsArray[i];
+                    break;
+                }
+            }
+        }
+        return permission;
+    }
+
     /**
-     * Opens a door via bluetooth.
+     * Opens a door if the user has a valid permission.
      */
-    public void openDoor(Master master, Slave slave){
-        // TODO:
-        // check if hasPermission.
-        // if bluetooth is supported and enabled. If not enabled, send callback to activity to activate it.
-        // get paired devices.
-        // filter devices
-        // and try to open.
+    public void openDoor(Master master, Slave slave) {
 
-        Permission p = master.getPermission();
-
-        if (p == null || !p.isValid()){
+        Permission permission = getValidPermission(master, slave);
+        if (permission == null) {
             mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
             return;
         }
 
-
         mBluetoothClient = new BluetoothClient(mContext, this);
 
         if (!mBluetoothClient.isSupported()){
@@ -282,18 +354,12 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             mBluetoothListener.enableBluetooth();
             return;
         }
-
         mMasterListener.doorOpening();
-
-        mBluetoothClient.executeOpenDoor(p.getKey(), master.getName(), slave.getId());
-
+        mBluetoothClient.executeOpenDoor(permission, master.getId(), slave.getId());
     }
 
-
-
-    public void makeFirstAdminConnection(String permissionKey, String defaultKey, String doorName){
+    public void makeFirstAdminConnection(String permissionKey, String defaultKey, Master master) {
         mBluetoothClient = new BluetoothClient(mContext, this);
-
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
@@ -302,8 +368,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             mBluetoothListener.enableBluetooth();
             return;
         }
-
-        mBluetoothClient.executeFirstConnectionConfiguration(permissionKey, defaultKey, doorName);
+        mBluetoothClient.executeFirstConnectionConfiguration(defaultKey, permissionKey, master);
     }
 
     public void scanDevices(){
@@ -321,7 +386,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         mBluetoothClient.scanDevices();
     }
 
-    public void createNewPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
+    public void createNewPermission(Permission permission, String permissionKey, String masterId) {
         mBluetoothClient = new BluetoothClient(mContext, this);
 
         if (!mBluetoothClient.isSupported()){
@@ -333,20 +398,16 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             return;
         }
 
-        mBluetoothClient.executeCreateNewPermission(type, startDate, startHour, endDate, endHour, permissionKey, doorName);
+        mBluetoothClient.executeCreateNewPermission(permission, permissionKey, masterId);
     }
 
-    public void openWhenClose(Master master, Slave slave, String key){
-        Permission p = master.getPermission();
-
+    public void openWhenClose(Master master, Slave slave, String key) {
+        Permission p = slave.getPermission(this);
         if (p == null || !p.isValid()){
             mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
             return;
         }
-
-
         mBluetoothClient = new BluetoothClient(mContext, this);
-
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
@@ -355,72 +416,142 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
             mBluetoothListener.enableBluetooth();
             return;
         }
-
         mBluetoothClient.executeOpenDoorWhenClose(p.getKey(), master.getName(), slave.getId());
     }
 
-    public void editPermission(String type, String startDate, String startHour, String endDate, String endHour, String permissionKey, String doorName){
+    public void editPermission(Permission toEditPermission, int oldSlaveId, String adminKey,
+                               String doorId) {
         mBluetoothClient = new BluetoothClient(mContext, this);
-
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
-        }
-        else if (!mBluetoothClient.isEnabled()){
+        }else if (!mBluetoothClient.isEnabled()){
             mBluetoothListener.enableBluetooth();
             return;
         }
+        mBluetoothClient.executeEditPermission(toEditPermission, oldSlaveId, adminKey, doorId);
+    }
 
-        mBluetoothClient.executeEditPermission(type, startDate, startHour, endDate, endHour, permissionKey, doorName);
-
+    public void deletePermission(String masterId, String adminKey, Permission permission){
+        mBluetoothClient = new BluetoothClient(mContext, this);
+        if (!mBluetoothClient.isSupported()){
+            mBluetoothListener.bluetoothNotSupported();
+            return;
+        }else if (!mBluetoothClient.isEnabled()){
+            mBluetoothListener.enableBluetooth();
+            return;
+        }
+        mBluetoothClient.executeDeletePermission(masterId, adminKey, permission);
     }
 
     public void readMyPermission(Master master, Slave slave, String permissionKey){
         mBluetoothClient = new BluetoothClient(mContext, this);
-
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
-        }
-        else if (!mBluetoothClient.isEnabled()){
+        } else if (!mBluetoothClient.isEnabled()){
             mBluetoothListener.enableBluetooth();
             return;
         }
-
         mBluetoothClient.executeReadUserPermission(master.getName(), slave.getId(), permissionKey);
     }
 
     public void readAllPermissions(Master master, Slave slave, String permissionKey){
         mBluetoothClient = new BluetoothClient(mContext, this);
-
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
-        }
-        else if (!mBluetoothClient.isEnabled()){
+        }else if (!mBluetoothClient.isEnabled()){
             mBluetoothListener.enableBluetooth();
             return;
         }
-
         mBluetoothClient.executeReadAllPermissions(master.getName(), slave.getId(), permissionKey);
     }
 
     public void getSlaves(Master master, String permissionKey){
         mBluetoothClient = new BluetoothClient(mContext, this);
-
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
-        }
-        else if (!mBluetoothClient.isEnabled()){
+        } else if (!mBluetoothClient.isEnabled()){
             mBluetoothListener.enableBluetooth();
             return;
         }
-
-        mBluetoothClient.executeGetSlaves(master.getName(), permissionKey);
-
+        mBluetoothClient.executeGetSlaves(master, permissionKey);
     }
 
+    public void pairSlaves(String masterName, String adminKey, int keySlaveId, int pairSlaveId) {
+        mBluetoothClient = new BluetoothClient(mContext, this);
+        if (!mBluetoothClient.isSupported()){
+            mBluetoothListener.bluetoothNotSupported();
+            return;
+        } else if (!mBluetoothClient.isEnabled()){
+            mBluetoothListener.enableBluetooth();
+            return;
+        }
+        mBluetoothClient.executePairSlaves(masterName, adminKey, keySlaveId, pairSlaveId);
+    }
+
+    public Permission getAdminPermission(Master master) {
+        HashMap<Integer, Permission> permissions = master.getPermissions(User.getLoggedUser());
+        if (permissions.containsKey(0)) {
+            return permissions.get(0);
+        }
+        return null;
+    }
+
+    public Permission getPermission(Master master, int id) {
+        return master.getPermissions(this).get(id);
+    }
+
+    public static User getUser(String email) {
+        ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
+        query.whereEqualTo(EMAIL, email);
+        try {
+            ParseUser parseUser = query.getFirst();
+            return User.create(parseUser);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static void fetchUser(String id, final OnParseUserGetted listener) {
+        ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
+        query.whereEqualTo(User.OBJECT_ID, id);
+        query.getFirstInBackground(new GetCallback<ParseUser>() {
+            @Override
+            public void done(ParseUser parseUser, ParseException e) {
+                if (e == null) {
+                    listener.onUserGetted(User.create(parseUser));
+                }
+            }
+        });
+    }
+
+    public static User getUserLocal(String email) {
+        ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
+        query.fromLocalDatastore();
+        query.whereEqualTo(EMAIL, email);
+        try {
+            ParseUser parseUser = query.getFirst();
+            return User.create(parseUser);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void logout(final OnParseUserLogoutListener listener) {
+        ParseUser.logOutInBackground(new LogOutCallback() {
+            @Override
+            public void done(ParseException e) {
+                Master.unpinAll();
+                Permission.unpinAll();
+                Slave.unpinAll();
+                listener.userLoggedOut();
+            }
+        });
+    }
 
     public boolean hasPermission(Master master){
         //TODO: check if there is a permission with the same objectId as the door
@@ -436,10 +567,4 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse, com.incr
         //TODO: get from mParseUser and transform each to the model. Filter by door.
         return null;
     }
-
-
-
-
-
-
 }

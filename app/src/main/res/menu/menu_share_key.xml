@@ -1,9 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.incrementaventures.okey.Activities.ShareKeyActivity">
-    <item android:id="@+id/action_share" android:title="@string/share"
-        android:orderInCategory="1" app:showAsAction="always"
-        android:icon="@drawable/ic_action_share"/>
-
-</menu>

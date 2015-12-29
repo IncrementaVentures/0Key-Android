@@ -1,0 +1,182 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.incrementaventures.okey.Fragments.MasterFragment">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background"
+        android:scaleType ="centerCrop"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:padding="16dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_alignParentTop="true"
+            android:id="@+id/selected_master_bar"
+            android:layout_centerHorizontal="true">
+
+            <android.support.v4.view.ViewPager
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="@android:color/darker_gray"
+                android:id="@+id/master_name_container"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
+
+            <ImageButton
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/right_arrow"
+                android:background="@android:color/transparent"
+                android:padding="25dp"
+                android:id="@+id/right_arrow_master"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true" />
+
+            <ImageButton
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/left_arrow"
+                android:background="@android:color/transparent"
+                android:padding="25dp"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:id="@+id/left_arrow_master"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true" />
+
+        </RelativeLayout>
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/open_button"
+            android:src="@drawable/app_icon_placeholder"
+            android:padding="10dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:layout_below="@+id/selected_master_bar"
+            android:layout_centerHorizontal="true" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_below="@id/open_button"
+            android:id="@+id/selected_slave_bar">
+
+            <android.support.v4.view.ViewPager
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:textColor="@android:color/darker_gray"
+                android:id="@+id/slave_name_container"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true" />
+
+            <ImageButton
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/right_arrow"
+                android:background="@android:color/transparent"
+                android:padding="25dp"
+                android:id="@+id/right_arrow_slave"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:layout_marginEnd="20dp"
+                android:layout_alignTop="@+id/left_arrow_slave"
+                android:layout_alignParentEnd="true" />
+
+            <ImageButton
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/left_arrow"
+                android:background="@android:color/transparent"
+                android:padding="25dp"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:id="@+id/left_arrow_slave"
+                android:layout_marginStart="20dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true" />
+
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/share_virtual_key"
+            android:layout_below="@+id/selected_slave_bar"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="@style/TextAppearance.AvenirGreySmall"
+                android:textColor="@color/turquoise"
+                android:gravity="center_vertical"
+                android:layout_marginRight="5dp"
+                android:text="@string/share_a_virtual_key"
+                android:id="@+id/bottom_text" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:gravity="center_vertical"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_action_share"
+                android:id="@+id/share_image" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/manage_virtual_keys"
+            android:onClick="onShowPermissionsClicked"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAppearance="@style/TextAppearance.AvenirGreySmall"
+                android:textColor="@color/turquoise"
+                android:text="@string/manage_virtual_keys"/>
+
+            <ImageButton
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:padding="3dp"
+                android:src="@drawable/permissions_icon"
+                android:scaleType="fitCenter"
+                android:onClick="onShowPermissionsClicked"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+                android:id="@+id/show_permissions_button"
+                />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,341 @@
+<ScrollView
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context="com.incrementaventures.okey.Fragments.ModifyPermissionFragment"
+    >
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/cancel_button"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/view1"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:padding="15dp"
+        android:background="@android:color/transparent"
+        android:onClick="onGoBackClicked"
+        android:src="@drawable/ic_action_clear" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+        android:padding="15dp"
+        android:text="@string/add_new_virtual_key"
+        android:id="@+id/modify_permission_screen_title"
+        android:layout_alignBottom="@+id/ok_button"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="10dp"
+        android:id="@+id/ok_button"
+        android:layout_gravity="right"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_action_check"
+        android:layout_alignEnd="@+id/permission_email" />
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:inputType="textEmailAddress"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:id="@+id/permission_email"
+        android:background="@android:color/transparent"
+        android:layout_below="@+id/textView6"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/permission_type_layout" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#cdcdcd"
+        android:id="@+id/view4"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/permission_email"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:text="@string/location"
+        android:paddingTop="10dp"
+        android:id="@+id/textView7"
+        android:layout_below="@+id/permission_email"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_master"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+        android:background="@android:color/transparent"
+        android:layout_below="@+id/textView7"
+        android:layout_alignStart="@+id/permission_email"
+        android:layout_alignEnd="@+id/permission_type_layout" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#cdcdcd"
+        android:id="@+id/separator3"
+        android:layout_below="@+id/permission_slave"
+        android:layout_alignParentStart="true" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/permission_type_layout"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:orientation="vertical"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_below="@+id/view5"
+        android:layout_alignParentStart="true">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:text="@string/virtual_key_type"
+            android:id="@+id/permission_type_text_view" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:id="@+id/permission_type_new"
+            android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+            android:text="@string/virtual_key_type_temporal"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#cdcdcd"
+        android:id="@+id/view1"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/permission_type_layout"
+        android:layout_alignParentStart="true" />
+
+    <LinearLayout
+        android:background="?android:attr/selectableItemBackground"
+        android:id="@+id/due_date_layout"
+        android:layout_width="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:layout_below="@+id/separator2"
+        android:layout_alignParentStart="true">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:text="@string/to_date"  />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+            android:textStyle="bold"
+            android:id="@+id/end_date_new"
+            android:text="2015-01-01"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:background="?android:attr/selectableItemBackground"
+        android:id="@+id/due_hour_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:layout_below="@+id/start_hour_layout"
+        android:layout_alignStart="@+id/start_hour_layout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:text="@string/to_hour"  />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+            android:id="@+id/end_hour_new"
+            android:text="00:00"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textStyle="bold"
+            />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#cdcdcd"
+        android:id="@+id/separator2"
+        android:layout_below="@+id/start_date_layout"
+        android:layout_alignEnd="@+id/start_hour_layout" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#cdcdcd"
+        android:id="@+id/view5"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/selected_master"
+        android:layout_alignEnd="@+id/start_hour_layout" />
+
+    <LinearLayout
+        android:background="?android:attr/selectableItemBackground"
+        android:id="@+id/start_date_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:layout_below="@+id/separator3"
+        android:layout_alignParentStart="true">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:text="@string/from_date" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+            android:textStyle="bold"
+            android:id="@+id/start_date_new"
+            android:text="2015-01-01"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:background="?android:attr/selectableItemBackground"
+        android:id="@+id/start_hour_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@+id/permission_slave"
+        android:layout_alignEnd="@+id/ok_button">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:text="@string/from_hour"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+            android:id="@+id/start_hour_new"
+            android:text="00:00"
+            android:textStyle="bold"
+            />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:text="Slave"
+        android:paddingTop="10dp"
+        android:id="@+id/slave_title"
+        android:layout_below="@+id/view1"
+        android:layout_alignParentStart="true" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/permission_slave"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+        android:background="@android:color/transparent"
+        android:layout_below="@+id/slave_title"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/start_hour_layout" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:text="@string/email"
+        android:id="@+id/textView6"
+        android:layout_below="@+id/cancel_button"
+        android:layout_alignStart="@+id/permission_type_layout"
+        android:layout_marginTop="35dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#cdcdcd"
+        android:id="@+id/view6"
+        android:layout_below="@+id/due_date_layout"
+        android:layout_alignBottom="@+id/due_date_layout"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_virtual_key"
+        android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+        android:id="@+id/delete_permission_button"
+        android:visibility="gone"
+        android:layout_below="@+id/due_hour_layout"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+</RelativeLayout>
+
+</ScrollView>

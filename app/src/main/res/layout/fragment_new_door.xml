@@ -1,0 +1,87 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context="com.incrementaventures.okey.Fragments.NewDoorFragment">
+
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/cancel_button"
+        android:padding="15dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:onClick="onGoHomeClicked"
+        android:src="@drawable/ic_action_clear"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+        android:padding="15dp"
+        android:text="@string/add_new_door"
+        android:id="@+id/modify_permission_screen_title"
+        android:layout_alignBottom="@+id/ok_button"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="10dp"
+        android:id="@+id/ok_button"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_action_check"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:text="@string/name"
+        android:padding="5dp"
+        android:id="@+id/textView17"
+        android:layout_below="@+id/modify_permission_screen_title"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="34dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:id="@+id/new_door_name"
+        android:layout_below="@+id/textView17"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:padding="5dp"
+        android:text="@string/location"
+        android:id="@+id/textView18"
+        android:layout_below="@+id/new_door_name"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        style="?android:editTextStyle"
+        android:text="@string/no_masters_yet"
+        android:id="@+id/selected_master"
+        android:layout_below="@+id/textView18"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>

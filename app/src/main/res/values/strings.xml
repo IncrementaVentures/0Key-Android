@@ -1,51 +1,40 @@
 <resources>
     <string name="app_name">0key</string>
-
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_create_account">CreateAccountActivity</string>
     <string name="auth_error">Can\'t authenticate, try again</string>
     <string name="door_opened">Door opened</string>
-    <string name="door_closed">Door closed</string>
-    <string name="edit_permission">Edit permission</string>
-    <string name="editing_permission">Editing permission</string>
-
+    <string name="edit_virtual_key">Edit virtual key</string>
+    <string name="editing_virtual_key">Editing virtual key</string>
+    <string name="edit_slave_name">Edit slave name</string>
+    <string name="edit_master_name">Edit master name</string>
+    <string name="pair_slaves">Pair slaves</string>
+    <string name="no_virtual_keys_for_this_slave">This slave doesn\'t have virtual keys.</string>
+    <string name="pairing_will_start">Requesting pairing</string>
     <string name="not_implemented_code_on_result">Not implemented code onResult()</string>
     <string name="ble_not_supported">Bluetooth LE not supported</string>
     <string name="device_found">Device found</string>
     <string name="device_not_found">Device not found</string>
-    <string name="service_discovered">Service discovered</string>
     <string name="door_cant_open">Can\'t open</string>
     <string name="door_cant_open_timeout">The door does not respond</string>
     <string name="door_cant_open_bad_code">The door is not responding as expected. Contact support.</string>
     <string name="door_cant_close">Can\'t close</string>
-
+    <string name="no_slaves_found_yet">No slaves yet.</string>
+    <string name="add_virtual_key">Add virtual key</string>
     <string name="open_door">Open door</string>
     <string name="open">Open</string>
     <string name="close_door">Close door</string>
-
-    <string name="door_already_opened"> Already opened </string>
-    <string name="door_already_closed"> Already closed </string>
+    <string name="email">Email</string>
     <string name="door_already_configured"> Door already configured </string>
     <string name="getting_slaves"> Getting slaves </string>
     <string name="you_are_not_admin"> You are not an administrator </string>
-
     <string name="protect_with_key"> Protect app with key</string>
     <string name="pin"> PIN </string>
-
-    <string name="title_activity_preferences">PreferencesActivity</string>
     <string name="enter_pin">Insert pin</string>
     <string name="okey">Ok</string>
     <string name="cancel">Cancel</string>
-    <string name="read_my_permission">My permission</string>
-    <string name="read_all_permissions">All permissions</string>
-
+    <string name="read_my_virtual_key">My virtual key</string>
+    <string name="read_all_virtual_keys">All virtual keys</string>
     <string name="pin_incorrect">Pin incorrect</string>
-
-    <string name="get_slaves">Get slaves</string>
-
-    <string name="gonna_be_admin">I will be the house administrator</string>
     <string name="insert_default_key">Insert the default key.</string>
     <string name="insert_new_key">Insert a custom new key.</string>
     <string name="insert_door_name">Insert the door name.</string>
@@ -54,47 +43,109 @@
     <string name="first_configuration_action_bar">First door configuration</string>
     <string name="configuring_door_dialog">Configuring door</string>
     <string name="opening_door">Opening door</string>
-    <string name="no_permission">You don\'t have permission</string>
-    <string name="no_permission_this_hour">You don\'t have permission now</string>
+    <string name="no_virtual_key">You don\'t have a valid virtual key</string>
+    <string name="no_virtual_key_this_hour">You don\'t have a valid virtual key now</string>
     <string name="bad_input_error">Communication problem. Contact support.</string>
-    <string name="no_permission_setted">No permission</string>
+    <string name="no_virtual_key_setted">No virtual key</string>
     <string name="new_door">Create door</string>
-    <string name="due_date">End date</string>
-    <string name="due_hour">End hour</string>
-    <string name="start_date">Start date</string>
-    <string name="start_hour">Start hour</string>
+    <string name="due_date">Ending date</string>
+    <string name="due_hour">Ending hour</string>
+    <string name="start_date">Starting date</string>
+    <string name="start_hour">Starting hour</string>
     <string name="scan_devices">Scan devices</string>
-    <string name="share">Share</string>
-    <string name="creating_permission">Creating permission</string>
-    <string name="permission_not_created">Permission not created</string>
-    <string name="permission_not_edited">Permission not edited</string>
-
-    <string name="permission_type"> Permission type</string>
-    <string name="permission_type_admin"> Administrator</string>
-    <string name="permission_type_temporal"> Temporal </string>
-    <string name="permission_type_permanent"> Permanent </string>
-    <string name="permission_type_unknown"> Unknown </string>
-
+    <string name="share_virtual_key">Share</string>
+    <string name="creating_virtual_key">Creating virtual key</string>
+    <string name="virtual_key_not_created">Virtual key not created</string>
+    <string name="virtual_key_not_edited">Virtual key not edited</string>
+    <string name="doors">Doors</string>
+    <string name="virtual_key_type"> Virtual key</string>
+    <string name="virtual_key_type_admin"> Administrator</string>
+    <string name="virtual_key_type_temporal"> Temporal </string>
+    <string name="virtual_key_type_permanent"> Permanent </string>
+    <string name="virtual_key_type_unknown"> Unknown </string>
     <string name="searching_door">Searching door</string>
-    <string name="reading_permission">Reading permission</string>
-    <string name="reading_permissions">Reading permissions</string>
-
+    <string name="reading_virtual_keys">Reading virtual keys</string>
+    <string name="reading_virtual_key">Reading virtual key</string>
     <string name="door_cant_configure"> Can\'t configure</string>
     <string name="open_when_close"> Open when door is close</string>
-    <string name="set_key_permission"> Set permission key</string>
-    <string name="permission_key_setted"> Permission key setted</string>
     <string name="no_devices_found_yet"> No devices found </string>
     <string name="masters"> Masters </string>
-    <string name="logging"> Logging </string>
+    <string name="logging"> Logging in </string>
     <string name="creating_account"> Creating account </string>
     <string name="configure_or_set_key_first"> Configure master or set key first. </string>
-
-
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_door">Door</string>
-    <string name="title_activity_new_permission">New permission</string>
-    <string name="title_activity_share_key">Share key</string>
-    <string name="title_activity_first_admin_config">Door configuration</string>
+    <string name="door_not_configured"> Configure master or set key first. </string>
+    <string name="master_with_no_slaves"> Master with no slaves </string>
+    <string name="virtual_key_edited"> Virtual key edited </string>
+    <string name="virtual_key_deleted"> Virtual key deleted </string>
+    <string name="virtual_keys"> Veritual keys</string>
+    <string name="delete_virtual_key"> Delete virtual key</string>
+    <string name="user_doesnt_exist"> User doesn\'t exist.</string>
+    <string name="key_will_be_shared"> Key will be shared.</string>
+    <string name="name"> Name</string>
+    <string name="location"> Location </string>
+    <string name="sucess_private_key_saved">Success. Your private key is saved.</string>
+    <string name="virtual_key_added_succesfully">Virtual key added successfully</string>
+    <string name="eliminating_virtual_key">Eliminating virtual key</string>
+    <string name="sorry_device_does_not_support_bluetooth">Sorry, your device doesn\'t support bluetooth</string>
+    <string name="birthday">Birthday</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="home">Home</string>
+    <string name="add_new_0key">Add new 0key</string>
+    <string name="add_new_door">Add new door</string>
+    <string name="add_new_virtual_key">New virtual key</string>
+    <string name="settings">Settings</string>
+    <string name="device_doesnt_support_bluetooth">Sorry, your device doesn\'t support bluetooth</string>
+    <string name="full_name">Full name</string>
+    <string name="password">Password</string>
+    <string name="gender">Gender</string>
+    <string name="factory_password">Factory password</string>
+    <string name="new_password">New password</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="virtual_key_created">Virtual key created</string>
+    <string name="scanned_0keys">Scanned 0keys</string>
+    <string name="devices_not_found">Devices not found</string>
+    <string name="searching">Searching</string>
+    <string name="deleting_virtual_key">Deleting virtual key</string>
+    <string name="master_configured">Master configured</string>
+    <string name="verify_account">Verify your account</string>
+    <string name="no_masters_yet">No masters yet</string>
+    <string name="pairing_slave">Pairing slave</string>
+    <string name="slaves_added">Slaves added</string>
+    <string name="logout">Logout</string>
+    <string name="logging_out">Logging out</string>
+    <string name="phone_number">Phone number</string>
+    <string name="create_account">Create account</string>
+    <string name="login">Log in</string>
+    <string name="title_activity_create_account">Log in</string>
+    <string name="from_hour">From hour</string>
+    <string name="from_date">From date</string>
+    <string name="to_hour">To hour</string>
+    <string name="to_date">To date</string>
+    <string name="share_a_virtual_key">Share a virtual key</string>
+    <string name="refresh_data">Refresh data</string>
+    <string name="verification_email_sent">Verification email sent</string>
+    <string name="new_virtual_keys">New virtual keys </string>
+    <string name="update_virtual_keys">Update Virtual keys</string>
+    <string name="updating_data">Updating data</string>
+    <string name="edit"> Edit </string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="unknown"> Unknown </string>
+    <string name="master_without_slaves">Master without slaves</string>
+    <string name="change_name">Change name</string>
+    <string name="set_pin">Set pin</string>
+    <string name="different_keys">Different keys</string>
+    <string name="get_an_0key">Get an 0key</string>
+    <string name="resend_verification_email">Send email again</string>
+    <string name="not_verified">Not verified</string>
+    <string name="slave_paired">Slave paired</string>
+    <string name="all_slaves">All slaves</string>
+    <string name="forgot_your_password_click_here">Forgot your password? Click here</string>
+    <string name="send_email">Send email</string>
+    <string name="an_error_occurred">An error occurred</string>
+    <string name="email_sent">Email sent</string>
+    <string name="we_will_send_you_email_reset">We will send you an email to reset your password.</string>
+    <string name="key_too_short">Key too short</string>
+    <string name="manage_virtual_keys">Manage virtual keys</string>
 
 </resources>

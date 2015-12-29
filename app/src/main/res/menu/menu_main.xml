@@ -1,14 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+    <item android:id="@+id/action_refresh_data" android:title="@string/add_new_virtual_key"
+        android:visible="false" android:orderInCategory="99" app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_autorenew_white_48dp"/>
 
-
-    <item android:id="@+id/scan_devices_action"
-        android:title="@string/scan_devices"
-        android:orderInCategory="1"
-        android:icon="@drawable/ic_action_autorenew"
-        app:showAsAction="always"/>
-
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_add_permission" android:title="@string/add_new_virtual_key"
+        android:visible="false" android:orderInCategory="100" app:showAsAction="ifRoom"
+        android:icon="@drawable/add"/>
 </menu>

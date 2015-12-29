@@ -1,0 +1,95 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_menu"
+    android:padding="16dp"
+    tools:context="com.incrementaventures.okey.Fragments.MenuFragment">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="User name"
+        android:textColor="@color/white"
+        android:id="@+id/user_name"
+        android:layout_below="@+id/back_button"
+        android:layout_toEndOf="@+id/back_button"
+        android:layout_marginStart="26dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteMedium"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:text="user@email.com"
+        android:textColor="@color/white"
+        android:id="@+id/user_email"
+        android:layout_below="@+id/user_name"
+        android:layout_alignStart="@+id/user_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:onClick="onAddNew0keyClicked"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
+        android:textColor="@color/white"
+        android:text="@string/add_new_0key"
+        android:id="@+id/add_new_0key"
+        android:layout_below="@+id/user_email"
+        android:layout_alignStart="@+id/user_email"
+        android:layout_marginTop="69dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:onClick="onAddNewDoorClicked"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
+        android:text="@string/add_new_door"
+        android:id="@+id/add_new_door"
+        android:textColor="@color/white"
+        android:layout_below="@+id/add_new_0key"
+        android:layout_alignStart="@+id/add_new_0key" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:onClick="onSettingsClicked"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
+        android:text="@string/settings"
+        android:id="@+id/settings"
+        android:textColor="@color/white"
+        android:layout_alignStart="@+id/add_new_door"
+        android:layout_below="@+id/add_new_door" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:onClick="onLogoutClicked"
+        android:textAppearance="@style/TextAppearance.AvenirWhiteLarge"
+        android:text="@string/logout"
+        android:id="@+id/logout"
+        android:textColor="@color/white"
+        android:layout_below="@+id/settings"
+        android:layout_alignStart="@+id/settings"
+        android:layout_marginTop="39dp" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_arrow_back_white_36dp"
+        android:onClick="onGoBackToMain"
+        android:id="@+id/back_button"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>

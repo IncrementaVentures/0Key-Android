@@ -1,0 +1,142 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/white"
+    tools:ignore="MissingPrefix"
+    tools:context="com.incrementaventures.okey.Fragments.ConfigurationFragment">
+
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/cancel_button"
+        android:padding="15dp"
+        android:layout_alignParentTop="true"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:onClick="onGoHomeClicked"
+        android:src="@drawable/ic_action_clear" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
+        android:padding="10dp"
+        android:text="@string/add_new_0key"
+        android:id="@+id/modify_permission_screen_title"
+        fontPath="fonts/avenir.ttf"
+        android:layout_alignBottom="@+id/ok_button"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="10dp"
+        android:id="@+id/ok_button"
+        android:layout_gravity="right"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_action_check"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:text="@string/name"
+        android:padding="5dp"
+        android:id="@+id/textView14"
+        android:layout_below="@+id/modify_permission_screen_title"
+        android:layout_alignStart="@+id/cancel_button"
+        android:layout_marginTop="32dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/new_0key_name"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:layout_below="@+id/textView14"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:text="@string/location"
+        android:padding="5dp"
+        android:id="@+id/textView15"
+        android:layout_below="@+id/new_0key_name"
+        android:layout_alignStart="@+id/new_0key_name" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:id="@+id/new_0key_location"
+        android:layout_below="@+id/textView15"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:text="@string/factory_password"
+        android:padding="5dp"
+        android:id="@+id/textView16"
+        android:layout_below="@+id/new_0key_location"
+        android:layout_alignStart="@+id/new_0key_location" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberPassword"
+        android:ems="10"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:id="@+id/new_0key_factory_password"
+        android:layout_below="@+id/textView16"
+        android:layout_alignStart="@+id/textView16"
+        android:layout_alignEnd="@+id/new_0key_location" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:text="@string/new_password"
+        android:padding="5dp"
+        android:id="@+id/new_pass_text_view"
+        android:layout_below="@+id/new_0key_factory_password"
+        android:layout_alignStart="@+id/new_0key_factory_password" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberPassword"
+        android:ems="10"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:id="@+id/new_0key_new_password"
+        android:layout_below="@+id/new_pass_text_view"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:src="@drawable/location_icon"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/new_0key_location"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_alignStart="@+id/ok_button"
+        android:layout_alignTop="@+id/new_0key_location" />
+
+</RelativeLayout>

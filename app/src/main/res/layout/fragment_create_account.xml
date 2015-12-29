@@ -4,6 +4,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@drawable/background_menu"
     tools:context="com.incrementaventures.okey.Fragments.CreateAccountFragment">
 
     <LinearLayout
@@ -15,73 +16,90 @@
         android:id="@+id/linearLayout">
 
 
-
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:hint="Name"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
             android:ems="10"
-            android:id="@+id/create_account_name"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:textCursorDrawable = "@null"
+            android:textColor="@color/white"
+            android:id="@+id/create_account_name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:text="@string/password"
+            android:id="@+id/textView20" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
+            android:textCursorDrawable = "@null"
+            android:textColor="@color/white"
             android:id="@+id/create_account_password"
-            android:layout_below="@+id/create_account_name"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:hint="Password"
-            android:layout_alignRight="@+id/create_account_name"
-            android:layout_alignEnd="@+id/create_account_name" />
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+             />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:text="@string/email"
+            android:id="@+id/textView21" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:ems="10"
+            android:textCursorDrawable = "@null"
+            android:textColor="@color/white"
             android:id="@+id/create_account_email"
-            android:layout_below="@+id/create_account_password"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:hint="Email"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:textColor="@color/white"
+            android:text="@string/phone_number"
+            android:id="@+id/textView22" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="phone"
             android:ems="10"
+            android:textCursorDrawable = "@null"
             android:id="@+id/create_account_phone"
-            android:layout_below="@+id/create_account_email"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:hint="Phone number"/>
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            />
 
-        CheckBox
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/gonna_be_admin"
-            android:id="@+id/gonna_be_admin"
-            android:layout_gravity="center_horizontal" />
-
-
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:textColor="@color/white"
+            android:focusable="true"
+            android:focusableInTouchMode="false"
+            android:text="@string/birthday"
+            android:id="@+id/textView23" />
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         android:textSize="60dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:text="0key"
         android:id="@+id/textView"
         android:layout_alignParentTop="true"
@@ -90,10 +108,78 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         android:text="Create"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:id="@+id/create_account_button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/create_account_birthday"
+        style="?android:editTextStyle"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:textColor="@color/white"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/linearLayout" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignEnd="@+id/create_account_birthday"
+        android:orientation="horizontal"
+        android:textColor="@color/white"
+        android:layout_above="@+id/create_account_button"
+        android:layout_below="@+id/create_account_birthday"
+        android:weightSum="1"
+        android:id="@+id/create_account_radio_group">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:textColor="@color/white"
+            android:text="@string/gender"
+            android:id="@+id/textView24"
+            android:layout_weight="0.4" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:text="@string/male"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:id="@+id/create_account_male"
+            android:layout_gravity="right"
+            android:layout_weight="0.3"
+            android:buttonTint="@color/white"
+            android:checked="true" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/female"
+            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+            android:textColor="@color/white"
+            android:buttonTint="@color/white"
+            android:id="@+id/create_account_female"
+            android:checked="false"
+            android:layout_weight="0.3" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:text="@string/full_name"
+        android:id="@+id/textView19"
+        android:layout_above="@+id/linearLayout"
+        android:textColor="@color/white"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
