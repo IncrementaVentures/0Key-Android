@@ -216,7 +216,6 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         user.mParseUser.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {
-
                 if (e == null) {
                     // Alert to the listener that user is signed up.
                     // IMPORTANT: use getLoggedUser() to obtain the user in the activity
@@ -539,6 +538,20 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
             e.printStackTrace();
             return null;
         }
+    }
+
+    public ArrayList<Permission> getInterestedPermissions(Master master) {
+        ArrayList<Permission> permissions = new ArrayList<>();
+        HashMap<Integer, Permission> userPermissions =
+                master.getPermissions(User.getLoggedUser());
+        if (userPermissions == null)
+            return permissions;
+        if (userPermissions.containsKey(0)) {
+            permissions.addAll(master.getAllPermissions());
+        } else {
+            permissions.addAll(userPermissions.values());
+        }
+        return permissions;
     }
 
     public void logout(final OnParseUserLogoutListener listener) {

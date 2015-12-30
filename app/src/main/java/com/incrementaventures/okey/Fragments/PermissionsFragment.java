@@ -22,6 +22,7 @@ import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -75,16 +76,24 @@ public class PermissionsFragment extends Fragment {
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (getArguments() == null ) {
             actionBar.setTitle(User.getLoggedUser().getName());
-            mPermissions = Permission.getAllPermissions();
+            mPermissions = new ArrayList<>();
+            ArrayList<Master> masters = Master.getMasters();
+            if (masters == null || masters.size() == 0)
+                return;
+            for (Master master : masters) {
+                mPermissions.addAll(User.getLoggedUser().getInterestedPermissions(master));
+            }
         } else {
             mMaster = Master.getMaster(getArguments().getString(Master.ID), User.getLoggedUser().getId());
             if (mMaster == null) {
                 return;
             }
             actionBar.setTitle(mMaster.getName());
-            mPermissions = mMaster.getAllPermissions();
+            mPermissions = User.getLoggedUser().getInterestedPermissions(mMaster);
         }
     }
+
+
 
     @Override
     public void onStart() {

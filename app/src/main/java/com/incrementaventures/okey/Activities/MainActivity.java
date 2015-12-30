@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        setUpToolbar();
         authenticateUser();
         if (mCurrentUser == null) return;
         checkNewPermissions();
@@ -113,8 +112,30 @@ public class MainActivity extends AppCompatActivity implements
                 addToBackStack(MenuFragment.TAG).commit();
     }
 
+
+    View.OnClickListener mShowMenuFragmentListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            showMenuFragment();
+        }
+    };
+
+    View.OnClickListener mBackListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
+        }
+    };
+
+    private void showMenuFragment() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, new MenuFragment(), MenuFragment.TAG)
+                .addToBackStack(MenuFragment.TAG).commit();
+    }
+
     private void setUpToolbar() {
         mToolbar.setNavigationIcon(R.drawable.ic_action_menu);
+        mToolbar.setNavigationOnClickListener(mShowMenuFragmentListener);
         mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
@@ -162,12 +183,15 @@ public class MainActivity extends AppCompatActivity implements
                 PermissionsFragment permissionsFragment = (PermissionsFragment)
                         getSupportFragmentManager().findFragmentByTag(PermissionsFragment.TAG);
                 if ((masterFragment != null && masterFragment.isVisible())) {
+                    setUpToolbar();
                     showToolbar();
                     mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.VISIBLE);
                     mToolbar.setTitle("");
                     hideAddPermissionAndRefreshButtons();
                 } else if (permissionsFragment != null && permissionsFragment.isVisible()) {
                     showToolbar();
+                    mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
+                    mToolbar.setNavigationOnClickListener(mBackListener);
                     mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
                     showAddPermissionAndRefreshButtons();
                 }
@@ -322,7 +346,6 @@ public class MainActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showMasterFragment();
                 Snackbar.make(mRootView, R.string.virtual_key_created, Snackbar.LENGTH_LONG).show();
             }
         });
@@ -335,7 +358,6 @@ public class MainActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showMasterFragment();
                 Snackbar.make(mRootView, R.string.master_configured, Snackbar.LENGTH_LONG).show();
                 mMasterFragment.onMasterReceived(master);
             }
@@ -349,7 +371,6 @@ public class MainActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showMasterFragment();
                 Snackbar.make(mRootView, R.string.virtual_key_edited, Snackbar.LENGTH_LONG).show();
             }
         });
@@ -549,7 +570,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onGoHomeClicked(View view) {
-        showMasterFragment();
+        // showMasterFragment();
+        onBackPressed();
     }
 
     public void onAddNew0keyClicked(View view) {
@@ -579,6 +601,8 @@ public class MainActivity extends AppCompatActivity implements
         showAddPermissionAndRefreshButtons();
         showToolbar();
         mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
+        mToolbar.setNavigationOnClickListener(mBackListener);
     }
 
 
@@ -594,6 +618,8 @@ public class MainActivity extends AppCompatActivity implements
                 .commit();
         showAddPermissionAndRefreshButtons();
         mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
+        mToolbar.setNavigationOnClickListener(mBackListener);
     }
 
     public void onAddNewPermissionClicked(View view) {
@@ -640,6 +666,9 @@ public class MainActivity extends AppCompatActivity implements
                 editor.putBoolean("protect_with_pin", true);
                 editor.putString(InsertPinFragment.PROTECT_PIN, "EMPTY");
                 editor.apply();
+                Master.deleteAllLocal();
+                Permission.deleteAllLocal();
+                Slave.deleteAllLocal();
                 Intent intent = new Intent(MainActivity.this, AuthActivity.class);
                 startActivity(intent);
                 finish();
@@ -653,7 +682,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onGoBackToMain(View view) {
-        showMasterFragment();
+        // showMasterFragment();
+        onBackPressed();
     }
 
     @Override
