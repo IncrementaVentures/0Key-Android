@@ -28,6 +28,7 @@
                 android:adjustViewBounds="true"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_toolbar_logo"
+                android:id="@+id/logo_toolbar"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true" />
 

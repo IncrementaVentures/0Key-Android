@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
@@ -161,9 +163,12 @@ public class MainActivity extends AppCompatActivity implements
                         getSupportFragmentManager().findFragmentByTag(PermissionsFragment.TAG);
                 if ((masterFragment != null && masterFragment.isVisible())) {
                     showToolbar();
+                    mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.VISIBLE);
+                    mToolbar.setTitle("");
                     hideAddPermissionAndRefreshButtons();
                 } else if (permissionsFragment != null && permissionsFragment.isVisible()) {
                     showToolbar();
+                    mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
                     showAddPermissionAndRefreshButtons();
                 }
             } catch (IllegalStateException e) { }
@@ -499,7 +504,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void get0keySelected() {
-
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(getString(R.string.link_0key_webpage)));
+        startActivity(browserIntent);
     }
 
     @Override
@@ -550,6 +557,10 @@ public class MainActivity extends AppCompatActivity implements
         showScannedMastersDialog();
     }
 
+    public void onGet0keyClicked(View view) {
+        get0keySelected();
+    }
+
     public void onAddNewDoorClicked(View view) {
         NewDoorFragment fragment = new NewDoorFragment();
         getSupportFragmentManager().beginTransaction()
@@ -557,6 +568,19 @@ public class MainActivity extends AppCompatActivity implements
                 .addToBackStack(NewDoorFragment.TAG)
                 .commit();
     }
+
+    public void onShowAllPermissionsClicked(View view) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        mPermissionsFragment = new PermissionsFragment();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, mPermissionsFragment, PermissionsFragment.TAG)
+                .addToBackStack(PermissionsFragment.TAG)
+                .commit();
+        showAddPermissionAndRefreshButtons();
+        showToolbar();
+        mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
+    }
+
 
     public void onShowPermissionsClicked(View view) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -569,6 +593,7 @@ public class MainActivity extends AppCompatActivity implements
                 .addToBackStack(PermissionsFragment.TAG)
                 .commit();
         showAddPermissionAndRefreshButtons();
+        mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
     }
 
     public void onAddNewPermissionClicked(View view) {

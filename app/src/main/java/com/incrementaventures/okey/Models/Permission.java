@@ -210,6 +210,23 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         return null;
     }
 
+    public static ArrayList<Permission> getAllPermissions() {
+        ParseQuery query = new ParseQuery(PERMISSION_CLASS_NAME);
+        query.fromLocalDatastore();
+        ArrayList<Permission> permissions = new ArrayList<>();
+        try {
+            List<ParseObject> list = query.find();
+            if (list != null) {
+                for (ParseObject permission : list) {
+                    permissions.add(Permission.create(permission));
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return permissions;
+    }
+
     public static ArrayList<Permission> getPermissions(String userId) {
         ParseQuery query = new ParseQuery(PERMISSION_CLASS_NAME);
         query.fromLocalDatastore();
@@ -434,7 +451,6 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
             @Override
             public void done(List<ParseObject> parsePermissions, ParseException e) {
                 new ProcessNetworkPermissionsTask(listener).execute(parsePermissions);
-
             }
         });
     }
@@ -474,6 +490,12 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         } else {
             return true;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Permission other = (Permission) o;
+        return mParsePermission.getObjectId().equals(other.getObjectId());
     }
 
     private static ArrayList<Permission> getAllLocal() throws ParseException {

@@ -5,6 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,9 +70,20 @@ public class PermissionsFragment extends Fragment {
     }
 
     private void setPermissions() {
-        mMaster = Master.getMaster(getArguments().getString(Master.ID), User.getLoggedUser().getId());
-        if (mMaster == null) return;
-        mPermissions = mMaster.getAllPermissions();
+        if (getActivity() == null ||((AppCompatActivity)getActivity()).getSupportActionBar() == null)
+            return;
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (getArguments() == null ) {
+            actionBar.setTitle(User.getLoggedUser().getName());
+            mPermissions = Permission.getAllPermissions();
+        } else {
+            mMaster = Master.getMaster(getArguments().getString(Master.ID), User.getLoggedUser().getId());
+            if (mMaster == null) {
+                return;
+            }
+            actionBar.setTitle(mMaster.getName());
+            mPermissions = mMaster.getAllPermissions();
+        }
     }
 
     @Override
@@ -81,9 +95,9 @@ public class PermissionsFragment extends Fragment {
     }
 
     public void onPermissionsReceived(ArrayList<Permission> permissions, final boolean newPermissions) {
-        mPermissions.clear();
         for (Permission permission : permissions) {
-            if (permission.getMasterId().equals(mMaster.getId())) {
+            if (!mPermissions.contains(permission) &&
+                    (mMaster == null || permission.getMasterId().equals(mMaster.getId()))) {
                 mPermissions.add(permission);
             }
         }
