@@ -666,9 +666,14 @@ public class MainActivity extends AppCompatActivity implements
                 editor.putBoolean("protect_with_pin", true);
                 editor.putString(InsertPinFragment.PROTECT_PIN, "EMPTY");
                 editor.apply();
-                Master.deleteAllLocal();
-                Permission.deleteAllLocal();
-                Slave.deleteAllLocal();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Master.deleteAllLocal();
+                        Permission.deleteAllLocal();
+                        Slave.deleteAllLocal();
+                    }
+                }).start();
                 Intent intent = new Intent(MainActivity.this, AuthActivity.class);
                 startActivity(intent);
                 finish();
