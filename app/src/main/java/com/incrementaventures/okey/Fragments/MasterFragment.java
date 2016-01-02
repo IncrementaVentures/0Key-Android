@@ -297,7 +297,9 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     public void openDoorClicked() {
         if (mMasters != null && mMasters.size() > 0 && mSlaves != null && mSlaves.size() > 0) {
             mOpenButton.setMinimumHeight(mOpenButton.getMeasuredHeight());
-            Picasso.with(getContext()).load(R.drawable.gray_app_icon_placeholder).into(mOpenButton);
+            if (getContext() != null) {
+                Picasso.with(getContext()).load(R.drawable.gray_app_icon_placeholder).into(mOpenButton);
+            }
             mOpenButton.setClickable(false);
             User.getLoggedUser().openDoor(mMasters.get(mSelectedMasterIndex),
                     mSlaves.get(mSelectedSlaveIndex));
@@ -336,7 +338,9 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
 
     public void enableOpenButton(int resId) {
         mOpenButton.setClickable(true);
-        Picasso.with(getContext()).load(resId).into(mOpenButton);
+        if (getContext() != null) {
+            Picasso.with(getContext()).load(resId).into(mOpenButton);
+        }
     }
 
     public void onSlaveNameClick() {
