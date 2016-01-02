@@ -527,6 +527,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
             try {
                 ArrayList<Permission> oldPermissions = Permission.getPermissions(User.getLoggedUser().getId());
                 if (params[0] != null) {
+                    // Delete invalid local permissions
                     for (Permission oldPermission : oldPermissions) {
                         boolean found = false;
                         for (ParseObject parsePermission : params[0]) {
@@ -555,7 +556,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
                         if (master != null && permission.getSlaveId() == Slave.ALL_SLAVES) {
                             master.fetchSlaves();
                         }
-                        if (User.getLoggedUser().getAdminPermission(master) != null) {
+                        if (Permission.getType(permission.getType()) == 0) {
                             fetchPermissions(master);
                         }
                         permission.saveLocal();
