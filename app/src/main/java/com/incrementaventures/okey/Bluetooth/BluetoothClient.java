@@ -566,11 +566,11 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         }
     }
 
-    private void processOpenDoorResponse(String fullMessage){
+    protected void processOpenDoorResponse(String fullMessage) {
         if (BluetoothProtocol.isDoorOpened(fullMessage)) {
             mListener.doorOpened(OPEN_MODE);
         }
-        else{
+        else {
             String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
             int e = determineError(errorCode);
             mListener.error(e);
@@ -597,7 +597,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     private void processAllPermissionsResponse(String fullMessage){
         String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
-
         switch (errorCode){
             case BluetoothProtocol.OK_ERROR_CODE:
                 String onlyPermissionData = fullMessage.substring(2, fullMessage.length()-3);
@@ -624,7 +623,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
         switch (errorCode){
             case BluetoothProtocol.OK_ERROR_CODE:
-                ArrayList<Slave> slaves = BluetoothProtocol.getSlavesList(fullMessage);
+                ArrayList<Slave> slaves = BluetoothProtocol.getSlavesList(fullMessage,
+                        User.getLoggedUser().getId());
                 if (slaves.size() == 0) mListener.masterWithNoSlaves();
                 mListener.slavesFound(mMaster, slaves);
                 break;

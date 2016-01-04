@@ -11,7 +11,7 @@
     <string name="no_virtual_keys_for_this_slave">This slave doesn\'t have virtual keys.</string>
     <string name="pairing_will_start">Requesting pairing</string>
     <string name="not_implemented_code_on_result">Not implemented code onResult()</string>
-    <string name="ble_not_supported">Bluetooth LE not supported</string>
+    <string name="ble_not_supported">com.incrementaventures.okey.Bluetooth LE not supported</string>
     <string name="device_found">Device found</string>
     <string name="device_not_found">Device not found</string>
     <string name="door_cant_open">Can\'t open</string>

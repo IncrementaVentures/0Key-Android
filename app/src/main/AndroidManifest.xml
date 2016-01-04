@@ -16,6 +16,7 @@
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,6 +26,7 @@
         </activity>
         <activity
             android:name=".Activities.AuthActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_create_account" >
         </activity>
 
