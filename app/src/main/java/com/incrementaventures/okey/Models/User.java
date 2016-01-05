@@ -6,6 +6,7 @@ import android.content.Context;
 
 import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
+import com.incrementaventures.okey.Networking.NetworkingUtils;
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.LogOutCallback;
@@ -209,7 +210,6 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
      */
     public static void signUp(final OnParseUserLoginResponse listener, String name, String pass,
                               String email, String phone, String sex, String birthday) {
-
         final User user = new User(name, pass, email, phone, sex, birthday);
 
         // Try yo save
