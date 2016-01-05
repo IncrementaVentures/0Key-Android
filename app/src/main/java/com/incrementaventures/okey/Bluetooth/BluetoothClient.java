@@ -11,6 +11,7 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.format.Time;
 import android.util.Log;
 import android.util.SparseArray;
@@ -58,12 +59,16 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int DONT_HAVE_PERMISSION_THIS_HOUR = 108;
     public static final int PERMISSION_NOT_EDITED = 109;
     public static final int DOOR_NOT_CONFIGURED = 110;
+    public static final int STILL_SCANNING = 111;
     private boolean mScanning;
+    private boolean mTryingToDiscoverServices;
+    private boolean mTryingToConnect;
     private boolean mConnected;
     private boolean mSending;
     private boolean mWaitingResponse;
 
     private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothManager mBluetoothManager;
 
     private BluetoothGattCharacteristic mWriteCharacteristic;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
@@ -99,19 +104,29 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private Permission mPermission;
     private Master mMaster;
 
+    private static BluetoothClient sInstance;
+
+    private int mRetryCount;
+
     /**
      * Handles the connection with the BLE device
      * @param context context of the call
      * @param listener Usually a user, or any who implements OnBluetoothToUserResponse
      */
-    public BluetoothClient(Context context,  OnBluetoothToUserResponse listener) {
+    private BluetoothClient(Context context,  OnBluetoothToUserResponse listener) {
         mListener = listener;
         mContext = context;
-        BluetoothManager bluetoothManager =
-                (BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
+        mBluetoothManager = (BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = mBluetoothManager.getAdapter();
         mHandler = new Handler();
         mDevices = new SparseArray<>();
+    }
+
+    public static BluetoothClient getInstance(Context context, OnBluetoothToUserResponse listener) {
+        if (sInstance == null) {
+            sInstance = new BluetoothClient(context, listener);
+        }
+        return sInstance;
     }
 
     public interface OnBluetoothToUserResponse{
@@ -250,52 +265,76 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     }
 
     private void startScan(int time){
-        mScanning = true;
-        mBluetoothAdapter.startLeScan(this);
-        // Stop the scanning after NORMAL_SCAN_TIME miliseconds. Saves battery.
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                stopScan();
-            }
-        }, time);
+        if (!mBluetoothAdapter.startLeScan(this)) {
+            mListener.error(STILL_SCANNING);
+        } else {
+            mScanning = true;
+            // Stop the scanning after NORMAL_SCAN_TIME miliseconds. Saves battery.
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    stopScan();
+                }
+            }, time);
+        }
     }
 
     private void stopScan(){
         mScanning = false;
         mBluetoothAdapter.stopLeScan(this);
         mListener.stopScanning();
-        if (mDevices.size() == 0 && mMode != SCAN_MODE){
+        if (mDevices.size() == 0 && mMode != SCAN_MODE) {
             mListener.deviceNotFound();
         }
+    }
+
+    public boolean isWorking() {
+        return mTryingToConnect || mTryingToDiscoverServices || mConnected || mWaitingResponse || mSending;
+    }
+
+    private void retryIfNecessary(final BluetoothDevice device) {
+        if (mRetryCount >= 3) {
+            mRetryCount = 0;
+            mListener.error(TIMEOUT);
+            return;
+        }
+        mRetryCount++;
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isWorking()) {
+                    device.connectGatt(mContext, false, mGattCallback);
+                    retryIfNecessary(device);
+                }
+            }
+        }, 3000);
     }
 
     /*
         Called when a devices is found.
      */
     @Override
-    public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-        if (device.getName() == null) return;
-        if ((mMode == OPEN_MODE && device.getName().equals(mMasterId))
-                || (mMode == CREATE_NEW_PERMISSION_MODE && device.getName().equals(mMasterId))
-                || (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(mMasterId))
-                || (mMode == READ_MY_PERMISSION_MODE && device.getName().equals(mMasterId))
-                || (mMode == READ_ALL_PERMISSIONS_MODE && device.getName().equals(mMasterId))
-                || (mMode == GET_SLAVES_MODE && device.getName().equals(mMasterId))
-                || (mMode == DELETE_PERMISSION_MODE && device.getName().equals(mMasterId))
-                || (mMode == EDIT_PERMISSION_MODE && device.getName().endsWith(mMasterId))
-                || (mMode == PAIR_SLAVES_MODE && device.getName().equals(mMasterId))) {
+    public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+        String deviceName = device.getName();
+        if (deviceName == null) return;
+        if ((mMode == OPEN_MODE && deviceName.equals(mMasterId))
+                || (mMode == CREATE_NEW_PERMISSION_MODE && deviceName.equals(mMasterId))
+                || (mMode == FIRST_ADMIN_CONNECTION_MODE && deviceName.equals(mMasterId))
+                || (mMode == READ_MY_PERMISSION_MODE && deviceName.equals(mMasterId))
+                || (mMode == READ_ALL_PERMISSIONS_MODE && deviceName.equals(mMasterId))
+                || (mMode == GET_SLAVES_MODE && deviceName.equals(mMasterId))
+                || (mMode == DELETE_PERMISSION_MODE && deviceName.equals(mMasterId))
+                || (mMode == EDIT_PERMISSION_MODE && deviceName.endsWith(mMasterId))
+                || (mMode == PAIR_SLAVES_MODE && deviceName.equals(mMasterId))) {
             mDevices.put(device.hashCode(), device);
-            device.connectGatt(mContext, false, mGattCallback);
-            mHandler.postDelayed(new Runnable() {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    if (mWaitingResponse || mSending) {
-                        mListener.error(TIMEOUT);
-                    }
+                    device.connectGatt(mContext, false, mGattCallback);
+                    retryIfNecessary(device);
+                    mTryingToConnect = true;
                 }
-            }, 10000);
-
+            });
         } else if (mMode == SCAN_MODE) {
             mListener.deviceFound(device, rssi, scanRecord);
         }
@@ -307,7 +346,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(final BluetoothGatt gatt, int status, int newState) {
-            if (!mConnected && BluetoothProtocol.STATE_CONNECTED == newState){
+            if (!mConnected && BluetoothProtocol.STATE_CONNECTED == newState) {
+                mTryingToConnect = false;
+                mTryingToDiscoverServices = true;
                 mConnected = true;
                 gatt.discoverServices();
             }
@@ -425,6 +466,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             }
             gatt.disconnect();
             gatt.close();
+            mRetryCount = 0;
+            mConnected = false;
         }
 
         /*
@@ -440,8 +483,12 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        gatt.disconnect();
-                        gatt.close();
+                        if (mBluetoothManager.getConnectionState(gatt.getDevice(), BluetoothGatt.GATT)
+                                == BluetoothGatt.STATE_CONNECTED) {
+                            gatt.disconnect();
+                            gatt.close();
+                        }
+                        mConnected = false;
                     }
                 }, 5000);
                 return;
@@ -464,6 +511,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
          */
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            mTryingToDiscoverServices = false;
             BluetoothGattService service = gatt.getService(UUID.fromString(
                     BluetoothProtocol.DOOR_SERVICE_UUID));
 

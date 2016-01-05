@@ -343,7 +343,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
             return;
         }
 
-        mBluetoothClient = new BluetoothClient(mContext, this);
+        mBluetoothClient = BluetoothClient.getInstance(mContext, this);
 
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
@@ -358,7 +358,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public void makeFirstAdminConnection(String permissionKey, String defaultKey, Master master) {
-        mBluetoothClient = new BluetoothClient(mContext, this);
+        mBluetoothClient = BluetoothClient.getInstance(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
@@ -371,7 +371,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public void scanDevices(){
-        mBluetoothClient = new BluetoothClient(mContext, this);
+        mBluetoothClient = BluetoothClient.getInstance(mContext, this);
 
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
@@ -386,7 +386,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public void createNewPermission(Permission permission, String permissionKey, String masterId) {
-        mBluetoothClient = new BluetoothClient(mContext, this);
+        mBluetoothClient = BluetoothClient.getInstance(mContext, this);
 
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
@@ -406,7 +406,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
             mPermissionsListener.error(BluetoothClient.DONT_HAVE_PERMISSION);
             return;
         }
-        mBluetoothClient = new BluetoothClient(mContext, this);
+        mBluetoothClient = BluetoothClient.getInstance(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
@@ -420,7 +420,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
 
     public void editPermission(Permission toEditPermission, int oldSlaveId, String adminKey,
                                String doorId) {
-        mBluetoothClient = new BluetoothClient(mContext, this);
+        mBluetoothClient = BluetoothClient.getInstance(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
@@ -432,7 +432,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public void deletePermission(String masterId, String adminKey, Permission permission){
-        mBluetoothClient = new BluetoothClient(mContext, this);
+        mBluetoothClient = BluetoothClient.getInstance(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
@@ -444,7 +444,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public void readMyPermission(Master master, Slave slave, String permissionKey){
-        mBluetoothClient = new BluetoothClient(mContext, this);
+        mBluetoothClient = BluetoothClient.getInstance(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
@@ -456,7 +456,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public void readAllPermissions(Master master, Slave slave, String permissionKey){
-        mBluetoothClient = new BluetoothClient(mContext, this);
+        mBluetoothClient = BluetoothClient.getInstance(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
@@ -468,7 +468,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public void getSlaves(Master master, String permissionKey){
-        mBluetoothClient = new BluetoothClient(mContext, this);
+        mBluetoothClient = BluetoothClient.getInstance(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;
@@ -480,7 +480,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public void pairSlaves(String masterName, String adminKey, int keySlaveId, int pairSlaveId) {
-        mBluetoothClient = new BluetoothClient(mContext, this);
+        mBluetoothClient = BluetoothClient.getInstance(mContext, this);
         if (!mBluetoothClient.isSupported()){
             mBluetoothListener.bluetoothNotSupported();
             return;

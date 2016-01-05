@@ -12,8 +12,8 @@
     <string name="pairing_will_start">Requesting pairing</string>
     <string name="not_implemented_code_on_result">Not implemented code onResult()</string>
     <string name="ble_not_supported">Bluetooth LE not supported</string>
-    <string name="device_found">0key found</string>
-    <string name="device_not_found">0key not found</string>
+    <string name="device_found">0key in range</string>
+    <string name="device_not_found">0key not in range</string>
     <string name="door_cant_open">Can\'t open</string>
     <string name="door_cant_open_timeout">The door does not respond</string>
     <string name="door_cant_open_bad_code">The door is not responding as expected. Contact support.</string>
@@ -151,5 +151,7 @@
     <string name="change_security_pin">Change security pin</string>
     <string name="this_will_reset_your_security_pin">Are you sure? This will reset your security pin and you will have to set it again.</string>
     <string name="reset">Reset</string>
+    <string name="syncing_data">Syncing data</string>
+    <string name="try_again_please">Try again please</string>
 
 </resources>

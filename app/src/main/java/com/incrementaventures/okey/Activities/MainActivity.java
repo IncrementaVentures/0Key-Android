@@ -253,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements
         } else if (id == R.id.action_add_permission) {
             onAddNewPermissionClicked(null);
         } else if (id == R.id.action_refresh_data) {
+            Snackbar.make(mRootView, R.string.syncing_data, Snackbar.LENGTH_LONG).show();
             checkNewPermissions();
         }
         return super.onOptionsItemSelected(item);
@@ -422,6 +423,10 @@ public class MainActivity extends AppCompatActivity implements
                 switch (code) {
                     case BluetoothClient.TIMEOUT:
                         Snackbar.make(mRootView, R.string.door_cant_open_timeout,
+                                Snackbar.LENGTH_LONG).show();
+                        break;
+                    case BluetoothClient.STILL_SCANNING:
+                        Snackbar.make(mRootView, R.string.try_again_please,
                                 Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.RESPONSE_INCORRECT:
@@ -788,7 +793,7 @@ public class MainActivity extends AppCompatActivity implements
             mCurrentUser.pairSlaves(
                     master.getId(), permission.getKey(), permission.getSlaveId(), slaveId);
         } else {
-            Snackbar.make(mRootView, R.string.no_virtual_key, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mRootView, R.string.you_are_not_admin, Snackbar.LENGTH_LONG).show();
         }
     }
 
