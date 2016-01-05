@@ -253,7 +253,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     /**
      * @return the user logged in the device, or null if there is no user logged.
      */
-    public static User getLoggedUser(MainActivity activity){
+    public static User getLoggedUser(MainActivity activity) {
         ParseUser current = ParseUser.getCurrentUser();
         if (current == null){
             return null;

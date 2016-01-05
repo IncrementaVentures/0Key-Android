@@ -151,7 +151,7 @@
     <string name="change_security_pin">Change security pin</string>
     <string name="this_will_reset_your_security_pin">Are you sure? This will reset your security pin and you will have to set it again.</string>
     <string name="reset">Reset</string>
-    <string name="syncing_data">Syncing data</string>
+    <string name="syncing_data">Downloading data</string>
     <string name="try_again_please">Try again please</string>
 
 </resources>

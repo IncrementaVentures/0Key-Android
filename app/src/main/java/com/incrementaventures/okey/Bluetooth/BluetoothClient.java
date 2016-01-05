@@ -28,7 +28,7 @@ import java.util.UUID;
 
 public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
-    private final int NORMAL_SCAN_TIME = 7000;
+    private final int NORMAL_SCAN_TIME = 6000;
     private final int LONG_SCAN_TIME = 120000;
     private final int MEDIUM_SCAN_TIME = 12000;
 
@@ -66,6 +66,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private boolean mConnected;
     private boolean mSending;
     private boolean mWaitingResponse;
+    private boolean mConnectionFinished;
 
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothManager mBluetoothManager;
@@ -126,6 +127,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         if (sInstance == null) {
             sInstance = new BluetoothClient(context, listener);
         }
+        sInstance.mListener = listener;
+        sInstance.mContext = context;
         return sInstance;
     }
 
@@ -265,26 +268,32 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     }
 
     private void startScan(int time){
+        mDevices = new SparseArray<>();
+        mConnectionFinished = false;
         if (!mBluetoothAdapter.startLeScan(this)) {
             mListener.error(STILL_SCANNING);
         } else {
             mScanning = true;
-            // Stop the scanning after NORMAL_SCAN_TIME miliseconds. Saves battery.
+            // Stop the scanning after time miliseconds.
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    stopScan();
+                    if (mConnectionFinished) {
+                        stopScan();
+                    }
                 }
             }, time);
         }
     }
 
-    private void stopScan(){
-        mScanning = false;
-        mBluetoothAdapter.stopLeScan(this);
-        mListener.stopScanning();
-        if (mDevices.size() == 0 && mMode != SCAN_MODE) {
-            mListener.deviceNotFound();
+    private void stopScan() {
+        if (mScanning) {
+            mScanning = false;
+            mBluetoothAdapter.stopLeScan(this);
+            mListener.stopScanning();
+            if (mDevices.size() == 0 && mMode != SCAN_MODE && mConnectionFinished) {
+                mListener.deviceNotFound();
+            }
         }
     }
 
@@ -292,8 +301,13 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         return mTryingToConnect || mTryingToDiscoverServices || mConnected || mWaitingResponse || mSending;
     }
 
-    private void retryIfNecessary(final BluetoothDevice device) {
-        if (mRetryCount >= 3) {
+    private boolean isRetryLimitReached() {
+        return mRetryCount > 3;
+    }
+
+    private void retryIfNecessary(final BluetoothDevice device, BluetoothGatt gatt) {
+        if (isRetryLimitReached()) {
+            finishConnection(gatt);
             mRetryCount = 0;
             mListener.error(TIMEOUT);
             return;
@@ -303,11 +317,29 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             @Override
             public void run() {
                 if (isWorking()) {
-                    device.connectGatt(mContext, false, mGattCallback);
-                    retryIfNecessary(device);
+                    BluetoothGatt gatt = device.connectGatt(mContext, false, mGattCallback);
+                    retryIfNecessary(device, gatt);
                 }
             }
         }, 3000);
+    }
+
+    private void finishConnection(BluetoothGatt gatt) {
+        int connectionState =
+                mBluetoothManager.getConnectionState(gatt.getDevice(), BluetoothGatt.GATT);
+        if (connectionState == BluetoothGatt.STATE_CONNECTED
+                || connectionState == BluetoothGatt.STATE_CONNECTING) {
+            gatt.disconnect();
+            gatt.close();
+        }
+        mRetryCount = 0;
+        mConnected = false;
+        mTryingToConnect = false;
+        mTryingToDiscoverServices = false;
+        mWaitingResponse = false;
+        mSending = false;
+        mConnectionFinished = true;
+        stopScan();
     }
 
     /*
@@ -330,8 +362,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    device.connectGatt(mContext, false, mGattCallback);
-                    retryIfNecessary(device);
+                    BluetoothGatt gatt = device.connectGatt(mContext, false, mGattCallback);
+                    retryIfNecessary(device, gatt);
                     mTryingToConnect = true;
                 }
             });
@@ -464,10 +496,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     mListener.error(RESPONSE_INCORRECT);
                     break;
             }
-            gatt.disconnect();
-            gatt.close();
-            mRetryCount = 0;
-            mConnected = false;
+            finishConnection(gatt);
         }
 
         /*
@@ -480,17 +509,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             if (mToSendMessageParts.size() == 0){
                 mWaitingResponse = true;
                 mSending = false;
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mBluetoothManager.getConnectionState(gatt.getDevice(), BluetoothGatt.GATT)
-                                == BluetoothGatt.STATE_CONNECTED) {
-                            gatt.disconnect();
-                            gatt.close();
-                        }
-                        mConnected = false;
-                    }
-                }, 5000);
                 return;
             }
             // Sends the message until is finished
