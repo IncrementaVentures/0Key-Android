@@ -492,12 +492,17 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public Permission getAdminPermission(Master master) {
-        HashMap<Integer, Permission> permissions = master.getPermissions(User.getLoggedUser());
-        if (permissions.containsKey(0) &&
-                Permission.getType(permissions.get(0).getType()) == Permission.ADMIN_PERMISSION) {
-            return permissions.get(0);
+        ParseQuery<com.parse.ParseObject> query = ParseQuery.getQuery(Permission.PERMISSION_CLASS_NAME);
+        query.fromLocalDatastore();
+        query.whereEqualTo(Permission.USER_ID, getId());
+        query.whereEqualTo(Permission.TYPE, Permission.ADMIN_PERMISSION);
+        query.whereEqualTo(Permission.MASTER_ID, master.getId());
+        try {
+            com.parse.ParseObject parsePermission = query.getFirst();
+            return Permission.create(parsePermission);
+        } catch (ParseException e) {
+            return null;
         }
-        return null;
     }
 
     public Permission getPermission(Master master, int id) {

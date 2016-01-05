@@ -66,7 +66,7 @@ public class ModifyPermissionFragment extends Fragment {
     @Bind(R.id.start_hour_new)
     TextView mStartHourView;
     @Bind(R.id.ok_button)
-    ImageButton mNewPermissionButton;
+    ImageButton mModifyPermissionButton;
     @Bind(R.id.permission_type_new)
     TextView mPermissionTypeView;
     @Bind(R.id.permission_slave)
@@ -192,6 +192,20 @@ public class ModifyPermissionFragment extends Fragment {
     }
 
     private void setUi() {
+        Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
+        // Not admin, then not show any option to interact with master
+        if (adminPermission == null) {
+            mModifyPermissionButton.setVisibility(ImageButton.GONE);
+            mDeletePermissionButton.setVisibility(Button.GONE);
+        // Admin and creating new permission
+        } else if (mKey == null) {
+            mModifyPermissionButton.setVisibility(ImageButton.VISIBLE);
+            mDeletePermissionButton.setVisibility(Button.GONE);
+        // Admin and editing
+        } else {
+            mModifyPermissionButton.setVisibility(ImageButton.VISIBLE);
+            mDeletePermissionButton.setVisibility(Button.VISIBLE);
+        }
         if (mPermissionTypeView.getText().toString().equals(getResources()
                 .getString(R.string.virtual_key_type_temporal))) {
             mDueDateLayout.setVisibility(LinearLayout.VISIBLE);
@@ -391,6 +405,7 @@ public class ModifyPermissionFragment extends Fragment {
                 mSelectedMaster = mMasters.get(which);
                 mSelectedMasterView.setText(mastersNames[which]);
                 setSlaves();
+                setUi();
             }
         });
         builder.show();

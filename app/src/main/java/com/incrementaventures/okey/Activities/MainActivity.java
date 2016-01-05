@@ -193,19 +193,39 @@ public class MainActivity extends AppCompatActivity implements
                     mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
                     mToolbar.setNavigationOnClickListener(mBackListener);
                     mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
-                    showAddPermissionAndRefreshButtons();
+                    if (mCurrentUser.getAdminPermission(mMasterFragment.getSelectedMaster()) != null) {
+                        showAddPermissionAndRefreshButtons();
+                    } else {
+                        showRefreshButton();
+                    }
                 }
             } catch (IllegalStateException e) { }
         }
     }
 
     private void showAddPermissionAndRefreshButtons() {
+        showAddPermissionButton();
+        showRefreshButton();
+    }
+
+    private void showAddPermissionButton() {
         mOptionsMenu.findItem(R.id.action_add_permission).setVisible(true);
+    }
+
+    private void showRefreshButton() {
         mOptionsMenu.findItem(R.id.action_refresh_data).setVisible(true);
     }
 
     private void hideAddPermissionAndRefreshButtons() {
+        hideAddPermissionButton();
+        hideRefreshButton();
+    }
+
+    private void hideAddPermissionButton() {
         mOptionsMenu.findItem(R.id.action_add_permission).setVisible(false);
+    }
+
+    private void hideRefreshButton() {
         mOptionsMenu.findItem(R.id.action_refresh_data).setVisible(false);
     }
 
@@ -479,35 +499,40 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNewPermissions(ArrayList<Permission> permissions, boolean newPermissions) {
-        if (permissions != null && permissions.size() > 0 && newPermissions) {
-            Snackbar.make(mRootView, R.string.new_virtual_keys, Snackbar.LENGTH_LONG).show();
-        }
-        ArrayList<Slave> slaves = new ArrayList<>();
-        ArrayList<Master> masters = new ArrayList<>();
-        Master master;
-        for (Permission permission : permissions) {
-            master = permission.getMaster();
-            if (master != null) {
-                if (!masters.contains(master))
-                    masters.add(master);
-                if (permission.getSlaveId() == Slave.ALL_SLAVES) {
-                    ArrayList<Slave> masterSlaves = new ArrayList<>(master.getSlaves());
-                    for (Slave slave : masterSlaves) {
-                        if (!slaves.contains(slave))
-                            slaves.add(slave);
+    public void onNewPermissions(final ArrayList<Permission> permissions, final boolean newPermissions) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (permissions != null && permissions.size() > 0 && newPermissions) {
+                    Snackbar.make(mRootView, R.string.new_virtual_keys, Snackbar.LENGTH_LONG).show();
+                }
+                ArrayList<Slave> slaves = new ArrayList<>();
+                ArrayList<Master> masters = new ArrayList<>();
+                Master master;
+                for (Permission permission : permissions) {
+                    master = permission.getMaster();
+                    if (master != null) {
+                        if (!masters.contains(master))
+                            masters.add(master);
+                        if (permission.getSlaveId() == Slave.ALL_SLAVES) {
+                            ArrayList<Slave> masterSlaves = new ArrayList<>(master.getSlaves());
+                            for (Slave slave : masterSlaves) {
+                                if (!slaves.contains(slave))
+                                    slaves.add(slave);
+                            }
+                        }
+                    }
+                    if (permission.getSlave() != null && !slaves.contains(permission.getSlave())) {
+                        slaves.add(permission.getSlave());
                     }
                 }
+                mMasterFragment.onMastersReceived(masters);
+                mMasterFragment.onSlavesReceived(slaves);
+                if (mPermissionsFragment != null && mPermissionsFragment.isVisible()) {
+                    mPermissionsFragment.onPermissionsReceived(permissions, newPermissions);
+                }
             }
-            if (permission.getSlave() != null && !slaves.contains(permission.getSlave())) {
-                slaves.add(permission.getSlave());
-            }
-        }
-        mMasterFragment.onMastersReceived(masters);
-        mMasterFragment.onSlavesReceived(slaves);
-        if (mPermissionsFragment != null && mPermissionsFragment.isVisible()) {
-            mPermissionsFragment.onPermissionsReceived(permissions, newPermissions);
-        }
+        }).start();
     }
 
 
@@ -598,7 +623,11 @@ public class MainActivity extends AppCompatActivity implements
                 .replace(R.id.container, mPermissionsFragment, PermissionsFragment.TAG)
                 .addToBackStack(PermissionsFragment.TAG)
                 .commit();
-        showAddPermissionAndRefreshButtons();
+        if (mCurrentUser.getAdminPermission(mMasterFragment.getSelectedMaster()) != null) {
+            showAddPermissionAndRefreshButtons();
+        } else {
+            showRefreshButton();
+        }
         showToolbar();
         mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
@@ -616,7 +645,11 @@ public class MainActivity extends AppCompatActivity implements
                 .replace(R.id.container, mPermissionsFragment, PermissionsFragment.TAG)
                 .addToBackStack(PermissionsFragment.TAG)
                 .commit();
-        showAddPermissionAndRefreshButtons();
+        if (mCurrentUser.getAdminPermission(mMasterFragment.getSelectedMaster()) != null) {
+            showAddPermissionAndRefreshButtons();
+        } else {
+            showRefreshButton();
+        }
         mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
         mToolbar.setNavigationOnClickListener(mBackListener);

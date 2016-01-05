@@ -231,6 +231,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         ParseQuery query = new ParseQuery(PERMISSION_CLASS_NAME);
         query.fromLocalDatastore();
         query.whereEqualTo(USER_ID, userId);
+        query.orderByDescending(Permission.CREATED_AT);
         ArrayList<Permission> permissions = new ArrayList<>();
         try {
             List<ParseObject> list = query.find();
@@ -569,7 +570,6 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
             return permissions;
         }
 
