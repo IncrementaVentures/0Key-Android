@@ -180,12 +180,14 @@ public class ModifyPermissionFragment extends Fragment {
             mStartDateView.setText(Permission.getFormattedDate(startDate));
             mEndDateView.setText(Permission.getFormattedDate(endDate));
             mPermissionTypeView.setText(mToEditPermission.getType());
+            mSelectedMasterView.setOnClickListener(null);
         } else {
             mStartDateView.setText(Permission.getFormattedDate("2015-01-01T00:01"));
             mEndDateView.setText(Permission.getFormattedDate("2015-01-01T00:01"));
         }
         if (!TextUtils.isEmpty(mPermissionName)) {
             mPermissionEmailView.setText(mPermissionName);
+            mPermissionEmailView.setFocusable(false);
         }
     }
 
@@ -329,7 +331,7 @@ public class ModifyPermissionFragment extends Fragment {
         }
         Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
         if (adminPermission == null) {
-            Snackbar.make(getView(), R.string.no_virtual_key, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(getView(), R.string.you_are_not_admin, Snackbar.LENGTH_LONG).show();
             return;
         }
         String userKey = adminPermission.getKey();
@@ -398,7 +400,7 @@ public class ModifyPermissionFragment extends Fragment {
     public void deletePermissionClicked() {
         Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
         if (adminPermission == null) {
-            Snackbar.make(getView(), R.string.no_virtual_key, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(getView(), R.string.you_are_not_admin, Snackbar.LENGTH_LONG).show();
             return;
         }
         mPermissionModifiedListener.onDeletePermissionClicked(mToEditPermission,

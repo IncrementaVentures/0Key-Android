@@ -28,8 +28,6 @@ public class ConfigurationFragment extends Fragment {
     EditText mName;
     @Bind(R.id.new_0key_factory_password)
     EditText mFactoryPassword;
-    @Bind(R.id.new_0key_location)
-    EditText mLocation;
     @Bind(R.id.new_0key_new_password)
     EditText mNewPassword;
 

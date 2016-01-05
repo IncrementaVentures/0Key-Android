@@ -11,9 +11,9 @@
     <string name="no_virtual_keys_for_this_slave">This slave doesn\'t have virtual keys.</string>
     <string name="pairing_will_start">Requesting pairing</string>
     <string name="not_implemented_code_on_result">Not implemented code onResult()</string>
-    <string name="ble_not_supported">com.incrementaventures.okey.Bluetooth LE not supported</string>
-    <string name="device_found">Device found</string>
-    <string name="device_not_found">Device not found</string>
+    <string name="ble_not_supported">Bluetooth LE not supported</string>
+    <string name="device_found">0key found</string>
+    <string name="device_not_found">0key not found</string>
     <string name="door_cant_open">Can\'t open</string>
     <string name="door_cant_open_timeout">The door does not respond</string>
     <string name="door_cant_open_bad_code">The door is not responding as expected. Contact support.</string>
@@ -104,7 +104,7 @@
     <string name="invalid_email">Invalid email</string>
     <string name="virtual_key_created">Virtual key created</string>
     <string name="scanned_0keys">Scanned 0keys</string>
-    <string name="devices_not_found">Devices not found</string>
+    <string name="devices_not_found">0keys not in range</string>
     <string name="searching">Searching</string>
     <string name="deleting_virtual_key">Deleting virtual key</string>
     <string name="master_configured">Master configured</string>

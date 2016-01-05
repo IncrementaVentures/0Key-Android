@@ -67,30 +67,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
-        android:text="@string/location"
-        android:padding="5dp"
-        android:id="@+id/textView15"
-        android:layout_below="@+id/new_0key_name"
-        android:layout_alignStart="@+id/new_0key_name" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
-        android:id="@+id/new_0key_location"
-        android:layout_below="@+id/textView15"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:text="@string/factory_password"
         android:padding="5dp"
         android:id="@+id/textView16"
-        android:layout_below="@+id/new_0key_location"
-        android:layout_alignStart="@+id/new_0key_location" />
+        android:layout_below="@+id/new_0key_name" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -101,7 +81,7 @@
         android:id="@+id/new_0key_factory_password"
         android:layout_below="@+id/textView16"
         android:layout_alignStart="@+id/textView16"
-        android:layout_alignEnd="@+id/new_0key_location" />
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -123,20 +103,5 @@
         android:layout_below="@+id/new_pass_text_view"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:src="@drawable/location_icon"
-        android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@+id/new_0key_location"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_alignStart="@+id/ok_button"
-        android:layout_alignTop="@+id/new_0key_location" />
 
 </RelativeLayout>

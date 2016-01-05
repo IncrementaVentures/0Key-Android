@@ -493,7 +493,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
 
     public Permission getAdminPermission(Master master) {
         HashMap<Integer, Permission> permissions = master.getPermissions(User.getLoggedUser());
-        if (permissions.containsKey(0)) {
+        if (permissions.containsKey(0) &&
+                Permission.getType(permissions.get(0).getType()) == Permission.ADMIN_PERMISSION) {
             return permissions.get(0);
         }
         return null;
