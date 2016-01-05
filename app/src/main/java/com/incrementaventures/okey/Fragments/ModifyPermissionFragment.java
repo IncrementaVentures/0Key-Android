@@ -349,14 +349,18 @@ public class ModifyPermissionFragment extends Fragment {
             return;
         }
         String userKey = adminPermission.getKey();
+        int permissionType = Permission.getType(mPermissionTypeView.getText().toString());
         String startDate =  Permission.getDefaultDateString(mStartDateView.getText().toString())
                 + "T" + mStartHourView.getText().toString();
-        String endDate =  Permission.getDefaultDateString(mEndDateView.getText().toString())
-                + "T" + mEndHourView.getText().toString();
+        String endDate = "0";
+        if (permissionType == Permission.TEMPORAL_PERMISSION) {
+            endDate =  Permission.getDefaultDateString(mEndDateView.getText().toString())
+                    + "T" + mEndHourView.getText().toString();
+        }
         if (TextUtils.isEmpty(mKey)) {
             Permission permission = Permission.create(user,
                     mSelectedMaster,
-                    Permission.getType(mPermissionTypeView.getText().toString()),
+                    permissionType,
                     "",
                     startDate,
                     endDate,
