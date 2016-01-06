@@ -121,6 +121,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         mBluetoothAdapter = mBluetoothManager.getAdapter();
         mHandler = new Handler();
         mDevices = new SparseArray<>();
+        mConnectionFinished = true;
     }
 
     public static BluetoothClient getInstance(Context context, OnBluetoothToUserResponse listener) {
@@ -278,7 +279,11 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (mConnectionFinished) {
+                    if (mScanning) {
+                        mListener.error(TIMEOUT);
+                        stopScan();
+                    }
+                    else if (mConnectionFinished) {
                         stopScan();
                     }
                 }
