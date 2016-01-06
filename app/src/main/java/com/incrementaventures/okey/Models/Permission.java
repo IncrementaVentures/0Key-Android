@@ -42,6 +42,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
 
     public interface OnNetworkResponseListener {
         void onNewPermissions(ArrayList<Permission> permissions, boolean newPermissions);
+        void invalidUserSessionToken();
     }
 
     private Permission(ParseObject parsePermission){
@@ -450,8 +451,12 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         query.whereEqualTo(Permission.USER_ID, user.getId());
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void done(List<ParseObject> parsePermissions, ParseException e) {
-                new ProcessNetworkPermissionsTask(listener).execute(parsePermissions);
+            public void done(List<ParseObject> parsePermissions, com.parse.ParseException e) {
+                if (e != null && e.getCode() == ParseException.INVALID_SESSION_TOKEN) {
+                    listener.invalidUserSessionToken();
+                } else {
+                    new ProcessNetworkPermissionsTask(listener).execute(parsePermissions);
+                }
             }
         });
     }
@@ -462,7 +467,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         query.whereEqualTo(MASTER_ID, master.getId());
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void done(List<ParseObject> parsePermissions, ParseException e) {
+            public void done(List<ParseObject> parsePermissions, com.parse.ParseException e) {
                 ArrayList<Permission> oldPermissions = master.getAllPermissions();
                 for (Permission permission : oldPermissions) {
                     boolean found = false;

@@ -504,6 +504,17 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void invalidUserSessionToken() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                logout();
+            }
+        }).start();
+        Snackbar.make(mRootView, R.string.invalid_session, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
     public void onNewPermissions(final ArrayList<Permission> permissions, final boolean newPermissions) {
         new Thread(new Runnable() {
             @Override
@@ -695,26 +706,30 @@ public class MainActivity extends AppCompatActivity implements
         transaction.commit();
     }
 
+    private void logout() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("protect_with_pin", true);
+        editor.putString(InsertPinFragment.PROTECT_PIN, "EMPTY");
+        editor.apply();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Master.deleteAllLocal();
+                Permission.deleteAllLocal();
+                Slave.deleteAllLocal();
+            }
+        }).start();
+        Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     public void onLogoutClicked(View view) {
         mCurrentUser.logout(new User.OnParseUserLogoutListener() {
             @Override
             public void userLoggedOut() {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean("protect_with_pin", true);
-                editor.putString(InsertPinFragment.PROTECT_PIN, "EMPTY");
-                editor.apply();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Master.deleteAllLocal();
-                        Permission.deleteAllLocal();
-                        Slave.deleteAllLocal();
-                    }
-                }).start();
-                Intent intent = new Intent(MainActivity.this, AuthActivity.class);
-                startActivity(intent);
-                finish();
+                logout();
             }
         });
         Snackbar.make(mRootView, R.string.logging_out, Snackbar.LENGTH_LONG).show();

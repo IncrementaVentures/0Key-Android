@@ -95,7 +95,7 @@ public class InsertPinFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        builder.setTitle(" ");
+        builder.setTitle(R.string.set_security_pin);
         View view = inflater.inflate(R.layout.set_pin_dialog, null, false);
         mPinEditText = (EditText) view.findViewById(R.id.pin);
         mPinConfirmEditText = (EditText) view.findViewById(R.id.pin_confirm);

@@ -302,7 +302,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     }
 
     private boolean isRetryLimitReached() {
-        return mRetryCount > 3;
+        return mRetryCount > 7;
     }
 
     private void retryIfNecessary(final BluetoothDevice device, BluetoothGatt gatt) {
@@ -321,16 +321,18 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     retryIfNecessary(device, gatt);
                 }
             }
-        }, 3000);
+        }, 800);
     }
 
     private void finishConnection(BluetoothGatt gatt) {
-        int connectionState =
-                mBluetoothManager.getConnectionState(gatt.getDevice(), BluetoothGatt.GATT);
-        if (connectionState == BluetoothGatt.STATE_CONNECTED
-                || connectionState == BluetoothGatt.STATE_CONNECTING) {
-            gatt.disconnect();
-            gatt.close();
+        if (gatt != null) {
+            int connectionState =
+                    mBluetoothManager.getConnectionState(gatt.getDevice(), BluetoothGatt.GATT);
+            if (connectionState == BluetoothGatt.STATE_CONNECTED
+                    || connectionState == BluetoothGatt.STATE_CONNECTING) {
+                gatt.disconnect();
+                gatt.close();
+            }
         }
         mRetryCount = 0;
         mConnected = false;

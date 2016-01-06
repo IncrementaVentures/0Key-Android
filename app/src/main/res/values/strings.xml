@@ -153,5 +153,8 @@
     <string name="reset">Reset</string>
     <string name="syncing_data">Downloading data</string>
     <string name="try_again_please">Try again please</string>
+    <string name="invalid_session">Invalid session. Log in again.</string>
+    <string name="set_security_pin">Set security pin</string>
+    <string name="insert_security_pin">Insert security pin</string>
 
 </resources>
