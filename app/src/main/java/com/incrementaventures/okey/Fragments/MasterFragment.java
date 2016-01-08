@@ -293,6 +293,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
             setSlaves();
             setSlaveHolderAdapter();
             setBottomText();
+            setSlavesUI();
         }
 
         @Override
@@ -316,7 +317,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         mSlaveNameAdapter.notifyDataSetChanged();
     }
 
-    private void setUI() {
+    private void setSlavesUI() {
         if (mSlaves == null || mSlaves.size() <= 1) {
             mLeftArrowSlave.setVisibility(ImageButton.GONE);
             mRightArrowSlave.setVisibility(ImageButton.GONE);
@@ -324,6 +325,9 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
             mLeftArrowSlave.setVisibility(ImageButton.VISIBLE);
             mRightArrowSlave.setVisibility(ImageButton.VISIBLE);
         }
+    }
+
+    private void setMasterUI() {
         if (mMasters == null || mMasters.size() == 0) {
             mLeftArrowMaster.setVisibility(ImageButton.GONE);
             mRightArrowMaster.setVisibility(ImageButton.GONE);
@@ -337,6 +341,11 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
             mRightArrowMaster.setVisibility(ImageButton.VISIBLE);
             mShowPermissionsButton.setVisibility(Button.VISIBLE);
         }
+    }
+
+    private void setUI() {
+        setSlavesUI();
+        setMasterUI();
     }
 
     @OnClick(R.id.open_button)
@@ -359,6 +368,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         setSlaves();
         setBottomText();
         setSlaveHolderAdapter();
+        setSlavesUI();
     }
 
     @OnClick(R.id.right_arrow_master)
@@ -368,6 +378,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         setSlaves();
         setBottomText();
         setSlaveHolderAdapter();
+        setSlavesUI();
     }
 
     @OnClick(R.id.left_arrow_slave)

@@ -215,21 +215,35 @@ public class Slave implements ParseObject, Nameable {
     }
 
     public static void unpinAll() {
-        ParseQuery<com.parse.ParseObject> query = new ParseQuery<>(Slave.SLAVE_CLASS_NAME);
-        query.fromLocalDatastore();
-
-        query.findInBackground(new FindCallback<com.parse.ParseObject>() {
+        new Thread(new Runnable() {
             @Override
-            public void done(List<com.parse.ParseObject> list, ParseException e) {
-                for (com.parse.ParseObject o : list) {
-                    try {
-                        o.unpin();
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
+            public void run() {
+                ParseQuery<com.parse.ParseObject> query = new ParseQuery<>(Slave.SLAVE_CLASS_NAME);
+                query.fromLocalDatastore();
+                query.findInBackground(new FindCallback<com.parse.ParseObject>() {
+                    @Override
+                    public void done(List<com.parse.ParseObject> list, ParseException e) {
+                        for (com.parse.ParseObject o : list) {
+                            try {
+                                o.unpin();
+                            } catch (ParseException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
                     }
-                }
+                });
+                ParseQuery<com.parse.ParseObject> query2 = new ParseQuery<>(SLAVE_NAME_CLASS_NAME);
+                query2.fromLocalDatastore();
+                query2.findInBackground(new FindCallback<com.parse.ParseObject>() {
+                    @Override
+                    public void done(List<com.parse.ParseObject> list, ParseException e) {
+                        for (com.parse.ParseObject o : list) {
+                            o.unpinInBackground();
+                        }
+                    }
+                });
             }
-        });
+        }).start();
     }
 
     public void setMasterId(String masterId) {

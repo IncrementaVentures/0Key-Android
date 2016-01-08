@@ -195,22 +195,33 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         mMasterName.pinInBackground();
     }
 
-    public static void unpinAll(){
-        ParseQuery<ParseObject> query = new ParseQuery<>(Master.MASTER_CLASS_NAME);
-        query.fromLocalDatastore();
-
-        query.findInBackground(new FindCallback<ParseObject>() {
+    public static void unpinAll() {
+        new Thread(new Runnable() {
             @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                for (ParseObject o : list) {
-                    try {
-                        o.unpin();
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
+            public void run() {
+                ParseQuery<ParseObject> query = new ParseQuery<>(Master.MASTER_CLASS_NAME);
+                query.fromLocalDatastore();
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        for (ParseObject o : list) {
+                            o.unpinInBackground();
+                        }
                     }
-                }
+                });
+
+                ParseQuery<ParseObject> query2 = new ParseQuery<>(Master.MASTER_NAME_CLASS_NAME);
+                query2.fromLocalDatastore();
+                query2.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        for (ParseObject o : list) {
+                            o.unpinInBackground();
+                        }
+                    }
+                });
             }
-        });
+        }).start();
     }
 
     public static void deleteAllLocal() {
@@ -219,7 +230,7 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         try {
             List<com.parse.ParseObject> localMasters = query.find();
             for (com.parse.ParseObject localMaster : localMasters) {
-                localMaster.unpin();
+                localMaster.unpinInBackground();
             }
         } catch (ParseException e) {
             e.printStackTrace();

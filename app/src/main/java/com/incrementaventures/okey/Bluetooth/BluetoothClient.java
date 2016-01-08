@@ -273,17 +273,14 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         mConnectionFinished = false;
         if (!mBluetoothAdapter.startLeScan(this)) {
             mListener.error(STILL_SCANNING);
+            stopScan();
         } else {
             mScanning = true;
             // Stop the scanning after time miliseconds.
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (mScanning) {
-                        mListener.error(TIMEOUT);
-                        stopScan();
-                    }
-                    else if (mConnectionFinished) {
+                    if (mConnectionFinished || mScanning) {
                         stopScan();
                     }
                 }
@@ -296,7 +293,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             mScanning = false;
             mBluetoothAdapter.stopLeScan(this);
             mListener.stopScanning();
-            if (mDevices.size() == 0 && mMode != SCAN_MODE && mConnectionFinished) {
+            if (mDevices.size() == 0 && mMode != SCAN_MODE && !isWorking()) {
                 mListener.deviceNotFound();
             }
         }

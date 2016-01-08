@@ -715,9 +715,9 @@ public class MainActivity extends AppCompatActivity implements
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Master.deleteAllLocal();
-                Permission.deleteAllLocal();
-                Slave.deleteAllLocal();
+                Master.unpinAll();
+                Permission.unpinAll();
+                Slave.unpinAll();
             }
         }).start();
         Intent intent = new Intent(MainActivity.this, AuthActivity.class);

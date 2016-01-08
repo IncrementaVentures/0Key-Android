@@ -153,7 +153,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         try {
             List<com.parse.ParseObject> localPermissions = query.find();
             for (com.parse.ParseObject localPermission : localPermissions) {
-                localPermission.unpin();
+                localPermission.unpinInBackground();
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -400,22 +400,27 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         mParsePermission.put(KEY, key);
     }
 
-    public static void unpinAll(){
-        ParseQuery<ParseObject> query = new ParseQuery<>(Permission.PERMISSION_CLASS_NAME);
-        query.fromLocalDatastore();
-
-        query.findInBackground(new FindCallback<ParseObject>() {
+    public static void unpinAll() {
+        new Thread(new Runnable() {
             @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                for (ParseObject o : list) {
-                    try {
-                        o.unpin();
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
+            public void run() {
+                ParseQuery<ParseObject> query = new ParseQuery<>(Permission.PERMISSION_CLASS_NAME);
+                query.fromLocalDatastore();
+
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        for (ParseObject o : list) {
+                            try {
+                                o.unpin();
+                            } catch (ParseException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
                     }
-                }
+                });
             }
-        });
+        }).start();
     }
 
     public boolean isAdmin(){
