@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:padding="2dp"
         android:textAppearance="@style/TextAppearance.AvenirGreySmall"
-        android:text="@string/name"
+        android:text="@string/downloading_user"
         android:id="@+id/user_name"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />

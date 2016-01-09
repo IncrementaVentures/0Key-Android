@@ -772,6 +772,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onModifyPermissionAdapterClicked(Permission permission) {
+        if (permission.getUser() == null) {
+            Snackbar.make(mRootView, R.string.user_not_loaded_yet, Snackbar.LENGTH_LONG).show();
+            return;
+        }
         FragmentManager fragmentManager = getSupportFragmentManager();
         Bundle args = new Bundle();
         args.putString(Master.ID, permission.getMasterId());

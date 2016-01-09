@@ -157,5 +157,7 @@
     <string name="set_security_pin">Set security pin</string>
     <string name="insert_security_pin">Insert security pin</string>
     <string name="key_must_have_length">Key must be of length 4</string>
+    <string name="downloading_user">Downloading user…</string>
+    <string name="user_not_loaded_yet">User not loaded yet, check your internet connection</string>
 
 </resources>
