@@ -49,8 +49,6 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
     View view;
     CreateAccountFragment thisFragment = this;
 
-    private ProgressDialog mProgressDialog;
-
     public CreateAccountFragment() {
     }
 

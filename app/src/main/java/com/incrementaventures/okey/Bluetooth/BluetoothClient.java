@@ -269,9 +269,13 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     }
 
     private void startScan(int time){
+        Log.d("BLUETOOTH CONNECTION", "---------");
+        Log.d("BLUETOOTH CONNECTION", "Starting scanning");
+
         mDevices = new SparseArray<>();
         mConnectionFinished = false;
         if (!mBluetoothAdapter.startLeScan(this)) {
+            Log.d("BLUETOOTH CONNECTION", "Cant start Scan");
             mListener.error(STILL_SCANNING);
             stopScan();
         } else {
@@ -280,6 +284,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    Log.d("BLUETOOTH CONNECTION", "After 'time' ms, trying to stop scan");
                     if (mConnectionFinished || mScanning) {
                         stopScan();
                     }
@@ -292,6 +297,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         if (mScanning) {
             mScanning = false;
             mBluetoothAdapter.stopLeScan(this);
+            Log.d("BLUETOOTH CONNECTION", "Scan stopped");
             mListener.stopScanning();
             if (mDevices.size() == 0 && mMode != SCAN_MODE && !isWorking()) {
                 mListener.deviceNotFound();
@@ -304,11 +310,12 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     }
 
     private boolean isRetryLimitReached() {
-        return mRetryCount > 7;
+        return mRetryCount > 2;
     }
 
     private void retryIfNecessary(final BluetoothDevice device, BluetoothGatt gatt) {
         if (isRetryLimitReached()) {
+            Log.d("BLUETOOTH CONNECTION", "Try count limit reached");
             finishConnection(gatt);
             mRetryCount = 0;
             mListener.error(TIMEOUT);
@@ -318,20 +325,24 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.d("BLUETOOTH CONNECTION", "Check if is working yet.");
                 if (isWorking()) {
+                    Log.d("BLUETOOTH CONNECTION", "Is working, connect again.");
                     BluetoothGatt gatt = device.connectGatt(mContext, false, mGattCallback);
                     retryIfNecessary(device, gatt);
                 }
             }
-        }, 800);
+        }, 3000);
     }
 
     private void finishConnection(BluetoothGatt gatt) {
+        Log.d("BLUETOOTH CONNECTION", "Finishing connection");
         if (gatt != null) {
             int connectionState =
                     mBluetoothManager.getConnectionState(gatt.getDevice(), BluetoothGatt.GATT);
             if (connectionState == BluetoothGatt.STATE_CONNECTED
                     || connectionState == BluetoothGatt.STATE_CONNECTING) {
+                Log.d("BLUETOOTH CONNECTION", "Disconnecting and closing gatt.");
                 gatt.disconnect();
                 gatt.close();
             }
@@ -353,6 +364,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
         String deviceName = device.getName();
         if (deviceName == null) return;
+        Log.d("BLUETOOTH CONNECTION", "Device found: " + device.getName());
         if ((mMode == OPEN_MODE && deviceName.equals(mMasterId))
                 || (mMode == CREATE_NEW_PERMISSION_MODE && deviceName.equals(mMasterId))
                 || (mMode == FIRST_ADMIN_CONNECTION_MODE && deviceName.equals(mMasterId))
@@ -366,6 +378,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
+                    Log.d("BLUETOOTH CONNECTION", "Executing first device.connectGatt()");
                     BluetoothGatt gatt = device.connectGatt(mContext, false, mGattCallback);
                     retryIfNecessary(device, gatt);
                     mTryingToConnect = true;
@@ -383,12 +396,14 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         @Override
         public void onConnectionStateChange(final BluetoothGatt gatt, int status, int newState) {
             if (!mConnected && BluetoothProtocol.STATE_CONNECTED == newState) {
+                Log.d("BLUETOOTH CONNECTION", "Connected");
                 mTryingToConnect = false;
                 mTryingToDiscoverServices = true;
                 mConnected = true;
                 gatt.discoverServices();
             }
             else if(BluetoothProtocol.STATE_DISCONNECTED == newState){
+                Log.d("BLUETOOTH CONNECTION", "Disconnected");
                 mConnected = false;
             }
         }
@@ -468,7 +483,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                                             BluetoothGattCharacteristic characteristic) {
             mWaitingResponse = false;
             String response = new String(characteristic.getValue());
-            Log.d("BLUETOOTH MESSAGE", response);
+            Log.d("BLUETOOTH CONNECTION", "Message received: " + response);
             if (mReceivedMessageParts == null) mReceivedMessageParts = new LinkedList<>();
             mReceivedMessageParts.offer(response);
 
@@ -533,6 +548,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
          */
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            Log.d("BLUETOOTH CONNECTION", "Services discovered");
             mTryingToDiscoverServices = false;
             BluetoothGattService service = gatt.getService(UUID.fromString(
                     BluetoothProtocol.DOOR_SERVICE_UUID));
@@ -564,6 +580,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     private void sendMessage(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
                              byte[] part){
+        Log.d("BLUETOOTH CONNECTION", "Sending message: " + new String(part));
         characteristic.setValue(part);
         gatt.writeCharacteristic(characteristic);
     }

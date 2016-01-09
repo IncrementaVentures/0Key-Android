@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void deviceNotFound() {
         enableOpenButton();
-        Snackbar.make(mRootView,  R.string.device_not_found, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRootView, R.string.device_not_found, Snackbar.LENGTH_LONG).show();
     }
 
     @Override

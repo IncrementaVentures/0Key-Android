@@ -23,7 +23,7 @@ android {
         applicationId "com.incrementaventures.okey"
         minSdkVersion 18
         targetSdkVersion 21
-        versionCode 7
+        versionCode 8
         versionName "2.0"
     }
     testOptions {
