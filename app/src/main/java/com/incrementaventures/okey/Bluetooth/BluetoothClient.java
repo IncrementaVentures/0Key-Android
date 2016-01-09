@@ -28,9 +28,12 @@ import java.util.UUID;
 
 public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
-    private final int NORMAL_SCAN_TIME = 6000;
+    private final int NORMAL_SCAN_TIME = 5000;
     private final int LONG_SCAN_TIME = 120000;
     private final int MEDIUM_SCAN_TIME = 12000;
+
+    private final int MAX_RETRIES = 5;
+    private final int RETRY_INTERVAL_MS = 1000;
 
     public static final int CLOSE_MODE = 0;
     public static final int OPEN_MODE = 1;
@@ -310,7 +313,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     }
 
     private boolean isRetryLimitReached() {
-        return mRetryCount > 2;
+        return mRetryCount > MAX_RETRIES;
     }
 
     private void retryIfNecessary(final BluetoothDevice device, BluetoothGatt gatt) {
@@ -332,7 +335,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     retryIfNecessary(device, gatt);
                 }
             }
-        }, 3000);
+        }, RETRY_INTERVAL_MS);
     }
 
     private void finishConnection(BluetoothGatt gatt) {
@@ -343,8 +346,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             if (connectionState == BluetoothGatt.STATE_CONNECTED
                     || connectionState == BluetoothGatt.STATE_CONNECTING) {
                 Log.d("BLUETOOTH CONNECTION", "Disconnecting and closing gatt.");
+                // TODO: 09-01-2016 See this
                 gatt.disconnect();
-                gatt.close();
+                // gatt.close();
             }
         }
         mRetryCount = 0;
@@ -404,6 +408,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             }
             else if(BluetoothProtocol.STATE_DISCONNECTED == newState){
                 Log.d("BLUETOOTH CONNECTION", "Disconnected");
+                gatt.close();
                 mConnected = false;
             }
         }
@@ -491,6 +496,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             if (!BluetoothProtocol.isLastMessagePart(response)){
                 return;
             }
+            finishConnection(gatt);
 
             String fullMessage = joinMessageParts(mReceivedMessageParts);
             String responseCode = BluetoothProtocol.getResponseCode(fullMessage);
@@ -515,7 +521,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     mListener.error(RESPONSE_INCORRECT);
                     break;
             }
-            finishConnection(gatt);
         }
 
         /*
