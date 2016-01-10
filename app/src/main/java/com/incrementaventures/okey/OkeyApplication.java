@@ -6,6 +6,7 @@ import com.crashlytics.android.Crashlytics;
 import com.incrementaventures.okey.Views.Adapters.FontsOverride;
 import com.parse.Parse;
 import com.parse.ParseCrashReporting;
+import com.parse.ParseUser;
 
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;

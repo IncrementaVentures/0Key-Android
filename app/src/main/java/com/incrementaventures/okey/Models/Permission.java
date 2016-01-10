@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.text.format.Time;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
+import com.incrementaventures.okey.Networking.ParseErrorHandler;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -322,18 +323,39 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         return mParsePermission.getString(KEY);
     }
 
-    private boolean started(Time time){
+    private boolean started(Time time) {
         if (mParsePermission.getString(START_DATE) == null) return true;
-        return mParsePermission.getString(START_DATE).compareTo(BluetoothProtocol.formatDate(time))> 0;
+        try {
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm",
+                    Locale.getDefault()).parse(mParsePermission.getString(START_DATE));
+            Date currentDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm",
+                    Locale.getDefault()).parse(BluetoothProtocol.formatDate(time));
+            boolean started = currentDate.after(startDate);
+            return started;
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private boolean finished(Time time){
         if (mParsePermission.getString(END_DATE) == null) return true;
-        return mParsePermission.getString(END_DATE).compareTo(BluetoothProtocol.formatDate(time)) > 0;
+        try {
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm",
+                    Locale.getDefault()).parse(mParsePermission.getString(END_DATE));
+            Date currentDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm",
+                    Locale.getDefault()).parse(BluetoothProtocol.formatDate(time));
+            boolean finished = currentDate.after(endDate);
+            return finished;
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean isValid(){
         Time time = new Time();
+        time.setToNow();
         if (mParsePermission.getInt(TYPE) == ADMIN_PERMISSION) return true;
         else if (mParsePermission.getInt(TYPE) == PERMANENT_PERMISSION && started(time)){
             return true;
@@ -457,8 +479,8 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parsePermissions, com.parse.ParseException e) {
-                if (e != null && e.getCode() == ParseException.INVALID_SESSION_TOKEN) {
-                    listener.invalidUserSessionToken();
+                if (e != null) {
+                    ParseErrorHandler.handleError(e);
                 } else {
                     new ProcessNetworkPermissionsTask(listener).execute(parsePermissions);
                 }

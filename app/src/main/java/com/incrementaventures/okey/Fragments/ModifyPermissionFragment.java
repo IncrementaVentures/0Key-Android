@@ -175,6 +175,8 @@ public class ModifyPermissionFragment extends Fragment {
             mToEditPermission = Permission.getPermission(getArguments().getString(Permission.OBJECT_ID));
             String startDate = mToEditPermission.getStartDate();
             String endDate = mToEditPermission.getEndDate();
+            if (endDate.equals("0"))
+                endDate = "2016-01-01T00:01";
             mStartHourView.setText(startDate.substring(startDate.indexOf('T') + 1, startDate.length()));
             mEndHourView.setText(endDate.substring(endDate.indexOf('T') + 1, endDate.length()));
             mStartDateView.setText(Permission.getFormattedDate(startDate));
@@ -182,8 +184,8 @@ public class ModifyPermissionFragment extends Fragment {
             mPermissionTypeView.setText(mToEditPermission.getType());
             mSelectedMasterView.setOnClickListener(null);
         } else {
-            mStartDateView.setText(Permission.getFormattedDate("2015-01-01T00:01"));
-            mEndDateView.setText(Permission.getFormattedDate("2015-01-01T00:01"));
+            mStartDateView.setText(Permission.getFormattedDate("2016-01-01T00:01"));
+            mEndDateView.setText(Permission.getFormattedDate("2016-01-01T00:01"));
         }
         if (!TextUtils.isEmpty(mPermissionName)) {
             mPermissionEmailView.setText(mPermissionName);
@@ -191,18 +193,44 @@ public class ModifyPermissionFragment extends Fragment {
         }
     }
 
+    private void disableAll() {
+        mDueDateLayout.setClickable(false);
+        mDueHourLayout.setClickable(false);
+        mStartDateLayout.setClickable(false);
+        mStartHourLayout.setClickable(false);
+        mSlaveTitle.setClickable(false);
+        mSelectedSlaveView.setClickable(false);
+        mPermissionTypeLayout.setClickable(false);
+    }
+
+
+    private void enableAll() {
+        mDueDateLayout.setClickable(true);
+        mDueHourLayout.setClickable(true);
+        mStartDateLayout.setClickable(true);
+        mStartHourLayout.setClickable(true);
+        mSlaveTitle.setClickable(true);
+        mSelectedSlaveView.setClickable(true);
+        mPermissionTypeLayout.setClickable(true);
+    }
+
+
     private void setUi() {
         Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
         // Not admin, then not show any option to interact with master
         if (adminPermission == null) {
+            disableAll();
+            mScreenTitle.setText(R.string.permission_information);
             mModifyPermissionButton.setVisibility(ImageButton.GONE);
             mDeletePermissionButton.setVisibility(Button.GONE);
         // Admin and creating new permission
         } else if (mKey == null) {
+            enableAll();
             mModifyPermissionButton.setVisibility(ImageButton.VISIBLE);
             mDeletePermissionButton.setVisibility(Button.GONE);
         // Admin and editing
         } else {
+            enableAll();
             mModifyPermissionButton.setVisibility(ImageButton.VISIBLE);
             mDeletePermissionButton.setVisibility(Button.VISIBLE);
         }

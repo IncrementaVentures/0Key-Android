@@ -159,5 +159,8 @@
     <string name="key_must_have_length">Key must be of length 4</string>
     <string name="downloading_user">Downloading user…</string>
     <string name="user_not_loaded_yet">User not loaded yet, check your internet connection</string>
+    <string name="session_expired_login_again">Session expired, log in again.</string>
+    <string name="check_internet_connection">Check your internet connection</string>
+    <string name="permission_information">Permission information</string>
 
 </resources>

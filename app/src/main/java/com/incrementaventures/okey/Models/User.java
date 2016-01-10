@@ -7,6 +7,7 @@ import android.content.Context;
 import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.incrementaventures.okey.Networking.NetworkingUtils;
+import com.incrementaventures.okey.Networking.ParseErrorHandler;
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.LogOutCallback;
@@ -515,7 +516,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         try {
             ParseUser parseUser = query.getFirst();
             return User.create(parseUser);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             return null;
         }
     }
@@ -528,6 +529,8 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null) {
                     listener.onUserGetted(User.create(parseUser));
+                } else {
+                    ParseErrorHandler.handleError(e);
                 }
             }
         });

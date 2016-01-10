@@ -36,6 +36,7 @@ import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
 import com.incrementaventures.okey.Models.User;
+import com.incrementaventures.okey.Networking.ParseErrorHandler;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
@@ -57,7 +58,8 @@ public class MainActivity extends AppCompatActivity implements
         ConfigurationFragment.OnMasterConfigurationListener,
         PermissionsFragment.OnPermissionAdapterListener,
         NewDoorFragment.OnPairRequestedListener,
-        NameHolderFragment.OnTextHolderFragmentClick {
+        NameHolderFragment.OnTextHolderFragmentClick,
+        ParseErrorHandler.OnParseErrorListener {
 
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int FIRST_CONFIG = 2;
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        initializeParseErrorHandler();
         authenticateUser();
         if (mCurrentUser == null) return;
         checkNewPermissions();
@@ -110,6 +113,10 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, new MenuFragment(), MenuFragment.TAG).
                 addToBackStack(MenuFragment.TAG).commit();
+    }
+
+    private void initializeParseErrorHandler() {
+        ParseErrorHandler.initialize(this);
     }
 
 
@@ -824,5 +831,21 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSlaveNameClick() {
         mMasterFragment.onSlaveNameClick();
+    }
+
+    @Override
+    public void sessionExpired() {
+        Snackbar.make(mRootView, R.string.session_expired_login_again, Snackbar.LENGTH_LONG).show();
+        logout();
+    }
+
+    @Override
+    public void defaultError() {
+        Snackbar.make(mRootView, R.string.an_error_occurred, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void timeout() {
+        Snackbar.make(mRootView, R.string.check_internet_connection, Snackbar.LENGTH_LONG).show();
     }
 }

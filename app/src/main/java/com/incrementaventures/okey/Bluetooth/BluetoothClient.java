@@ -70,6 +70,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private boolean mSending;
     private boolean mWaitingResponse;
     private boolean mConnectionFinished;
+    private int mConnectionsCount;
 
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothManager mBluetoothManager;
@@ -109,6 +110,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private Master mMaster;
 
     private static BluetoothClient sInstance;
+
 
     private int mRetryCount;
 
@@ -275,20 +277,22 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         Log.d("BLUETOOTH CONNECTION", "---------");
         Log.d("BLUETOOTH CONNECTION", "Starting scanning");
 
-        mDevices = new SparseArray<>();
-        mConnectionFinished = false;
         if (!mBluetoothAdapter.startLeScan(this)) {
             Log.d("BLUETOOTH CONNECTION", "Cant start Scan");
             mListener.error(STILL_SCANNING);
             stopScan();
         } else {
+            mConnectionsCount++;
             mScanning = true;
+            mDevices = new SparseArray<>();
+            mConnectionFinished = false;
+            final int previousCount = mConnectionsCount;
             // Stop the scanning after time miliseconds.
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     Log.d("BLUETOOTH CONNECTION", "After 'time' ms, trying to stop scan");
-                    if (mConnectionFinished || mScanning) {
+                    if (previousCount == mConnectionsCount) {
                         stopScan();
                     }
                 }
@@ -316,7 +320,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         return mRetryCount > MAX_RETRIES;
     }
 
-    private void retryIfNecessary(final BluetoothDevice device, BluetoothGatt gatt) {
+    private void retryIfNecessary(final BluetoothDevice device, final BluetoothGatt gatt) {
         if (isRetryLimitReached()) {
             Log.d("BLUETOOTH CONNECTION", "Try count limit reached");
             finishConnection(gatt);
@@ -339,16 +343,13 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     }
 
     private void finishConnection(BluetoothGatt gatt) {
-        Log.d("BLUETOOTH CONNECTION", "Finishing connection");
         if (gatt != null) {
             int connectionState =
                     mBluetoothManager.getConnectionState(gatt.getDevice(), BluetoothGatt.GATT);
             if (connectionState == BluetoothGatt.STATE_CONNECTED
                     || connectionState == BluetoothGatt.STATE_CONNECTING) {
-                Log.d("BLUETOOTH CONNECTION", "Disconnecting and closing gatt.");
-                // TODO: 09-01-2016 See this
+                Log.d("BLUETOOTH CONNECTION", "Disconnecting gatt.");
                 gatt.disconnect();
-                // gatt.close();
             }
         }
         mRetryCount = 0;
@@ -379,6 +380,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 || (mMode == EDIT_PERMISSION_MODE && deviceName.endsWith(mMasterId))
                 || (mMode == PAIR_SLAVES_MODE && deviceName.equals(mMasterId))) {
             mDevices.put(device.hashCode(), device);
+            stopScan();
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
@@ -399,6 +401,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(final BluetoothGatt gatt, int status, int newState) {
+            Log.d("BLUETOOTH CONNECTION", "On connection state changed");
             if (!mConnected && BluetoothProtocol.STATE_CONNECTED == newState) {
                 Log.d("BLUETOOTH CONNECTION", "Connected");
                 mTryingToConnect = false;
@@ -407,9 +410,12 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 gatt.discoverServices();
             }
             else if(BluetoothProtocol.STATE_DISCONNECTED == newState){
-                Log.d("BLUETOOTH CONNECTION", "Disconnected");
+                Log.d("BLUETOOTH CONNECTION", "Disconnected. Closing gatt.");
                 gatt.close();
                 mConnected = false;
+                if (!mConnectionFinished && mRetryCount == 0) {
+                    finishConnection(gatt);
+                }
             }
         }
 
