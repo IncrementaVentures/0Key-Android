@@ -401,15 +401,15 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(final BluetoothGatt gatt, int status, int newState) {
-            Log.d("BLUETOOTH CONNECTION", "On connection state changed");
-            if (!mConnected && BluetoothProtocol.STATE_CONNECTED == newState) {
+            Log.d("BLUETOOTH CONNECTION", "On connection state changed. Device: "+ gatt.getDevice().getAddress());
+            if (!mConnected && BluetoothGatt.STATE_CONNECTED == newState) {
                 Log.d("BLUETOOTH CONNECTION", "Connected");
                 mTryingToConnect = false;
                 mTryingToDiscoverServices = true;
                 mConnected = true;
                 gatt.discoverServices();
             }
-            else if(BluetoothProtocol.STATE_DISCONNECTED == newState){
+            else if(BluetoothGatt.STATE_DISCONNECTED == newState) {
                 Log.d("BLUETOOTH CONNECTION", "Disconnected. Closing gatt.");
                 gatt.close();
                 mConnected = false;
