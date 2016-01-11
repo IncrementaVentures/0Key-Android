@@ -242,7 +242,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
         ParseUser.logInInBackground(email, pass, new LogInCallback() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
-                if (e == null) {
+                if (e == null && parseUser != null) {
                     // IMPORTANT: use getLoggedUser() to obtain the user in the activity
                     listener.userLoggedIn(parseUser);
                 } else {
@@ -494,6 +494,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     }
 
     public Permission getAdminPermission(Master master) {
+        if (master == null) return null;
         ParseQuery<com.parse.ParseObject> query = ParseQuery.getQuery(Permission.PERMISSION_CLASS_NAME);
         query.fromLocalDatastore();
         query.whereEqualTo(Permission.USER_ID, getId());

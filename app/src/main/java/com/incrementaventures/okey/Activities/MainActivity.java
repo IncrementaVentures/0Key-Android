@@ -652,7 +652,8 @@ public class MainActivity extends AppCompatActivity implements
                 .replace(R.id.container, mPermissionsFragment, PermissionsFragment.TAG)
                 .addToBackStack(PermissionsFragment.TAG)
                 .commit();
-        if (mCurrentUser.getAdminPermission(mMasterFragment.getSelectedMaster()) != null) {
+        Master selectedMaster = mMasterFragment.getSelectedMaster();
+        if (selectedMaster != null && mCurrentUser.getAdminPermission(mMasterFragment.getSelectedMaster()) != null) {
             showAddPermissionAndRefreshButtons();
         } else {
             showRefreshButton();

@@ -161,6 +161,6 @@
     <string name="user_not_loaded_yet">User not loaded yet, check your internet connection</string>
     <string name="session_expired_login_again">Session expired, log in again.</string>
     <string name="check_internet_connection">Check your internet connection</string>
-    <string name="permission_information">Permission information</string>
+    <string name="virtual_key_information">Virtual key information</string>
 
 </resources>

@@ -220,7 +220,7 @@ public class ModifyPermissionFragment extends Fragment {
         // Not admin, then not show any option to interact with master
         if (adminPermission == null) {
             disableAll();
-            mScreenTitle.setText(R.string.permission_information);
+            mScreenTitle.setText(R.string.virtual_key_information);
             mModifyPermissionButton.setVisibility(ImageButton.GONE);
             mDeletePermissionButton.setVisibility(Button.GONE);
         // Admin and creating new permission
