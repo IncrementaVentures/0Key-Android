@@ -58,7 +58,8 @@ public class PermissionsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_permissions, container, false);
         ButterKnife.bind(this, view);
         setPermissions();
-        mPermissionsAdapter = new PermissionAdapter(getActivity(), R.layout.permission_list_item,
+        if (getContext() == null) return view;
+        mPermissionsAdapter = new PermissionAdapter(getContext(), R.layout.permission_list_item,
             mPermissions, mListener);
         mPermissionsView.setAdapter(mPermissionsAdapter);
         mPermissionsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

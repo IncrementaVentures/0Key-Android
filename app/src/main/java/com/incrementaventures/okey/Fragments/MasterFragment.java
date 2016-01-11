@@ -106,6 +106,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
             ButterKnife.bind(this, mView);
             return mView;
         }
+        Picasso.with(getContext()).load(R.drawable.app_icon_placeholder).into(mOpenButton);
         setData();
         return mView;
     }
