@@ -49,11 +49,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int DELETE_PERMISSION_MODE = 12;
     public static final int PAIR_SLAVES_MODE = 13;
 
-    public static final int DOOR_ALREADY_CLOSED = 2;
-    public static final int DOOR_ALREADY_OPENED = 3;
-    public static final int ADMIN_ALREADY_ASSIGNED = 5;
-    public static final int ADMIN_ASSIGNED = 6;
-
+    /**
+     * Error messages.
+     */
     public static final int TIMEOUT = 101;
     public static final int RESPONSE_INCORRECT = 102;
     public static final int CANT_OPEN = 103;
@@ -65,6 +63,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int PERMISSION_NOT_EDITED = 109;
     public static final int DOOR_NOT_CONFIGURED = 110;
     public static final int STILL_SCANNING = 111;
+
     private boolean mScanning;
     private boolean mTryingToDiscoverServices;
     private boolean mTryingToConnect;
@@ -117,14 +116,14 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private int mRetryCount;
 
     /**
-     * Handles the connection with the BLE device
      * @param context context of the call
      * @param listener Usually a user, or any who implements OnBluetoothToUserResponse
      */
-    private BluetoothClient(Context context,  OnBluetoothToUserResponse listener) {
+    private BluetoothClient(Context context, OnBluetoothToUserResponse listener) {
         mListener = listener;
         mContext = context;
-        mBluetoothManager = (BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothManager = (BluetoothManager) mContext.getApplicationContext()
+                .getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
         mHandler = new Handler();
         mDevices = new SparseArray<>();
@@ -137,6 +136,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         }
         sInstance.mListener = listener;
         sInstance.mContext = context;
+        sInstance.mBluetoothManager = (BluetoothManager) context.getApplicationContext()
+                .getSystemService(Context.BLUETOOTH_SERVICE);
+        sInstance.mBluetoothAdapter = sInstance.mBluetoothManager.getAdapter();
         return sInstance;
     }
 
@@ -444,7 +446,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                                       int status) {
             gatt.setCharacteristicNotification(mNotifyCharacteristic, true);
             String message;
-            switch (mMode){
+            switch (mMode) {
                 case OPEN_MODE:
                     // Separate the messsage in 20 bytes parts, then send each part
                     message = BluetoothProtocol.buildOpenMessage(mPermissionKey, mPermission.getSlaveId(), mSlaveId);

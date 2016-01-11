@@ -3,6 +3,7 @@ package com.incrementaventures.okey.Models;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 
 import com.incrementaventures.okey.Activities.MainActivity;
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
@@ -254,17 +255,17 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
     /**
      * @return the user logged in the device, or null if there is no user logged.
      */
-    public static User getLoggedUser(MainActivity activity) {
+    public static User getLoggedUser(Context context) {
         ParseUser current = ParseUser.getCurrentUser();
         if (current == null){
             return null;
         }
 
         User user = new User(current);
-        user.mBluetoothListener =  activity;
-        user.mMasterListener = activity;
-        user.mPermissionsListener = activity;
-        user.mContext = activity;
+        user.mBluetoothListener =  (OnUserBluetoothToActivityResponse) context;
+        user.mMasterListener = (OnActionMasterResponse) context;
+        user.mPermissionsListener = (OnPermissionsResponse) context;
+        user.mContext = context;
         sLoggedUser = user;
         return user;
     }

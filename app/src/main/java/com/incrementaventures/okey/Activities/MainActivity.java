@@ -37,6 +37,7 @@ import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
 import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.Networking.ParseErrorHandler;
+import com.incrementaventures.okey.OkeyApplication;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
@@ -431,6 +432,7 @@ public class MainActivity extends AppCompatActivity implements
                     case BluetoothClient.TIMEOUT:
                         Snackbar.make(mRootView, R.string.door_cant_open_timeout,
                                 Snackbar.LENGTH_LONG).show();
+                        OkeyApplication.doRestart(MainActivity.this);
                         break;
                     case BluetoothClient.STILL_SCANNING:
                         Snackbar.make(mRootView, R.string.try_again_please,
