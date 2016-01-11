@@ -3,6 +3,7 @@ package com.incrementaventures.okey.Activities;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -432,6 +433,9 @@ public class MainActivity extends AppCompatActivity implements
                     case BluetoothClient.TIMEOUT:
                         Snackbar.make(mRootView, R.string.door_cant_open_timeout,
                                 Snackbar.LENGTH_LONG).show();
+                        /**
+                         * @see OkeyApplication#doRestart(Context).
+                         */
                         OkeyApplication.doRestart(MainActivity.this);
                         break;
                     case BluetoothClient.STILL_SCANNING:
