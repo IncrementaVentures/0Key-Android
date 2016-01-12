@@ -66,7 +66,7 @@ public class ModifyPermissionFragment extends Fragment {
     @Bind(R.id.start_hour_new)
     TextView mStartHourView;
     @Bind(R.id.ok_button)
-    ImageButton mNewPermissionButton;
+    ImageButton mModifyPermissionButton;
     @Bind(R.id.permission_type_new)
     TextView mPermissionTypeView;
     @Bind(R.id.permission_slave)
@@ -175,21 +175,65 @@ public class ModifyPermissionFragment extends Fragment {
             mToEditPermission = Permission.getPermission(getArguments().getString(Permission.OBJECT_ID));
             String startDate = mToEditPermission.getStartDate();
             String endDate = mToEditPermission.getEndDate();
+            if (endDate.equals("0"))
+                endDate = "2016-01-01T00:01";
             mStartHourView.setText(startDate.substring(startDate.indexOf('T') + 1, startDate.length()));
             mEndHourView.setText(endDate.substring(endDate.indexOf('T') + 1, endDate.length()));
             mStartDateView.setText(Permission.getFormattedDate(startDate));
             mEndDateView.setText(Permission.getFormattedDate(endDate));
             mPermissionTypeView.setText(mToEditPermission.getType());
+            mSelectedMasterView.setOnClickListener(null);
         } else {
-            mStartDateView.setText(Permission.getFormattedDate("2015-01-01T00:01"));
-            mEndDateView.setText(Permission.getFormattedDate("2015-01-01T00:01"));
+            mStartDateView.setText(Permission.getFormattedDate("2016-01-01T00:01"));
+            mEndDateView.setText(Permission.getFormattedDate("2016-01-01T00:01"));
         }
         if (!TextUtils.isEmpty(mPermissionName)) {
             mPermissionEmailView.setText(mPermissionName);
+            mPermissionEmailView.setFocusable(false);
         }
     }
 
+    private void disableAll() {
+        mDueDateLayout.setClickable(false);
+        mDueHourLayout.setClickable(false);
+        mStartDateLayout.setClickable(false);
+        mStartHourLayout.setClickable(false);
+        mSlaveTitle.setClickable(false);
+        mSelectedSlaveView.setClickable(false);
+        mPermissionTypeLayout.setClickable(false);
+    }
+
+
+    private void enableAll() {
+        mDueDateLayout.setClickable(true);
+        mDueHourLayout.setClickable(true);
+        mStartDateLayout.setClickable(true);
+        mStartHourLayout.setClickable(true);
+        mSlaveTitle.setClickable(true);
+        mSelectedSlaveView.setClickable(true);
+        mPermissionTypeLayout.setClickable(true);
+    }
+
+
     private void setUi() {
+        Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
+        // Not admin, then not show any option to interact with master
+        if (adminPermission == null) {
+            disableAll();
+            mScreenTitle.setText(R.string.virtual_key_information);
+            mModifyPermissionButton.setVisibility(ImageButton.GONE);
+            mDeletePermissionButton.setVisibility(Button.GONE);
+        // Admin and creating new permission
+        } else if (mKey == null) {
+            enableAll();
+            mModifyPermissionButton.setVisibility(ImageButton.VISIBLE);
+            mDeletePermissionButton.setVisibility(Button.GONE);
+        // Admin and editing
+        } else {
+            enableAll();
+            mModifyPermissionButton.setVisibility(ImageButton.VISIBLE);
+            mDeletePermissionButton.setVisibility(Button.VISIBLE);
+        }
         if (mPermissionTypeView.getText().toString().equals(getResources()
                 .getString(R.string.virtual_key_type_temporal))) {
             mDueDateLayout.setVisibility(LinearLayout.VISIBLE);
@@ -329,18 +373,22 @@ public class ModifyPermissionFragment extends Fragment {
         }
         Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
         if (adminPermission == null) {
-            Snackbar.make(getView(), R.string.no_virtual_key, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(getView(), R.string.you_are_not_admin, Snackbar.LENGTH_LONG).show();
             return;
         }
         String userKey = adminPermission.getKey();
+        int permissionType = Permission.getType(mPermissionTypeView.getText().toString());
         String startDate =  Permission.getDefaultDateString(mStartDateView.getText().toString())
                 + "T" + mStartHourView.getText().toString();
-        String endDate =  Permission.getDefaultDateString(mEndDateView.getText().toString())
-                + "T" + mEndHourView.getText().toString();
+        String endDate = "0";
+        if (permissionType == Permission.TEMPORAL_PERMISSION) {
+            endDate =  Permission.getDefaultDateString(mEndDateView.getText().toString())
+                    + "T" + mEndHourView.getText().toString();
+        }
         if (TextUtils.isEmpty(mKey)) {
             Permission permission = Permission.create(user,
                     mSelectedMaster,
-                    Permission.getType(mPermissionTypeView.getText().toString()),
+                    permissionType,
                     "",
                     startDate,
                     endDate,
@@ -389,6 +437,7 @@ public class ModifyPermissionFragment extends Fragment {
                 mSelectedMaster = mMasters.get(which);
                 mSelectedMasterView.setText(mastersNames[which]);
                 setSlaves();
+                setUi();
             }
         });
         builder.show();
@@ -398,7 +447,7 @@ public class ModifyPermissionFragment extends Fragment {
     public void deletePermissionClicked() {
         Permission adminPermission = User.getLoggedUser().getAdminPermission(mSelectedMaster);
         if (adminPermission == null) {
-            Snackbar.make(getView(), R.string.no_virtual_key, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(getView(), R.string.you_are_not_admin, Snackbar.LENGTH_LONG).show();
             return;
         }
         mPermissionModifiedListener.onDeletePermissionClicked(mToEditPermission,

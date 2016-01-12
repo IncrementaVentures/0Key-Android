@@ -1,63 +1,47 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<ScrollView
     android:layout_height="match_parent"
+    android:layout_width="match_parent"
     android:background="@drawable/background_menu"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:padding="16dp"
     tools:context="com.incrementaventures.okey.Fragments.LoginFragment">
 
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayout"
-        android:layout_below="@+id/login_email"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
-            android:text="@string/password"
-            android:id="@+id/textView25" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:textColor="@color/white"
-            android:textCursorDrawable = "@null"
-            android:ems="10"
-            android:id="@+id/login_password"
-            android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
-             />
-
-
-    </LinearLayout>
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/imageView2"
+        android:src="@drawable/app_icon_placeholder"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center"
+        android:padding="10dp"
+        android:adjustViewBounds="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="40dp"
+        android:layout_gravity="center"
+
         android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:textColor="@color/white"
         android:text="0key"
         android:id="@+id/textView"
-        android:layout_below="@+id/imageView2"
-        android:layout_centerHorizontal="true" />
+        />
 
-    <Button
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/login"
-        android:id="@+id/login_button"
         android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
-        android:textColor="@color/white"
-        android:layout_above="@+id/create_account_in_login_button"
-        android:layout_alignStart="@+id/create_account_in_login_button"
-        android:layout_alignParentEnd="true" />
+        android:text="@string/email"
+        android:id="@+id/textView26"
+        android:textColor="@color/white"/>
 
     <EditText
         android:layout_width="match_parent"
@@ -67,54 +51,58 @@
         android:ems="10"
         android:textColor="@color/white"
         android:id="@+id/login_email"
-        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
-        android:layout_below="@+id/textView26"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:text="@string/create_account"
-        android:id="@+id/create_account_in_login_button"
-        android:layout_alignParentBottom="true"
-        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
-        android:layout_alignLeft="@+id/linearLayout"
-        android:layout_alignStart="@+id/linearLayout"
-        android:layout_alignParentEnd="true" />
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
-        android:text="@string/email"
-        android:id="@+id/textView26"
         android:textColor="@color/white"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:text="@string/password"
+        android:id="@+id/textView25" />
 
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:id="@+id/imageView2"
-        android:src="@drawable/app_icon_placeholder"
-        android:scaleType="fitCenter"
-        android:padding="10dp"
-        android:adjustViewBounds="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:textColor="@color/white"
+        android:textCursorDrawable = "@null"
+        android:ems="10"
+        android:id="@+id/login_password"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+         />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/forgot_your_password_click_here"
         android:padding="10dp"
+        android:layout_gravity="center"
         android:onClick="forgotPasswordClicked"
         android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
         android:textColor="@color/white"
-        android:id="@+id/button"
-        android:layout_below="@+id/linearLayout"
-        android:layout_centerHorizontal="true" />
+        android:id="@+id/button"/>
 
-</RelativeLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:id="@+id/login_button"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"
+        android:textColor="@color/white"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:text="@string/create_account"
+        android:id="@+id/create_account_in_login_button"
+        android:textAppearance="@style/TextAppearance.AvenirGreyMedium"/>
+
+
+
+
+</LinearLayout>
+
+</ScrollView>

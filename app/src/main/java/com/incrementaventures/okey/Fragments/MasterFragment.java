@@ -106,13 +106,31 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
             ButterKnife.bind(this, mView);
             return mView;
         }
-        setPermissions();
-        setMasters();
-        setSlaves();
-        setBottomText();
-        setNameableHolderAdapters();
-        setUI();
+        Picasso.with(getContext()).load(R.drawable.app_icon_placeholder).into(mOpenButton);
+        setData();
         return mView;
+    }
+
+    private void setData() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                setPermissions();
+                setMasters();
+                setSlaves();
+                setBottomText();
+                setNameableHolderAdapters();
+
+                if(getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setUI();
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -136,15 +154,37 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
 
     private void setBottomText() {
         if (mMasters == null || mMasters.size() == 0) {
-            changeBottomTextToGet0key();
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        changeBottomTextToGet0key();
+
+                    }
+                });
+            }
             return;
         }
         if (User.getLoggedUser().getAdminPermission(mMasters.get(mSelectedMasterIndex)) != null) {
-            mBottomLayout.setOnClickListener(mShareKeyListener);
-            changeBottomTextToShareKey();
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBottomLayout.setOnClickListener(mShareKeyListener);
+                        changeBottomTextToShareKey();
+                    }
+                });
+            }
         } else {
-            mBottomLayout.setOnClickListener(mGet0keyListener);
-            changeBottomTextToGet0key();
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBottomLayout.setOnClickListener(mGet0keyListener);
+                        changeBottomTextToGet0key();
+                    }
+                });
+            }
         }
     }
 
@@ -233,8 +273,15 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     }
 
     private void setNameableHolderAdapters() {
-        setMasterHolderAdapter();
-        setSlaveHolderAdapter();
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setMasterHolderAdapter();
+                    setSlaveHolderAdapter();
+                }
+            });
+        }
     }
 
     ViewPager.OnPageChangeListener mMasterPageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -247,6 +294,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
             setSlaves();
             setSlaveHolderAdapter();
             setBottomText();
+            setSlavesUI();
         }
 
         @Override
@@ -270,7 +318,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         mSlaveNameAdapter.notifyDataSetChanged();
     }
 
-    private void setUI() {
+    private void setSlavesUI() {
         if (mSlaves == null || mSlaves.size() <= 1) {
             mLeftArrowSlave.setVisibility(ImageButton.GONE);
             mRightArrowSlave.setVisibility(ImageButton.GONE);
@@ -278,6 +326,9 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
             mLeftArrowSlave.setVisibility(ImageButton.VISIBLE);
             mRightArrowSlave.setVisibility(ImageButton.VISIBLE);
         }
+    }
+
+    private void setMasterUI() {
         if (mMasters == null || mMasters.size() == 0) {
             mLeftArrowMaster.setVisibility(ImageButton.GONE);
             mRightArrowMaster.setVisibility(ImageButton.GONE);
@@ -293,11 +344,18 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         }
     }
 
+    private void setUI() {
+        setSlavesUI();
+        setMasterUI();
+    }
+
     @OnClick(R.id.open_button)
     public void openDoorClicked() {
         if (mMasters != null && mMasters.size() > 0 && mSlaves != null && mSlaves.size() > 0) {
             mOpenButton.setMinimumHeight(mOpenButton.getMeasuredHeight());
-            Picasso.with(getContext()).load(R.drawable.gray_app_icon_placeholder).into(mOpenButton);
+            if (getContext() != null) {
+                Picasso.with(getContext()).load(R.drawable.gray_app_icon_placeholder).into(mOpenButton);
+            }
             mOpenButton.setClickable(false);
             User.getLoggedUser().openDoor(mMasters.get(mSelectedMasterIndex),
                     mSlaves.get(mSelectedSlaveIndex));
@@ -311,6 +369,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         setSlaves();
         setBottomText();
         setSlaveHolderAdapter();
+        setSlavesUI();
     }
 
     @OnClick(R.id.right_arrow_master)
@@ -320,6 +379,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         setSlaves();
         setBottomText();
         setSlaveHolderAdapter();
+        setSlavesUI();
     }
 
     @OnClick(R.id.left_arrow_slave)
@@ -336,7 +396,9 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
 
     public void enableOpenButton(int resId) {
         mOpenButton.setClickable(true);
-        Picasso.with(getContext()).load(resId).into(mOpenButton);
+        if (getContext() != null) {
+            Picasso.with(getContext()).load(resId).into(mOpenButton);
+        }
     }
 
     public void onSlaveNameClick() {

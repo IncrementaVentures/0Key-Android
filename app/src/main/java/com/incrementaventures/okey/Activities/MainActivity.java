@@ -3,10 +3,12 @@ package com.incrementaventures.okey.Activities;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -18,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
@@ -34,6 +37,8 @@ import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
 import com.incrementaventures.okey.Models.User;
+import com.incrementaventures.okey.Networking.ParseErrorHandler;
+import com.incrementaventures.okey.OkeyApplication;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
@@ -55,14 +60,11 @@ public class MainActivity extends AppCompatActivity implements
         ConfigurationFragment.OnMasterConfigurationListener,
         PermissionsFragment.OnPermissionAdapterListener,
         NewDoorFragment.OnPairRequestedListener,
-        NameHolderFragment.OnTextHolderFragmentClick {
+        NameHolderFragment.OnTextHolderFragmentClick,
+        ParseErrorHandler.OnParseErrorListener {
 
     public static final int REQUEST_ENABLE_BT = 1;
-    public static final int FIRST_CONFIG = 2;
-    public static final String DEFAULT_KEY_EXTRA = "defaultkey";
-    public static final String NEW_KEY_EXTRA = "newkey";
-    public static final String MASTER_NAME_EXTRA = "doorname";
-    public static final String SCANNED_DOOR_EXTRA = "scanneddoor";
+
 
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        setUpToolbar();
+        initializeParseErrorHandler();
         authenticateUser();
         if (mCurrentUser == null) return;
         checkNewPermissions();
@@ -111,8 +113,34 @@ public class MainActivity extends AppCompatActivity implements
                 addToBackStack(MenuFragment.TAG).commit();
     }
 
+    private void initializeParseErrorHandler() {
+        ParseErrorHandler.initialize(this);
+    }
+
+
+    View.OnClickListener mShowMenuFragmentListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            showMenuFragment();
+        }
+    };
+
+    View.OnClickListener mBackListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
+        }
+    };
+
+    private void showMenuFragment() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, new MenuFragment(), MenuFragment.TAG)
+                .addToBackStack(MenuFragment.TAG).commit();
+    }
+
     private void setUpToolbar() {
         mToolbar.setNavigationIcon(R.drawable.ic_action_menu);
+        mToolbar.setNavigationOnClickListener(mShowMenuFragmentListener);
         mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
@@ -160,23 +188,49 @@ public class MainActivity extends AppCompatActivity implements
                 PermissionsFragment permissionsFragment = (PermissionsFragment)
                         getSupportFragmentManager().findFragmentByTag(PermissionsFragment.TAG);
                 if ((masterFragment != null && masterFragment.isVisible())) {
+                    setUpToolbar();
                     showToolbar();
+                    mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.VISIBLE);
+                    mToolbar.setTitle("");
                     hideAddPermissionAndRefreshButtons();
                 } else if (permissionsFragment != null && permissionsFragment.isVisible()) {
                     showToolbar();
-                    showAddPermissionAndRefreshButtons();
+                    mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
+                    mToolbar.setNavigationOnClickListener(mBackListener);
+                    mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
+                    if (mCurrentUser.getAdminPermission(mMasterFragment.getSelectedMaster()) != null) {
+                        showAddPermissionAndRefreshButtons();
+                    } else {
+                        showRefreshButton();
+                    }
                 }
             } catch (IllegalStateException e) { }
         }
     }
 
     private void showAddPermissionAndRefreshButtons() {
+        showAddPermissionButton();
+        showRefreshButton();
+    }
+
+    private void showAddPermissionButton() {
         mOptionsMenu.findItem(R.id.action_add_permission).setVisible(true);
+    }
+
+    private void showRefreshButton() {
         mOptionsMenu.findItem(R.id.action_refresh_data).setVisible(true);
     }
 
     private void hideAddPermissionAndRefreshButtons() {
+        hideAddPermissionButton();
+        hideRefreshButton();
+    }
+
+    private void hideAddPermissionButton() {
         mOptionsMenu.findItem(R.id.action_add_permission).setVisible(false);
+    }
+
+    private void hideRefreshButton() {
         mOptionsMenu.findItem(R.id.action_refresh_data).setVisible(false);
     }
 
@@ -204,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements
         } else if (id == R.id.action_add_permission) {
             onAddNewPermissionClicked(null);
         } else if (id == R.id.action_refresh_data) {
+            Snackbar.make(mRootView, R.string.syncing_data, Snackbar.LENGTH_LONG).show();
             checkNewPermissions();
         }
         return super.onOptionsItemSelected(item);
@@ -256,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void deviceNotFound() {
         enableOpenButton();
-        Snackbar.make(mRootView,  R.string.device_not_found, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRootView, R.string.device_not_found, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -317,7 +372,6 @@ public class MainActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showMasterFragment();
                 Snackbar.make(mRootView, R.string.virtual_key_created, Snackbar.LENGTH_LONG).show();
             }
         });
@@ -330,7 +384,6 @@ public class MainActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showMasterFragment();
                 Snackbar.make(mRootView, R.string.master_configured, Snackbar.LENGTH_LONG).show();
                 mMasterFragment.onMasterReceived(master);
             }
@@ -344,7 +397,6 @@ public class MainActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showMasterFragment();
                 Snackbar.make(mRootView, R.string.virtual_key_edited, Snackbar.LENGTH_LONG).show();
             }
         });
@@ -376,6 +428,14 @@ public class MainActivity extends AppCompatActivity implements
                 switch (code) {
                     case BluetoothClient.TIMEOUT:
                         Snackbar.make(mRootView, R.string.door_cant_open_timeout,
+                                Snackbar.LENGTH_LONG).show();
+                        /**
+                         * @see OkeyApplication#doRestart(Context).
+                         */
+                        OkeyApplication.doRestart(MainActivity.this);
+                        break;
+                    case BluetoothClient.STILL_SCANNING:
+                        Snackbar.make(mRootView, R.string.try_again_please,
                                 Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.RESPONSE_INCORRECT:
@@ -453,35 +513,51 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNewPermissions(ArrayList<Permission> permissions, boolean newPermissions) {
-        if (permissions != null && permissions.size() > 0 && newPermissions) {
-            Snackbar.make(mRootView, R.string.new_virtual_keys, Snackbar.LENGTH_LONG).show();
-        }
-        ArrayList<Slave> slaves = new ArrayList<>();
-        ArrayList<Master> masters = new ArrayList<>();
-        Master master;
-        for (Permission permission : permissions) {
-            master = permission.getMaster();
-            if (master != null) {
-                if (!masters.contains(master))
-                    masters.add(master);
-                if (permission.getSlaveId() == Slave.ALL_SLAVES) {
-                    ArrayList<Slave> masterSlaves = new ArrayList<>(master.getSlaves());
-                    for (Slave slave : masterSlaves) {
-                        if (!slaves.contains(slave))
-                            slaves.add(slave);
+    public void invalidUserSessionToken() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                logout();
+            }
+        }).start();
+        Snackbar.make(mRootView, R.string.invalid_session, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onNewPermissions(final ArrayList<Permission> permissions, final boolean newPermissions) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (permissions != null && permissions.size() > 0 && newPermissions) {
+                    Snackbar.make(mRootView, R.string.new_virtual_keys, Snackbar.LENGTH_LONG).show();
+                }
+                ArrayList<Slave> slaves = new ArrayList<>();
+                ArrayList<Master> masters = new ArrayList<>();
+                Master master;
+                for (Permission permission : permissions) {
+                    master = permission.getMaster();
+                    if (master != null) {
+                        if (!masters.contains(master))
+                            masters.add(master);
+                        if (permission.getSlaveId() == Slave.ALL_SLAVES) {
+                            ArrayList<Slave> masterSlaves = new ArrayList<>(master.getSlaves());
+                            for (Slave slave : masterSlaves) {
+                                if (!slaves.contains(slave))
+                                    slaves.add(slave);
+                            }
+                        }
+                    }
+                    if (permission.getSlave() != null && !slaves.contains(permission.getSlave())) {
+                        slaves.add(permission.getSlave());
                     }
                 }
+                mMasterFragment.onMastersReceived(masters);
+                mMasterFragment.onSlavesReceived(slaves);
+                if (mPermissionsFragment != null && mPermissionsFragment.isVisible()) {
+                    mPermissionsFragment.onPermissionsReceived(permissions, newPermissions);
+                }
             }
-            if (permission.getSlave() != null && !slaves.contains(permission.getSlave())) {
-                slaves.add(permission.getSlave());
-            }
-        }
-        mMasterFragment.onMastersReceived(masters);
-        mMasterFragment.onSlavesReceived(slaves);
-        if (mPermissionsFragment != null && mPermissionsFragment.isVisible()) {
-            mPermissionsFragment.onPermissionsReceived(permissions, newPermissions);
-        }
+        }).start();
     }
 
 
@@ -499,7 +575,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void get0keySelected() {
-
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(getString(R.string.link_0key_webpage)));
+        startActivity(browserIntent);
     }
 
     @Override
@@ -542,12 +620,17 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onGoHomeClicked(View view) {
-        showMasterFragment();
+        // showMasterFragment();
+        onBackPressed();
     }
 
     public void onAddNew0keyClicked(View view) {
         mCurrentUser.scanDevices();
         showScannedMastersDialog();
+    }
+
+    public void onGet0keyClicked(View view) {
+        get0keySelected();
     }
 
     public void onAddNewDoorClicked(View view) {
@@ -557,6 +640,26 @@ public class MainActivity extends AppCompatActivity implements
                 .addToBackStack(NewDoorFragment.TAG)
                 .commit();
     }
+
+    public void onShowAllPermissionsClicked(View view) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        mPermissionsFragment = new PermissionsFragment();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, mPermissionsFragment, PermissionsFragment.TAG)
+                .addToBackStack(PermissionsFragment.TAG)
+                .commit();
+        Master selectedMaster = mMasterFragment.getSelectedMaster();
+        if (selectedMaster != null && mCurrentUser.getAdminPermission(mMasterFragment.getSelectedMaster()) != null) {
+            showAddPermissionAndRefreshButtons();
+        } else {
+            showRefreshButton();
+        }
+        showToolbar();
+        mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
+        mToolbar.setNavigationOnClickListener(mBackListener);
+    }
+
 
     public void onShowPermissionsClicked(View view) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -568,7 +671,14 @@ public class MainActivity extends AppCompatActivity implements
                 .replace(R.id.container, mPermissionsFragment, PermissionsFragment.TAG)
                 .addToBackStack(PermissionsFragment.TAG)
                 .commit();
-        showAddPermissionAndRefreshButtons();
+        if (mCurrentUser.getAdminPermission(mMasterFragment.getSelectedMaster()) != null) {
+            showAddPermissionAndRefreshButtons();
+        } else {
+            showRefreshButton();
+        }
+        mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
+        mToolbar.setNavigationOnClickListener(mBackListener);
     }
 
     public void onAddNewPermissionClicked(View view) {
@@ -606,18 +716,30 @@ public class MainActivity extends AppCompatActivity implements
         transaction.commit();
     }
 
+    private void logout() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("protect_with_pin", true);
+        editor.putString(InsertPinFragment.PROTECT_PIN, "EMPTY");
+        editor.apply();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Master.unpinAll();
+                Permission.unpinAll();
+                Slave.unpinAll();
+            }
+        }).start();
+        Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     public void onLogoutClicked(View view) {
         mCurrentUser.logout(new User.OnParseUserLogoutListener() {
             @Override
             public void userLoggedOut() {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean("protect_with_pin", true);
-                editor.putString(InsertPinFragment.PROTECT_PIN, "EMPTY");
-                editor.apply();
-                Intent intent = new Intent(MainActivity.this, AuthActivity.class);
-                startActivity(intent);
-                finish();
+                logout();
             }
         });
         Snackbar.make(mRootView, R.string.logging_out, Snackbar.LENGTH_LONG).show();
@@ -628,7 +750,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onGoBackToMain(View view) {
-        showMasterFragment();
+        // showMasterFragment();
+        onBackPressed();
     }
 
     @Override
@@ -659,6 +782,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onModifyPermissionAdapterClicked(Permission permission) {
+        if (permission.getUser() == null) {
+            Snackbar.make(mRootView, R.string.user_not_loaded_yet, Snackbar.LENGTH_LONG).show();
+            return;
+        }
         FragmentManager fragmentManager = getSupportFragmentManager();
         Bundle args = new Bundle();
         args.putString(Master.ID, permission.getMasterId());
@@ -695,7 +822,7 @@ public class MainActivity extends AppCompatActivity implements
             mCurrentUser.pairSlaves(
                     master.getId(), permission.getKey(), permission.getSlaveId(), slaveId);
         } else {
-            Snackbar.make(mRootView, R.string.no_virtual_key, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mRootView, R.string.you_are_not_admin, Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -707,5 +834,21 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSlaveNameClick() {
         mMasterFragment.onSlaveNameClick();
+    }
+
+    @Override
+    public void sessionExpired() {
+        Snackbar.make(mRootView, R.string.session_expired_login_again, Snackbar.LENGTH_LONG).show();
+        logout();
+    }
+
+    @Override
+    public void defaultError() {
+        Snackbar.make(mRootView, R.string.an_error_occurred, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void timeout() {
+        Snackbar.make(mRootView, R.string.check_internet_connection, Snackbar.LENGTH_LONG).show();
     }
 }

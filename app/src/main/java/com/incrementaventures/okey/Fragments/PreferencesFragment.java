@@ -3,11 +3,13 @@ package com.incrementaventures.okey.Fragments;
 
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -104,6 +106,31 @@ public class PreferencesFragment extends Fragment {
         edit.apply();
     }
 
+    @OnClick(R.id.change_security_pin)
+    public void onChangeSecurityPinClicked() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.change_security_pin);
+        builder.setMessage(R.string.this_will_reset_your_security_pin);
+        builder.setPositiveButton(R.string.reset, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SharedPreferences prefs = android.preference.PreferenceManager
+                        .getDefaultSharedPreferences(getContext());
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("protect_with_pin", true);
+                editor.putString(InsertPinFragment.PROTECT_PIN, "EMPTY");
+                editor.commit();
+                new InsertPinFragment().show(getActivity().getFragmentManager(), "dialog_pin");
+                mKeyAtStart.setChecked(true);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.show();
+    }
 
     //@OnClick(R.id.user_birthday)
     public void onBirthdayTextClick() {

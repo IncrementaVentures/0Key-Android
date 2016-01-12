@@ -5,6 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +22,7 @@ import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -54,7 +58,8 @@ public class PermissionsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_permissions, container, false);
         ButterKnife.bind(this, view);
         setPermissions();
-        mPermissionsAdapter = new PermissionAdapter(getActivity(), R.layout.permission_list_item,
+        if (getContext() == null) return view;
+        mPermissionsAdapter = new PermissionAdapter(getContext(), R.layout.permission_list_item,
             mPermissions, mListener);
         mPermissionsView.setAdapter(mPermissionsAdapter);
         mPermissionsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -67,10 +72,29 @@ public class PermissionsFragment extends Fragment {
     }
 
     private void setPermissions() {
-        mMaster = Master.getMaster(getArguments().getString(Master.ID), User.getLoggedUser().getId());
-        if (mMaster == null) return;
-        mPermissions = mMaster.getAllPermissions();
+        if (getActivity() == null ||((AppCompatActivity)getActivity()).getSupportActionBar() == null)
+            return;
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (getArguments() == null ) {
+            actionBar.setTitle(User.getLoggedUser().getName());
+            mPermissions = new ArrayList<>();
+            ArrayList<Master> masters = Master.getMasters();
+            if (masters == null || masters.size() == 0)
+                return;
+            for (Master master : masters) {
+                mPermissions.addAll(User.getLoggedUser().getInterestedPermissions(master));
+            }
+        } else {
+            mMaster = Master.getMaster(getArguments().getString(Master.ID), User.getLoggedUser().getId());
+            if (mMaster == null) {
+                return;
+            }
+            actionBar.setTitle(mMaster.getName());
+            mPermissions = User.getLoggedUser().getInterestedPermissions(mMaster);
+        }
     }
+
+
 
     @Override
     public void onStart() {
@@ -81,9 +105,9 @@ public class PermissionsFragment extends Fragment {
     }
 
     public void onPermissionsReceived(ArrayList<Permission> permissions, final boolean newPermissions) {
-        mPermissions.clear();
         for (Permission permission : permissions) {
-            if (permission.getMasterId().equals(mMaster.getId())) {
+            if (!mPermissions.contains(permission) &&
+                    (mMaster == null || permission.getMasterId().equals(mMaster.getId()))) {
                 mPermissions.add(permission);
             }
         }

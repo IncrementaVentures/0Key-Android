@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.text.format.Time;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
+import com.incrementaventures.okey.Networking.ParseErrorHandler;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -42,6 +43,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
 
     public interface OnNetworkResponseListener {
         void onNewPermissions(ArrayList<Permission> permissions, boolean newPermissions);
+        void invalidUserSessionToken();
     }
 
     private Permission(ParseObject parsePermission){
@@ -152,7 +154,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         try {
             List<com.parse.ParseObject> localPermissions = query.find();
             for (com.parse.ParseObject localPermission : localPermissions) {
-                localPermission.unpin();
+                localPermission.unpinInBackground();
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -210,10 +212,28 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         return null;
     }
 
+    public static ArrayList<Permission> getAllPermissions() {
+        ParseQuery query = new ParseQuery(PERMISSION_CLASS_NAME);
+        query.fromLocalDatastore();
+        ArrayList<Permission> permissions = new ArrayList<>();
+        try {
+            List<ParseObject> list = query.find();
+            if (list != null) {
+                for (ParseObject permission : list) {
+                    permissions.add(Permission.create(permission));
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return permissions;
+    }
+
     public static ArrayList<Permission> getPermissions(String userId) {
         ParseQuery query = new ParseQuery(PERMISSION_CLASS_NAME);
         query.fromLocalDatastore();
         query.whereEqualTo(USER_ID, userId);
+        query.orderByDescending(Permission.CREATED_AT);
         ArrayList<Permission> permissions = new ArrayList<>();
         try {
             List<ParseObject> list = query.find();
@@ -303,18 +323,39 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         return mParsePermission.getString(KEY);
     }
 
-    private boolean started(Time time){
+    private boolean started(Time time) {
         if (mParsePermission.getString(START_DATE) == null) return true;
-        return mParsePermission.getString(START_DATE).compareTo(BluetoothProtocol.formatDate(time))> 0;
+        try {
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm",
+                    Locale.getDefault()).parse(mParsePermission.getString(START_DATE));
+            Date currentDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm",
+                    Locale.getDefault()).parse(BluetoothProtocol.formatDate(time));
+            boolean started = currentDate.after(startDate);
+            return started;
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private boolean finished(Time time){
         if (mParsePermission.getString(END_DATE) == null) return true;
-        return mParsePermission.getString(END_DATE).compareTo(BluetoothProtocol.formatDate(time)) > 0;
+        try {
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm",
+                    Locale.getDefault()).parse(mParsePermission.getString(END_DATE));
+            Date currentDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm",
+                    Locale.getDefault()).parse(BluetoothProtocol.formatDate(time));
+            boolean finished = currentDate.after(endDate);
+            return finished;
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean isValid(){
         Time time = new Time();
+        time.setToNow();
         if (mParsePermission.getInt(TYPE) == ADMIN_PERMISSION) return true;
         else if (mParsePermission.getInt(TYPE) == PERMANENT_PERMISSION && started(time)){
             return true;
@@ -381,22 +422,27 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         mParsePermission.put(KEY, key);
     }
 
-    public static void unpinAll(){
-        ParseQuery<ParseObject> query = new ParseQuery<>(Permission.PERMISSION_CLASS_NAME);
-        query.fromLocalDatastore();
-
-        query.findInBackground(new FindCallback<ParseObject>() {
+    public static void unpinAll() {
+        new Thread(new Runnable() {
             @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                for (ParseObject o : list) {
-                    try {
-                        o.unpin();
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
+            public void run() {
+                ParseQuery<ParseObject> query = new ParseQuery<>(Permission.PERMISSION_CLASS_NAME);
+                query.fromLocalDatastore();
+
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        for (ParseObject o : list) {
+                            try {
+                                o.unpin();
+                            } catch (ParseException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
                     }
-                }
+                });
             }
-        });
+        }).start();
     }
 
     public boolean isAdmin(){
@@ -432,9 +478,12 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         query.whereEqualTo(Permission.USER_ID, user.getId());
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void done(List<ParseObject> parsePermissions, ParseException e) {
-                new ProcessNetworkPermissionsTask(listener).execute(parsePermissions);
-
+            public void done(List<ParseObject> parsePermissions, com.parse.ParseException e) {
+                if (e != null) {
+                    ParseErrorHandler.handleError(e);
+                } else {
+                    new ProcessNetworkPermissionsTask(listener).execute(parsePermissions);
+                }
             }
         });
     }
@@ -445,7 +494,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         query.whereEqualTo(MASTER_ID, master.getId());
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void done(List<ParseObject> parsePermissions, ParseException e) {
+            public void done(List<ParseObject> parsePermissions, com.parse.ParseException e) {
                 ArrayList<Permission> oldPermissions = master.getAllPermissions();
                 for (Permission permission : oldPermissions) {
                     boolean found = false;
@@ -474,6 +523,12 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
         } else {
             return true;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Permission other = (Permission) o;
+        return mParsePermission.getObjectId().equals(other.getObjectId());
     }
 
     private static ArrayList<Permission> getAllLocal() throws ParseException {
@@ -505,6 +560,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
             try {
                 ArrayList<Permission> oldPermissions = Permission.getPermissions(User.getLoggedUser().getId());
                 if (params[0] != null) {
+                    // Delete invalid local permissions
                     for (Permission oldPermission : oldPermissions) {
                         boolean found = false;
                         for (ParseObject parsePermission : params[0]) {
@@ -533,7 +589,7 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
                         if (master != null && permission.getSlaveId() == Slave.ALL_SLAVES) {
                             master.fetchSlaves();
                         }
-                        if (User.getLoggedUser().getAdminPermission(master) != null) {
+                        if (Permission.getType(permission.getType()) == 0) {
                             fetchPermissions(master);
                         }
                         permission.saveLocal();
@@ -546,7 +602,6 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
             return permissions;
         }
 

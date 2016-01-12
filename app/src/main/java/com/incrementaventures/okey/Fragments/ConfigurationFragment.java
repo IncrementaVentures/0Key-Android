@@ -3,6 +3,7 @@ package com.incrementaventures.okey.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,8 +29,6 @@ public class ConfigurationFragment extends Fragment {
     EditText mName;
     @Bind(R.id.new_0key_factory_password)
     EditText mFactoryPassword;
-    @Bind(R.id.new_0key_location)
-    EditText mLocation;
     @Bind(R.id.new_0key_new_password)
     EditText mNewPassword;
 
@@ -57,6 +56,10 @@ public class ConfigurationFragment extends Fragment {
 
     @OnClick(R.id.ok_button)
     public void onOkButtonClick() {
+        if (mNewPassword.getText().toString().length() != 4) {
+            Snackbar.make(getView(), R.string.key_must_have_length, Snackbar.LENGTH_LONG).show();
+            return;
+        }
         Master master  = Master.create(mMasterId, mName.getText().toString(),
                 User.getLoggedUser().getId());
         mListener.onConfigureMasterClick(mNewPassword.getText().toString(),

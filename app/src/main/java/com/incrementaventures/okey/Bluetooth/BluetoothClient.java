@@ -9,8 +9,11 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.format.Time;
 import android.util.Log;
 import android.util.SparseArray;
@@ -27,9 +30,12 @@ import java.util.UUID;
 
 public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
-    private final int NORMAL_SCAN_TIME = 7000;
+    private final int NORMAL_SCAN_TIME = 5000;
     private final int LONG_SCAN_TIME = 120000;
     private final int MEDIUM_SCAN_TIME = 12000;
+
+    private final int MAX_RETRIES = 5;
+    private final int RETRY_INTERVAL_MS = 1000;
 
     public static final int CLOSE_MODE = 0;
     public static final int OPEN_MODE = 1;
@@ -43,11 +49,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int DELETE_PERMISSION_MODE = 12;
     public static final int PAIR_SLAVES_MODE = 13;
 
-    public static final int DOOR_ALREADY_CLOSED = 2;
-    public static final int DOOR_ALREADY_OPENED = 3;
-    public static final int ADMIN_ALREADY_ASSIGNED = 5;
-    public static final int ADMIN_ASSIGNED = 6;
-
+    /**
+     * Error messages.
+     */
     public static final int TIMEOUT = 101;
     public static final int RESPONSE_INCORRECT = 102;
     public static final int CANT_OPEN = 103;
@@ -58,12 +62,19 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     public static final int DONT_HAVE_PERMISSION_THIS_HOUR = 108;
     public static final int PERMISSION_NOT_EDITED = 109;
     public static final int DOOR_NOT_CONFIGURED = 110;
+    public static final int STILL_SCANNING = 111;
+
     private boolean mScanning;
+    private boolean mTryingToDiscoverServices;
+    private boolean mTryingToConnect;
     private boolean mConnected;
     private boolean mSending;
     private boolean mWaitingResponse;
+    private boolean mConnectionFinished;
+    private int mConnectionsCount;
 
     private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothManager mBluetoothManager;
 
     private BluetoothGattCharacteristic mWriteCharacteristic;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
@@ -99,19 +110,36 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     private Permission mPermission;
     private Master mMaster;
 
+    private static BluetoothClient sInstance;
+
+
+    private int mRetryCount;
+
     /**
-     * Handles the connection with the BLE device
      * @param context context of the call
      * @param listener Usually a user, or any who implements OnBluetoothToUserResponse
      */
-    public BluetoothClient(Context context,  OnBluetoothToUserResponse listener) {
+    private BluetoothClient(Context context, OnBluetoothToUserResponse listener) {
         mListener = listener;
         mContext = context;
-        BluetoothManager bluetoothManager =
-                (BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
+        mBluetoothManager = (BluetoothManager) mContext.getApplicationContext()
+                .getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = mBluetoothManager.getAdapter();
         mHandler = new Handler();
         mDevices = new SparseArray<>();
+        mConnectionFinished = true;
+    }
+
+    public static BluetoothClient getInstance(Context context, OnBluetoothToUserResponse listener) {
+        if (sInstance == null) {
+            sInstance = new BluetoothClient(context, listener);
+        }
+        sInstance.mListener = listener;
+        sInstance.mContext = context;
+        sInstance.mBluetoothManager = (BluetoothManager) context.getApplicationContext()
+                .getSystemService(Context.BLUETOOTH_SERVICE);
+        sInstance.mBluetoothAdapter = sInstance.mBluetoothManager.getAdapter();
+        return sInstance;
     }
 
     public interface OnBluetoothToUserResponse{
@@ -250,52 +278,121 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     }
 
     private void startScan(int time){
-        mScanning = true;
-        mBluetoothAdapter.startLeScan(this);
-        // Stop the scanning after NORMAL_SCAN_TIME miliseconds. Saves battery.
+        Log.d("BLUETOOTH CONNECTION", "---------------------");
+        Log.d("BLUETOOTH CONNECTION", "Starting scanning");
+        if (!mBluetoothAdapter.startLeScan(this)) {
+            Log.d("BLUETOOTH CONNECTION", "Cant start Scan");
+            mListener.error(STILL_SCANNING);
+            stopScan();
+        } else {
+            mConnectionsCount++;
+            mScanning = true;
+            mDevices = new SparseArray<>();
+            mConnectionFinished = false;
+            final int previousCount = mConnectionsCount;
+            // Stop the scanning after time miliseconds.
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("BLUETOOTH CONNECTION", "After 'time' ms, trying to stop scan");
+                    if (previousCount == mConnectionsCount) {
+                        stopScan();
+                    }
+                }
+            }, time);
+        }
+    }
+
+    private void stopScan() {
+        if (mScanning) {
+            mScanning = false;
+            mBluetoothAdapter.stopLeScan(this);
+            Log.d("BLUETOOTH CONNECTION", "Scan stopped");
+            mListener.stopScanning();
+            if (mDevices.size() == 0 && mMode != SCAN_MODE && !isWorking()) {
+                mListener.deviceNotFound();
+            }
+        }
+    }
+
+    public boolean isWorking() {
+        return mTryingToConnect || mTryingToDiscoverServices || mConnected || mWaitingResponse || mSending;
+    }
+
+    private boolean isRetryLimitReached() {
+        return mRetryCount > MAX_RETRIES;
+    }
+
+    private void retryIfNecessary(final BluetoothDevice device, final BluetoothGatt gatt) {
+        if (isRetryLimitReached()) {
+            Log.d("BLUETOOTH CONNECTION", "Try count limit reached");
+            finishConnection(gatt);
+            mRetryCount = 0;
+            mListener.error(TIMEOUT);
+            return;
+        }
+        mRetryCount++;
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                stopScan();
+                Log.d("BLUETOOTH CONNECTION", "Check if is frozen.");
+                if (isWorking()) {
+                    Log.d("BLUETOOTH CONNECTION", "Frozen, create new connection.");
+                    BluetoothGatt gatt = device.connectGatt(mContext, false, mGattCallback);
+                    retryIfNecessary(device, gatt);
+                }
             }
-        }, time);
+        }, RETRY_INTERVAL_MS);
     }
 
-    private void stopScan(){
-        mScanning = false;
-        mBluetoothAdapter.stopLeScan(this);
-        mListener.stopScanning();
-        if (mDevices.size() == 0 && mMode != SCAN_MODE){
-            mListener.deviceNotFound();
+    private void finishConnection(BluetoothGatt gatt) {
+        if (gatt != null) {
+            int connectionState =
+                    mBluetoothManager.getConnectionState(gatt.getDevice(), BluetoothGatt.GATT);
+            if (connectionState == BluetoothGatt.STATE_CONNECTED
+                    || connectionState == BluetoothGatt.STATE_CONNECTING) {
+                Log.d("BLUETOOTH CONNECTION", "Disconnecting gatt.");
+                gatt.disconnect();
+            }
         }
+        mRetryCount = 0;
+        mConnected = false;
+        mTryingToConnect = false;
+        mTryingToDiscoverServices = false;
+        mWaitingResponse = false;
+        mSending = false;
+        mConnectionFinished = true;
+        stopScan();
     }
 
     /*
         Called when a devices is found.
      */
     @Override
-    public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-        if (device.getName() == null) return;
-        if ((mMode == OPEN_MODE && device.getName().equals(mMasterId))
-                || (mMode == CREATE_NEW_PERMISSION_MODE && device.getName().equals(mMasterId))
-                || (mMode == FIRST_ADMIN_CONNECTION_MODE && device.getName().equals(mMasterId))
-                || (mMode == READ_MY_PERMISSION_MODE && device.getName().equals(mMasterId))
-                || (mMode == READ_ALL_PERMISSIONS_MODE && device.getName().equals(mMasterId))
-                || (mMode == GET_SLAVES_MODE && device.getName().equals(mMasterId))
-                || (mMode == DELETE_PERMISSION_MODE && device.getName().equals(mMasterId))
-                || (mMode == EDIT_PERMISSION_MODE && device.getName().endsWith(mMasterId))
-                || (mMode == PAIR_SLAVES_MODE && device.getName().equals(mMasterId))) {
+    public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+        String deviceName = device.getName();
+        if (deviceName == null) return;
+        Log.d("BLUETOOTH CONNECTION", "Device found: " + device.getName());
+        if ((mMode == OPEN_MODE && deviceName.equals(mMasterId))
+                || (mMode == CREATE_NEW_PERMISSION_MODE && deviceName.equals(mMasterId))
+                || (mMode == FIRST_ADMIN_CONNECTION_MODE && deviceName.equals(mMasterId))
+                || (mMode == READ_MY_PERMISSION_MODE && deviceName.equals(mMasterId))
+                || (mMode == READ_ALL_PERMISSIONS_MODE && deviceName.equals(mMasterId))
+                || (mMode == GET_SLAVES_MODE && deviceName.equals(mMasterId))
+                || (mMode == DELETE_PERMISSION_MODE && deviceName.equals(mMasterId))
+                || (mMode == EDIT_PERMISSION_MODE && deviceName.endsWith(mMasterId))
+                || (mMode == PAIR_SLAVES_MODE && deviceName.equals(mMasterId))) {
             mDevices.put(device.hashCode(), device);
-            device.connectGatt(mContext, false, mGattCallback);
-            mHandler.postDelayed(new Runnable() {
+            stopScan();
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    if (mWaitingResponse || mSending) {
-                        mListener.error(TIMEOUT);
-                    }
+                    Log.d("BLUETOOTH CONNECTION", "Executing first device.connectGatt()");
+                    BluetoothGatt gatt = device.connectGatt(mContext, false, mGattCallback);
+                    retryIfNecessary(device, gatt);
+                    mTryingToConnect = true;
                 }
-            }, 10000);
-
+            });
         } else if (mMode == SCAN_MODE) {
             mListener.deviceFound(device, rssi, scanRecord);
         }
@@ -307,12 +404,25 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
     BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(final BluetoothGatt gatt, int status, int newState) {
-            if (!mConnected && BluetoothProtocol.STATE_CONNECTED == newState){
+            Log.d("BLUETOOTH CONNECTION", "On connection state changed. Device: "+ gatt.getDevice().getAddress());
+            if (!mConnected && BluetoothGatt.STATE_CONNECTED == newState) {
+                Log.d("BLUETOOTH CONNECTION", "Connected");
+                mTryingToConnect = false;
+                mTryingToDiscoverServices = true;
                 mConnected = true;
                 gatt.discoverServices();
             }
-            else if(BluetoothProtocol.STATE_DISCONNECTED == newState){
+            else if(BluetoothGatt.STATE_DISCONNECTED == newState) {
+                Log.d("BLUETOOTH CONNECTION", "Disconnected and closing gatt.");
                 mConnected = false;
+                gatt.close();
+                if (!mConnectionFinished && mRetryCount == 0) {
+                    finishConnection(gatt);
+                }
+            } else if (BluetoothGatt.STATE_CONNECTING == newState) {
+                Log.d("BLUETOOTH CONNECTION", "Connecting.");
+            } else if (BluetoothGatt.STATE_DISCONNECTING == newState) {
+                Log.d("BLUETOOTH CONNECTION", "Disconnecting.");
             }
         }
 
@@ -336,7 +446,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                                       int status) {
             gatt.setCharacteristicNotification(mNotifyCharacteristic, true);
             String message;
-            switch (mMode){
+            switch (mMode) {
                 case OPEN_MODE:
                     // Separate the messsage in 20 bytes parts, then send each part
                     message = BluetoothProtocol.buildOpenMessage(mPermissionKey, mPermission.getSlaveId(), mSlaveId);
@@ -391,7 +501,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                                             BluetoothGattCharacteristic characteristic) {
             mWaitingResponse = false;
             String response = new String(characteristic.getValue());
-            Log.d("BLUETOOTH MESSAGE", response);
+            Log.d("BLUETOOTH CONNECTION", "Message received: " + response);
             if (mReceivedMessageParts == null) mReceivedMessageParts = new LinkedList<>();
             mReceivedMessageParts.offer(response);
 
@@ -399,6 +509,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             if (!BluetoothProtocol.isLastMessagePart(response)){
                 return;
             }
+            finishConnection(gatt);
 
             String fullMessage = joinMessageParts(mReceivedMessageParts);
             String responseCode = BluetoothProtocol.getResponseCode(fullMessage);
@@ -423,8 +534,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     mListener.error(RESPONSE_INCORRECT);
                     break;
             }
-            gatt.disconnect();
-            gatt.close();
         }
 
         /*
@@ -437,13 +546,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
             if (mToSendMessageParts.size() == 0){
                 mWaitingResponse = true;
                 mSending = false;
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        gatt.disconnect();
-                        gatt.close();
-                    }
-                }, 5000);
                 return;
             }
             // Sends the message until is finished
@@ -464,6 +566,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
          */
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            Log.d("BLUETOOTH CONNECTION", "Services discovered");
+            mTryingToDiscoverServices = false;
             BluetoothGattService service = gatt.getService(UUID.fromString(
                     BluetoothProtocol.DOOR_SERVICE_UUID));
 
@@ -489,11 +593,12 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         BluetoothGattDescriptor descriptor = mNotifyCharacteristic.getDescriptor(configNotifyUuid);
         descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
         gatt.writeDescriptor(descriptor);
-        
+
     }
 
     private void sendMessage(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
                              byte[] part){
+        Log.d("BLUETOOTH CONNECTION", "Sending message: " + new String(part));
         characteristic.setValue(part);
         gatt.writeCharacteristic(characteristic);
     }
@@ -514,40 +619,40 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         String key = BluetoothProtocol.getNewPermissionKey(fullMessage);
         if (!errorCode.equals(BluetoothProtocol.OK_ERROR_CODE)){
             int e = determineError(errorCode);
-                    mListener.error(e);
-                    return;
-            }
+            mListener.error(e);
+            return;
+        }
 
-            if (key != null) {
-                switch (mMode) {
-                    case FIRST_ADMIN_CONNECTION_MODE:
-                        mMaster.save();
-                        Time now = new Time();
-                        now.setToNow();
-                        mPermission = Permission.create(User.getLoggedUser(),
-                                mMaster,
-                                Permission.ADMIN_PERMISSION,
-                                key,
-                                BluetoothProtocol.formatDate(now),
-                                Permission.PERMANENT_DATE,
-                                0);
-                        mListener.masterConfigured(mMaster, mPermission);
-                        break;
-                    case CREATE_NEW_PERMISSION_MODE:
-                        mListener.permissionCreated(key, mPermission);
-                        break;
-                    case EDIT_PERMISSION_MODE:
-                        mPermission.setSlaveId(mPermission.getSlaveId());
-                        mPermission.setStartDate(mPermission.getStartDate());
-                        mPermission.setEndDate(mPermission.getEndDate());
-                        mPermission.setType(Permission.getType(mPermission.getType()));
-                        mListener.permissionEdited(key, mPermission);
-                        break;
-                    case DELETE_PERMISSION_MODE:
-                        mListener.permissionDeleted(mPermission);
-                        break;
-                    default:
-                        mListener.error(RESPONSE_INCORRECT);
+        if (key != null) {
+            switch (mMode) {
+                case FIRST_ADMIN_CONNECTION_MODE:
+                    mMaster.save();
+                    Time now = new Time();
+                    now.setToNow();
+                    mPermission = Permission.create(User.getLoggedUser(),
+                            mMaster,
+                            Permission.ADMIN_PERMISSION,
+                            key,
+                            BluetoothProtocol.formatDate(now),
+                            Permission.PERMANENT_DATE,
+                            0);
+                    mListener.masterConfigured(mMaster, mPermission);
+                    break;
+                case CREATE_NEW_PERMISSION_MODE:
+                    mListener.permissionCreated(key, mPermission);
+                    break;
+                case EDIT_PERMISSION_MODE:
+                    mPermission.setSlaveId(mPermission.getSlaveId());
+                    mPermission.setStartDate(mPermission.getStartDate());
+                    mPermission.setEndDate(mPermission.getEndDate());
+                    mPermission.setType(Permission.getType(mPermission.getType()));
+                    mListener.permissionEdited(key, mPermission);
+                    break;
+                case DELETE_PERMISSION_MODE:
+                    mListener.permissionDeleted(mPermission);
+                    break;
+                default:
+                    mListener.error(RESPONSE_INCORRECT);
             }
         } else {
             switch (mMode){
@@ -566,11 +671,11 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         }
     }
 
-    private void processOpenDoorResponse(String fullMessage){
+    protected void processOpenDoorResponse(String fullMessage) {
         if (BluetoothProtocol.isDoorOpened(fullMessage)) {
             mListener.doorOpened(OPEN_MODE);
         }
-        else{
+        else {
             String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
             int e = determineError(errorCode);
             mListener.error(e);
@@ -584,9 +689,9 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                 HashMap<String, String> data = BluetoothProtocol.getPermissionData(fullMessage);
                 int type = Integer.valueOf(data.get(Permission.TYPE));
                 mListener.permissionReceived(type,
-                                             data.get(Permission.KEY),
-                                             data.get(Permission.START_DATE),
-                                             data.get(Permission.END_DATE)) ;
+                        data.get(Permission.KEY),
+                        data.get(Permission.START_DATE),
+                        data.get(Permission.END_DATE)) ;
                 break;
             default:
                 int e = determineError(errorCode);
@@ -597,7 +702,6 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
 
     private void processAllPermissionsResponse(String fullMessage){
         String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
-
         switch (errorCode){
             case BluetoothProtocol.OK_ERROR_CODE:
                 String onlyPermissionData = fullMessage.substring(2, fullMessage.length()-3);
@@ -608,7 +712,7 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
                     return;
                 }
                 for (String p : permissionData){
-                   permissions.add(BluetoothProtocol.getPermissionData(p));
+                    permissions.add(BluetoothProtocol.getPermissionData(p));
                 }
 
                 mListener.permissionsReceived(permissions) ;
@@ -624,7 +728,8 @@ public class BluetoothClient implements BluetoothAdapter.LeScanCallback {
         String errorCode = BluetoothProtocol.getErrorCode(fullMessage);
         switch (errorCode){
             case BluetoothProtocol.OK_ERROR_CODE:
-                ArrayList<Slave> slaves = BluetoothProtocol.getSlavesList(fullMessage);
+                ArrayList<Slave> slaves = BluetoothProtocol.getSlavesList(fullMessage,
+                        User.getLoggedUser().getId());
                 if (slaves.size() == 0) mListener.masterWithNoSlaves();
                 mListener.slavesFound(mMaster, slaves);
                 break;

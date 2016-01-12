@@ -105,6 +105,7 @@ public class LoginFragment extends Fragment implements User.OnParseUserLoginResp
             parseUser.saveInBackground();
         }
         if (parseUser.getBoolean(User.EMAIL_VERIFIED)) {
+            if (getActivity() == null) return;
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
             getActivity().finish();

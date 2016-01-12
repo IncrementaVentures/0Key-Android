@@ -15,6 +15,7 @@ public class BluetoothProtocol {
     public static final int STATE_DISCONNECTED = 0;
     public static final int STATE_CONNECTING = 1;
     public static final int STATE_CONNECTED = 2;
+    public static final int STATE_DISCONNECTING = 3;
 
     public static final String SEPARATOR = ";";
     public static final String ITEM_SEPARATOR = "&";
@@ -453,7 +454,8 @@ public class BluetoothProtocol {
     public static boolean isDoorOpened(String response) {
         String[] parts = response.split(SEPARATOR);
         String resultCode = parts[1];
-        if (resultCode.equals(String.valueOf(ERROR))) {
+        String errorCode = parts[2];
+        if (resultCode.equals(String.valueOf(ERROR)) || !errorCode.equals(EMPTY)) {
             return false;
         }
         else if (resultCode.equals(String.valueOf(SUCCESS))) {
@@ -475,7 +477,7 @@ public class BluetoothProtocol {
         return false;
     }
 
-    public static ArrayList<Slave> getSlavesList(String response){
+    public static ArrayList<Slave> getSlavesList(String response, String userId){
         response = response.substring(2, response.length()-3);
         String[] parts = response.split(ITEM_SEPARATOR);
         ArrayList<Slave> slaves = new ArrayList<>();
@@ -485,7 +487,7 @@ public class BluetoothProtocol {
             String id = part.split(SEPARATOR)[0];
             String type = part.split(SEPARATOR)[1];
             slaves.add(Slave.create("", Slave.DEFAULT_NAME + " " + id, Integer.valueOf(type),
-                    Integer.valueOf(id), User.getLoggedUser().getId()));
+                    Integer.valueOf(id), userId));
         }
         return slaves;
     }

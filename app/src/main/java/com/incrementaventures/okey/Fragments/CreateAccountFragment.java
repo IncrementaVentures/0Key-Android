@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.User;
+import com.incrementaventures.okey.Networking.NetworkingUtils;
 import com.incrementaventures.okey.R;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -47,8 +48,6 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
 
     View view;
     CreateAccountFragment thisFragment = this;
-
-    private ProgressDialog mProgressDialog;
 
     public CreateAccountFragment() {
     }
@@ -101,8 +100,12 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
                     default:
                         sex = User.MALE;
                 }
-                User.signUp(thisFragment, name, password, email, phone, sex, birthday);
-                Snackbar.make(getView(), R.string.creating_account, Snackbar.LENGTH_SHORT).show();
+                if (NetworkingUtils.isOnline(getContext())) {
+                    User.signUp(thisFragment, name, password, email, phone, sex, birthday);
+                    Snackbar.make(getView(), R.string.creating_account, Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -152,8 +155,9 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
 
     @Override
     public void authError(ParseException e) {
-        if (mProgressDialog != null) mProgressDialog.dismiss();
-        Snackbar.make(getView(), R.string.auth_error, Snackbar.LENGTH_SHORT).show();
-
+        if (getView() == null) return;
+        Snackbar.make(getView(),
+                e.getMessage().substring(0, 1).toUpperCase() + e.getMessage().substring(1),
+                Snackbar.LENGTH_SHORT).show();
     }
 }
