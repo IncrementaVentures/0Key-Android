@@ -64,11 +64,7 @@ public class MainActivity extends AppCompatActivity implements
         ParseErrorHandler.OnParseErrorListener {
 
     public static final int REQUEST_ENABLE_BT = 1;
-    public static final int FIRST_CONFIG = 2;
-    public static final String DEFAULT_KEY_EXTRA = "defaultkey";
-    public static final String NEW_KEY_EXTRA = "newkey";
-    public static final String MASTER_NAME_EXTRA = "doorname";
-    public static final String SCANNED_DOOR_EXTRA = "scanneddoor";
+
 
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
