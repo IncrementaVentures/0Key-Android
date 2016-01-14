@@ -349,6 +349,8 @@ public class ModifyPermissionFragment extends Fragment {
         newFragment.show(getActivity().getFragmentManager(), "datePicker");
     }
 
+
+
     @OnClick(R.id.ok_button)
     public void newPermissionClicked() {
         if (!NetworkingUtils.isOnline(getContext())) {

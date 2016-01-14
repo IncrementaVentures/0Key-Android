@@ -105,12 +105,12 @@ public class PermissionsFragment extends Fragment {
     }
 
     public void onPermissionsReceived(ArrayList<Permission> permissions, final boolean newPermissions) {
-        for (Permission permission : permissions) {
-            if (!mPermissions.contains(permission) &&
-                    (mMaster == null || permission.getMasterId().equals(mMaster.getId()))) {
-                mPermissions.add(permission);
-            }
+        if (mPermissions == null) {
+            mPermissions = new ArrayList<>();
         }
+        mPermissions.clear();
+        mPermissions.addAll(permissions);
+
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override

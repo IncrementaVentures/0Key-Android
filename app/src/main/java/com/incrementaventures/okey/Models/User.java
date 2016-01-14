@@ -351,7 +351,7 @@ public class User implements BluetoothClient.OnBluetoothToUserResponse,
             mBluetoothListener.bluetoothNotSupported();
             return;
         }
-        else if (!mBluetoothClient.isEnabled()){
+        else if (!mBluetoothClient.isEnabled()) {
             mBluetoothListener.enableBluetooth();
             return;
         }
