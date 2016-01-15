@@ -23,6 +23,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.incrementaventures.okey.Fragments.ConfigurationFragment;
 import com.incrementaventures.okey.Fragments.MasterFragment;
@@ -311,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void deviceNotFound() {
         enableOpenButton();
+        logAnswers(new CustomEvent("Device not found"));
         Snackbar.make(mRootView, R.string.device_not_found, Snackbar.LENGTH_LONG).show();
     }
 
@@ -328,6 +331,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void doorOpened(final int state) {
+        logAnswers(new CustomEvent("Door opened"));
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -335,6 +339,10 @@ public class MainActivity extends AppCompatActivity implements
                 Snackbar.make(mRootView, R.string.door_opened, Snackbar.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void logAnswers(CustomEvent event) {
+        Answers.getInstance().logCustom(event);
     }
 
     @Override
@@ -369,6 +377,7 @@ public class MainActivity extends AppCompatActivity implements
     public void permissionCreated(String key, Permission permission) {
         permission.setKey(key);
         permission.share();
+        logAnswers(new CustomEvent("Permission created"));
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -394,6 +403,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void permissionEdited(String key, Permission newPermission) {
         newPermission.save();
+        logAnswers(new CustomEvent("Permission edited"));
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -405,6 +415,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void permissionDeleted(Permission permission) {
         permission.delete();
+        logAnswers(new CustomEvent("Permission deleted"));
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -427,11 +438,16 @@ public class MainActivity extends AppCompatActivity implements
                 enableOpenButton();
                 switch (code) {
                     case BluetoothClient.TIMEOUT:
+                        logAnswers(new CustomEvent("Door not respond"));
                         Snackbar.make(mRootView, R.string.door_cant_open_timeout,
                                 Snackbar.LENGTH_LONG).show();
                         /**
                          * @see OkeyApplication#doRestart(Context).
                          */
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) { }
+
                         OkeyApplication.doRestart(MainActivity.this);
                         break;
                     case BluetoothClient.STILL_SCANNING:
@@ -439,6 +455,7 @@ public class MainActivity extends AppCompatActivity implements
                                 Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.RESPONSE_INCORRECT:
+                        logAnswers(new CustomEvent("Door not responding as expected"));
                         Snackbar.make(mRootView, R.string.door_cant_open_bad_code,
                                 Snackbar.LENGTH_LONG).show();
                         break;
@@ -467,6 +484,7 @@ public class MainActivity extends AppCompatActivity implements
                                 Snackbar.LENGTH_LONG).show();
                         break;
                     case BluetoothClient.BAD_INPUT:
+                        logAnswers(new CustomEvent("Communication problem"));
                         Snackbar.make(mRootView, R.string.bad_input_error,
                                 Snackbar.LENGTH_LONG).show();
                         break;

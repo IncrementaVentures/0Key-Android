@@ -147,7 +147,7 @@
     <string name="we_will_send_you_email_reset">We will send you an email to reset your password.</string>
     <string name="key_too_short">Key too short</string>
     <string name="manage_virtual_keys">Manage virtual keys</string>
-    <string name="link_0key_webpage">http://www.0key.solutions</string>
+    <string name="link_0key_webpage">https://0key.typeform.com/to/OQWtnx</string>
     <string name="change_security_pin">Change security pin</string>
     <string name="this_will_reset_your_security_pin">Are you sure? This will reset your security pin and you will have to set it again.</string>
     <string name="reset">Reset</string>
