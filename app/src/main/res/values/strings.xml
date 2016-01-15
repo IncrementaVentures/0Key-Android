@@ -136,6 +136,7 @@
     <string name="set_pin">Set pin</string>
     <string name="different_keys">Different keys</string>
     <string name="get_an_0key">Get an 0key</string>
+    <string name="get_an_0key_exclamation">Get an 0key!</string>
     <string name="resend_verification_email">Send email again</string>
     <string name="not_verified">Not verified</string>
     <string name="slave_paired">Slave paired</string>

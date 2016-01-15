@@ -2,6 +2,7 @@ package com.incrementaventures.okey.Fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -190,12 +191,14 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
 
     private void changeBottomTextToGet0key() {
         mShareImage.setVisibility(ImageView.GONE);
-        mBottomText.setText(R.string.get_an_0key);
+        mBottomText.setText(R.string.get_an_0key_exclamation);
+        mBottomText.setTypeface(mBottomText.getTypeface(), Typeface.BOLD);
     }
 
     private void changeBottomTextToShareKey() {
         mShareImage.setVisibility(ImageView.VISIBLE);
         mBottomText.setText(R.string.share_a_virtual_key);
+        mBottomText.setTypeface(mBottomText.getTypeface(), Typeface.NORMAL);
     }
 
     private void setMasters() {
@@ -332,15 +335,12 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         if (mMasters == null || mMasters.size() == 0) {
             mLeftArrowMaster.setVisibility(ImageButton.GONE);
             mRightArrowMaster.setVisibility(ImageButton.GONE);
-            mShowPermissionsButton.setVisibility(Button.GONE);
         } else if (mMasters.size() <= 1) {
             mLeftArrowMaster.setVisibility(ImageButton.GONE);
             mRightArrowMaster.setVisibility(ImageButton.GONE);
-            mShowPermissionsButton.setVisibility(Button.VISIBLE);
         } else {
             mLeftArrowMaster.setVisibility(ImageButton.VISIBLE);
             mRightArrowMaster.setVisibility(ImageButton.VISIBLE);
-            mShowPermissionsButton.setVisibility(Button.VISIBLE);
         }
     }
 

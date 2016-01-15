@@ -6,4 +6,6 @@
     <color name="turquoise">#36b9bb</color>
     <color name="card_shadow">#8c666666</color>
     <color name="white">#ffffff</color>
+    <color name="master_slave_color">#7d7d7d</color>
+    <color name="button_color">#9A9A9A</color>
 </resources>

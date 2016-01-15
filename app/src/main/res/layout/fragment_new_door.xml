@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:background="@color/white"
     tools:context="com.incrementaventures.okey.Fragments.NewDoorFragment">
 
 
@@ -31,12 +32,12 @@
     <ImageButton
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:padding="10dp"
+        android:padding="12dp"
         android:id="@+id/ok_button"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_action_check"
+        android:src="@drawable/add_gray"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 
