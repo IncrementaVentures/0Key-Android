@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\Andres\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-applinks\1.4.0\8ad21bf21784dacce5f2043afb97218cc377e835\bolts-applinks-1.4.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="8ad21bf21784dacce5f2043afb97218cc377e835">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\bolts-applinks-1.4.0-0a63fa342d4c5ecd9f1c093df199b697c0a89e7f.jar" />
+    </item>
+    <item
+        jar="C:\Users\Andres\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-tasks\1.4.0\d85884acf6810a3bbbecb587f239005cbc846dc4\bolts-tasks-1.4.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d85884acf6810a3bbbecb587f239005cbc846dc4">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\bolts-tasks-1.4.0-798d5e8f83f985c3cda95efa4f48b6d6ca48dfc7.jar" />
+    </item>
+
+</items>
