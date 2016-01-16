@@ -25,21 +25,23 @@
         android:textAppearance="@style/TextAppearance.AvenirBlackMedium"
         android:padding="10dp"
         android:text="@string/add_new_0key"
+        android:gravity="center"
         android:id="@+id/modify_permission_screen_title"
         fontPath="fonts/avenir.ttf"
-        android:layout_alignBottom="@+id/ok_button"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignBottom="@+id/cancel_button"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/cancel_button" />
 
     <ImageButton
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:padding="10dp"
+        android:padding="12dp"
         android:id="@+id/ok_button"
         android:layout_gravity="right"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_action_check"
+        android:src="@drawable/add_gray"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 

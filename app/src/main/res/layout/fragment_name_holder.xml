@@ -24,6 +24,7 @@
             android:padding="5dp"
             android:gravity="center_vertical"
             android:textAppearance="@style/TextAppearance.AvenirGreyLarge"
+            android:textColor="@color/master_slave_color"
             android:text="Door name"
             />
 

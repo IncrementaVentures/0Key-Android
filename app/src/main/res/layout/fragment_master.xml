@@ -6,7 +6,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/background"
+        android:src="@drawable/background_master_fragment"
         android:scaleType ="centerCrop"
         />
 
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/right_arrow"
                 android:background="@android:color/transparent"
-                android:padding="25dp"
+                android:padding="22dp"
                 android:id="@+id/right_arrow_master"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
@@ -51,7 +51,7 @@
                 android:src="@drawable/left_arrow"
                 android:visibility="gone"
                 android:background="@android:color/transparent"
-                android:padding="25dp"
+                android:padding="22dp"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:id="@+id/left_arrow_master"
@@ -65,6 +65,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/open_button"
             android:padding="10dp"
+
+            android:src="@drawable/app_icon_placeholder"
             android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
             android:scaleType="fitCenter"
@@ -95,7 +97,7 @@
                 android:src="@drawable/right_arrow"
                 android:background="@android:color/transparent"
                 android:visibility="gone"
-                android:padding="25dp"
+                android:padding="22dp"
                 android:id="@+id/right_arrow_slave"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
@@ -108,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/left_arrow"
                 android:background="@android:color/transparent"
-                android:padding="25dp"
+                android:padding="22dp"
                 android:visibility="gone"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
@@ -123,8 +125,13 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
             android:id="@+id/share_virtual_key"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingEnd = "13dp"
+            android:paddingStart="20dp"
+            android:background="@color/button_color"
             android:layout_below="@+id/selected_slave_bar"
             android:layout_centerHorizontal="true">
 
@@ -132,17 +139,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAppearance="@style/TextAppearance.AvenirGreySmall"
-                android:textColor="@color/turquoise"
-                android:gravity="center_vertical"
-                android:layout_marginRight="5dp"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:layout_marginEnd="5dp"
                 android:text="@string/share_a_virtual_key"
                 android:id="@+id/bottom_text" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:scaleType="fitCenter"
                 android:gravity="center_vertical"
+                android:padding="5dp"
                 android:adjustViewBounds="true"
                 android:src="@drawable/ic_action_share"
                 android:id="@+id/share_image" />
@@ -153,6 +161,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:visibility="gone"
             android:id="@+id/manage_virtual_keys"
             android:onClick="onShowPermissionsClicked"
             android:layout_alignParentBottom="true"

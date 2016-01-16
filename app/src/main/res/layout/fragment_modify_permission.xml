@@ -37,13 +37,13 @@
     <ImageButton
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:padding="10dp"
+        android:padding="13dp"
         android:id="@+id/ok_button"
         android:layout_gravity="right"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_action_check"
+        android:src="@drawable/add_gray"
         android:layout_alignEnd="@+id/permission_email" />
 
 

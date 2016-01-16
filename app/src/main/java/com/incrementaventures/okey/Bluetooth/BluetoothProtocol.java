@@ -255,7 +255,7 @@ public class BluetoothProtocol {
         // "02;date;adminKey;permissionKey;0;2;0;0;0;"
         builder.append(EMPTY).append(SEPARATOR);
         // "02;date;adminKey;permissionKey;0;2;0;0;0;*"
-        builder.append(MESSAGE_END).append(SEPARATOR);
+        builder.append(MESSAGE_END);
 
         return builder.toString();
     }
