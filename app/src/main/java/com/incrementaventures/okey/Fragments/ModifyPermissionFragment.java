@@ -156,7 +156,7 @@ public class ModifyPermissionFragment extends Fragment {
     }
 
     private Slave getAllSlavesRepresentative() {
-        return Slave.create(mSelectedMaster.getId(), getString(R.string.all_slaves), 0, 0,
+        return Slave.create(mSelectedMaster.getId(), getString(R.string.all_doors), 0, 0,
                 User.getLoggedUser().getId());
     }
 

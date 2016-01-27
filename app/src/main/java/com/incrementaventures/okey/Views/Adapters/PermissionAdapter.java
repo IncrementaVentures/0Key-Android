@@ -68,7 +68,7 @@ public class PermissionAdapter extends ArrayAdapter<Permission> {
         Slave slave = permission.getSlave();
         TextView slaveView = (TextView) view.findViewById(R.id.permission_slave_edit);
         if (slave == null || permission.getSlaveId() == 0) {
-            slaveView.setText(R.string.all_slaves);
+            slaveView.setText(R.string.all_doors);
         } else {
             slaveView.setText(String.valueOf(slave.getName()));
         }
