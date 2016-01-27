@@ -141,7 +141,6 @@ public class ModifyPermissionFragment extends Fragment {
         if (mMasters.size() > 0 && mSelectedMaster != null) {
             mSelectedMasterView.setText(mSelectedMaster.getName());
         }
-
     }
 
     private void setSlaves() {
@@ -151,7 +150,9 @@ public class ModifyPermissionFragment extends Fragment {
         mSlaves.add(getAllSlavesRepresentative());
         mSlaves.addAll(mSelectedMaster.getSlaves());
         mSelectedSlaveView.setClickable(true);
-        mSelectedSlave = mSlaves.get(0);
+        if (mSelectedSlave == null) {
+             mSelectedSlave = mSlaves.get(0);
+        }
         mSelectedSlaveView.setText(mSelectedSlave.getName());
     }
 
@@ -183,6 +184,7 @@ public class ModifyPermissionFragment extends Fragment {
             mEndDateView.setText(Permission.getFormattedDate(endDate));
             mPermissionTypeView.setText(mToEditPermission.getType());
             mSelectedMasterView.setOnClickListener(null);
+            mSelectedSlave = mToEditPermission.getSlave();
         } else {
             mStartDateView.setText(Permission.getFormattedDate("2016-01-01T00:01"));
             mEndDateView.setText(Permission.getFormattedDate("2016-01-01T00:01"));
