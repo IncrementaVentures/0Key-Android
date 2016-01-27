@@ -1,6 +1,7 @@
 package com.incrementaventures.okey.Activities;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -444,10 +446,9 @@ public class MainActivity extends AppCompatActivity implements
                         /**
                          * @see OkeyApplication#doRestart(Context).
                          */
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) { }
-
+                        ProgressDialog.show(MainActivity.this, "",
+                                getString(R.string.reestablishing_connection));
+                        SystemClock.sleep(2000);
                         OkeyApplication.doRestart(MainActivity.this);
                         break;
                     case BluetoothClient.STILL_SCANNING:

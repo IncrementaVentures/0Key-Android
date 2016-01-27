@@ -13,6 +13,8 @@ import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -529,6 +531,27 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     public boolean equals(Object o) {
         Permission other = (Permission) o;
         return mParsePermission.getObjectId().equals(other.getObjectId());
+    }
+
+    public static ArrayList<Permission> orderByUserName(ArrayList<Permission> permissions) {
+        if (permissions == null) return null;
+
+        Permission[] array = permissions.toArray(new Permission[permissions.size()]);
+        Arrays.sort(array, new Comparator<Permission>() {
+            @Override
+            public int compare(Permission lhs, Permission rhs) {
+                User leftUser = lhs.getUser();
+                User rightUser = rhs.getUser();
+                if (leftUser == null) {
+                    return -1;
+                }
+                if (rightUser == null) {
+                    return 1;
+                }
+                return leftUser.getName().compareTo(rightUser.getName());
+            }
+        });
+        return new ArrayList<>(Arrays.asList(array));
     }
 
     private static ArrayList<Permission> getAllLocal() throws ParseException {

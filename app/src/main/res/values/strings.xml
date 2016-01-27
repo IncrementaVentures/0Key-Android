@@ -163,5 +163,6 @@
     <string name="session_expired_login_again">Session expired, log in again.</string>
     <string name="check_internet_connection">Check your internet connection</string>
     <string name="virtual_key_information">Virtual key information</string>
+    <string name="reestablishing_connection">Please wait. We are reestablishing the connection.</string>
 
 </resources>

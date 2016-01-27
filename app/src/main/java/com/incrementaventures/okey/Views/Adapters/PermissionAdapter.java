@@ -15,6 +15,8 @@ import com.incrementaventures.okey.Models.User;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class PermissionAdapter extends ArrayAdapter<Permission> {
 
@@ -29,7 +31,6 @@ public class PermissionAdapter extends ArrayAdapter<Permission> {
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mListener = listener;
     }
-
     private void setUser(View view, Permission permission) {
         User user = permission.getUser();
         final TextView userNameView = (TextView) view.findViewById(R.id.user_name);

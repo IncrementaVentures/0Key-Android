@@ -2,88 +2,11 @@
 <items version="2" >
 
     <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.android.support\preference-v7\23.1.0\jars\classes.jar"
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.mikepenz\materialize\0.5.1\jars\classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="f6710ac076a15f4a754fc86783ff5ba447064a9e">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-5793d4d29e47b2626995707a50f20f96a8c1c4fc.jar" />
-    </item>
-    <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\beta\1.1.4\jars\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="ad5bb101ced4d3939225c9b57e5a3d81547c1fbb">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-07ffc8a7c95882d3c3f19cda07ef38d1a10980af.jar" />
-    </item>
-    <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\answers\1.3.6\jars\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="9af3b9b8114e685291aa00e6572b0a9131244956">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-57b4ba6c428375858fa86aed32fcbf05fa31d605.jar" />
-    </item>
-    <item
-        jar="C:\Users\Andres\.gradle\caches\modules-2\files-2.1\com.jakewharton\butterknife\7.0.1\d5d13ea991eab0252e3710e5df3d6a9d4b21d461\butterknife-7.0.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="d5d13ea991eab0252e3710e5df3d6a9d4b21d461">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\butterknife-7.0.1-055b1a0b7e0501dd38a74f129d53459fcd771cd3.jar" />
-    </item>
-    <item
-        jar="C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.1\support-annotations-23.1.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\support-annotations-23.1.1-6fd699aeef8bbc23a3ee27b7d45abde9e3ed1a1a.jar" />
-    </item>
-    <item
-        jar="C:\Users\Andres\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\picasso-2.5.2-1b8d1372e64c41ed63fde07e5a55fed78a5b2aad.jar" />
-    </item>
-    <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\uk.co.chrisjenx\calligraphy\2.1.0\jars\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="e653e15e62e8a59ddd76cc7f827bf8bce38ae7bb">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-b0c8860a73faac578e9bd1469f81ddaf2016ce86.jar" />
-    </item>
-    <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.mikepenz\materialdrawer\4.5.8\jars\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="6d6ddf70451696f31710ec2553fd07c24a9e59b3">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-f7949889fbf8a8009abd57ca46e20ab56ec4e6aa.jar" />
-    </item>
-    <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\crashlytics\2.5.5\jars\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="611605b6b640c1558f9bdea41de8ff837ab68ca8">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-6add13ca28a97f30716f9c2ac1f88314b5c767ef.jar" />
-    </item>
-    <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.android.support\design\23.1.1\jars\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="379471b2bd17d9737c050345c08e8c7d16589784">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-c97685fd7b1a969150a2f591d436f12302e893a7.jar" />
-    </item>
-    <item
-        jar="C:\StudioProjects\Okey\app\libs\Parse-1.12.0.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="6b89fba32ca73eda4b6a87ec479fac61818973f2">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\Parse-1.12.0-2bb8b36ce5048a5900835ce63f6a30efaecd45a0.jar" />
-    </item>
-    <item
-        jar="C:\StudioProjects\Okey\app\libs\ParseCrashReporting-1.9.4.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="7a11f2d74111fd9b02c2d091a1b76b82f6a4357e">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\ParseCrashReporting-1.9.4-ef831f18a0f8dba3204cd7ebb0a32b4dacc680df.jar" />
+        sha1="25e8af11fff99ad02250f52f2436e25f60cc1bbe">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-c3805864f76c83869cd00ee8db8b678d762d5f90.jar" />
     </item>
     <item
         jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\libs\internal_impl-23.1.1.jar"
@@ -93,11 +16,25 @@
         <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\internal_impl-23.1.1-ba8aba73a3b6c43a437f081395c43d0bea0b1a59.jar" />
     </item>
     <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.1.1\jars\classes.jar"
+        jar="C:\StudioProjects\Okey\app\libs\Parse-1.12.0.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="09c5e804bc67fc0580360043dff067df574a60d4">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-9799db726652c412091ec64f94cc2cdaabb82087.jar" />
+        sha1="6b89fba32ca73eda4b6a87ec479fac61818973f2">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\Parse-1.12.0-2bb8b36ce5048a5900835ce63f6a30efaecd45a0.jar" />
+    </item>
+    <item
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\io.fabric.sdk.android\fabric\1.3.10\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="a5db9a2dd46d84285ef737f65030b74b6e8ee2a4">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-ca72e3fbe88142a0245c1cd3bacae8b7cdc9dae4.jar" />
+    </item>
+    <item
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\crashlytics\2.5.5\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="611605b6b640c1558f9bdea41de8ff837ab68ca8">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-6add13ca28a97f30716f9c2ac1f88314b5c767ef.jar" />
     </item>
     <item
         jar="C:\Users\Andres\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-applinks\1.4.0\8ad21bf21784dacce5f2043afb97218cc377e835\bolts-applinks-1.4.0.jar"
@@ -107,6 +44,13 @@
         <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\bolts-applinks-1.4.0-0a63fa342d4c5ecd9f1c093df199b697c0a89e7f.jar" />
     </item>
     <item
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.1.1\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="09c5e804bc67fc0580360043dff067df574a60d4">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-9799db726652c412091ec64f94cc2cdaabb82087.jar" />
+    </item>
+    <item
         jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\crashlytics-core\2.3.8\jars\classes.jar"
         jumboMode="false"
         revision="21.1.2"
@@ -114,25 +58,39 @@
         <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-4b54f561d35ba6ed9fdb4bbe3c81e57e4277e69c.jar" />
     </item>
     <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.mikepenz\materialize\0.5.1\jars\classes.jar"
+        jar="C:\Users\Andres\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="25e8af11fff99ad02250f52f2436e25f60cc1bbe">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-c3805864f76c83869cd00ee8db8b678d762d5f90.jar" />
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\picasso-2.5.2-1b8d1372e64c41ed63fde07e5a55fed78a5b2aad.jar" />
     </item>
     <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.mikepenz\iconics-core\2.5.1\jars\classes.jar"
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.1\jars\classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="39424478261a9f98810223352349ea3e0e6d3691">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-ba8391b42a9acc875accdd5b844cb50cdb5b41aa.jar" />
+        sha1="5c5699834e9722f1c288fea2de82725d078ba127">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-405717bd8a379f2b2af72a8f1d4ffdef627426e4.jar" />
     </item>
     <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\io.fabric.sdk.android\fabric\1.3.10\jars\classes.jar"
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\answers\1.3.6\jars\classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="a5db9a2dd46d84285ef737f65030b74b6e8ee2a4">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-ca72e3fbe88142a0245c1cd3bacae8b7cdc9dae4.jar" />
+        sha1="9af3b9b8114e685291aa00e6572b0a9131244956">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-57b4ba6c428375858fa86aed32fcbf05fa31d605.jar" />
+    </item>
+    <item
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.mikepenz\materialdrawer\4.5.8\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="6d6ddf70451696f31710ec2553fd07c24a9e59b3">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-f7949889fbf8a8009abd57ca46e20ab56ec4e6aa.jar" />
+    </item>
+    <item
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\beta\1.1.4\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="ad5bb101ced4d3939225c9b57e5a3d81547c1fbb">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-07ffc8a7c95882d3c3f19cda07ef38d1a10980af.jar" />
     </item>
     <item
         jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\classes.jar"
@@ -149,11 +107,53 @@
         <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\bolts-tasks-1.4.0-798d5e8f83f985c3cda95efa4f48b6d6ca48dfc7.jar" />
     </item>
     <item
-        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.1\jars\classes.jar"
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.mikepenz\iconics-core\2.5.1\jars\classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="5c5699834e9722f1c288fea2de82725d078ba127">
-        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-405717bd8a379f2b2af72a8f1d4ffdef627426e4.jar" />
+        sha1="39424478261a9f98810223352349ea3e0e6d3691">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-ba8391b42a9acc875accdd5b844cb50cdb5b41aa.jar" />
+    </item>
+    <item
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.android.support\preference-v7\23.1.0\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="f6710ac076a15f4a754fc86783ff5ba447064a9e">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-5793d4d29e47b2626995707a50f20f96a8c1c4fc.jar" />
+    </item>
+    <item
+        jar="C:\Users\Andres\.gradle\caches\modules-2\files-2.1\com.jakewharton\butterknife\7.0.1\d5d13ea991eab0252e3710e5df3d6a9d4b21d461\butterknife-7.0.1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d5d13ea991eab0252e3710e5df3d6a9d4b21d461">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\butterknife-7.0.1-055b1a0b7e0501dd38a74f129d53459fcd771cd3.jar" />
+    </item>
+    <item
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\com.android.support\design\23.1.1\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="379471b2bd17d9737c050345c08e8c7d16589784">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-c97685fd7b1a969150a2f591d436f12302e893a7.jar" />
+    </item>
+    <item
+        jar="C:\StudioProjects\Okey\app\libs\ParseCrashReporting-1.9.4.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="7a11f2d74111fd9b02c2d091a1b76b82f6a4357e">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\ParseCrashReporting-1.9.4-ef831f18a0f8dba3204cd7ebb0a32b4dacc680df.jar" />
+    </item>
+    <item
+        jar="C:\StudioProjects\Okey\app\build\intermediates\exploded-aar\uk.co.chrisjenx\calligraphy\2.1.0\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="e653e15e62e8a59ddd76cc7f827bf8bce38ae7bb">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\classes-b0c8860a73faac578e9bd1469f81ddaf2016ce86.jar" />
+    </item>
+    <item
+        jar="C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.1\support-annotations-23.1.1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
+        <dex dex="C:\StudioProjects\Okey\app\build\intermediates\pre-dexed\debug\support-annotations-23.1.1-6fd699aeef8bbc23a3ee27b7d45abde9e3ed1a1a.jar" />
     </item>
 
 </items>

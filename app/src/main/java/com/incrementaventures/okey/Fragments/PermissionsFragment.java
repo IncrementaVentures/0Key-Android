@@ -92,6 +92,7 @@ public class PermissionsFragment extends Fragment {
             actionBar.setTitle(mMaster.getName());
             mPermissions = User.getLoggedUser().getInterestedPermissions(mMaster);
         }
+        mPermissions = Permission.orderByUserName(mPermissions);
     }
 
 
@@ -108,8 +109,15 @@ public class PermissionsFragment extends Fragment {
         if (mPermissions == null) {
             mPermissions = new ArrayList<>();
         }
-        mPermissions.clear();
-        mPermissions.addAll(permissions);
+        for (int i = 0; i < permissions.size(); i++) {
+            if (mPermissions.contains(permissions.get(i))) {
+                mPermissions.remove(mPermissions.indexOf(permissions.get(i)));
+                mPermissions.add(i, permissions.get(i));
+            } else {
+                mPermissions.add(permissions.get(i));
+            }
+        }
+        mPermissions = Permission.orderByUserName(mPermissions);
 
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
