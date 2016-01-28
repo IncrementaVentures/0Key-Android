@@ -116,7 +116,6 @@ public class ModifyPermissionFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_modify_permission, container, false);
         ButterKnife.bind(this, v);
-        hideToolbar();
         getArgumentsData();
         setMasters();
         setSlaves();
@@ -457,13 +456,6 @@ public class ModifyPermissionFragment extends Fragment {
         mPermissionModifiedListener.onDeletePermissionClicked(mToEditPermission,
                 adminPermission.getKey());
 
-    }
-
-    private void hideToolbar() {
-        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if ( actionBar != null) {
-            actionBar.hide();
-        }
     }
 
     @Override

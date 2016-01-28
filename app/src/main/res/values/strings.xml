@@ -5,10 +5,10 @@
     <string name="door_opened">Door opened</string>
     <string name="edit_virtual_key">Edit virtual key</string>
     <string name="editing_virtual_key">Editing virtual key</string>
-    <string name="edit_slave_name">Edit slave name</string>
+    <string name="edit_slave_name">Edit door name</string>
     <string name="edit_master_name">Edit master name</string>
-    <string name="pair_slaves">Pair slaves</string>
-    <string name="no_virtual_keys_for_this_slave">This slave doesn\'t have virtual keys.</string>
+    <string name="pair_slaves">Pair doors</string>
+    <string name="no_virtual_keys_for_this_slave">This door doesn\'t have virtual keys.</string>
     <string name="pairing_will_start">Requesting pairing</string>
     <string name="not_implemented_code_on_result">Not implemented code onResult()</string>
     <string name="ble_not_supported">Bluetooth LE not supported</string>
@@ -18,14 +18,14 @@
     <string name="door_cant_open_timeout">The door does not respond</string>
     <string name="door_cant_open_bad_code">The door is not responding as expected. Contact support.</string>
     <string name="door_cant_close">Can\'t close</string>
-    <string name="no_slaves_found_yet">No slaves yet.</string>
+    <string name="no_slaves_found_yet">No doors yet.</string>
     <string name="add_virtual_key">Add virtual key</string>
     <string name="open_door">Open door</string>
     <string name="open">Open</string>
     <string name="close_door">Close door</string>
     <string name="email">Email</string>
     <string name="door_already_configured"> Door already configured </string>
-    <string name="getting_slaves"> Getting slaves </string>
+    <string name="getting_slaves"> Getting doors </string>
     <string name="you_are_not_admin"> You are not an administrator </string>
     <string name="protect_with_key"> Protect app with key</string>
     <string name="pin"> PIN </string>
@@ -74,7 +74,7 @@
     <string name="creating_account"> Creating account </string>
     <string name="configure_or_set_key_first"> Configure master or set key first. </string>
     <string name="door_not_configured"> Configure master or set key first. </string>
-    <string name="master_with_no_slaves"> Master with no slaves </string>
+    <string name="master_with_no_slaves"> Master with no doors </string>
     <string name="virtual_key_edited"> Virtual key edited </string>
     <string name="virtual_key_deleted"> Virtual key deleted </string>
     <string name="virtual_keys"> Veritual keys</string>
@@ -110,8 +110,8 @@
     <string name="master_configured">Master configured</string>
     <string name="verify_account">Verify your account</string>
     <string name="no_masters_yet">No masters yet</string>
-    <string name="pairing_slave">Pairing slave</string>
-    <string name="slaves_added">Slaves added</string>
+    <string name="pairing_slave">Pairing door</string>
+    <string name="slaves_added">Doors added</string>
     <string name="logout">Logout</string>
     <string name="logging_out">Logging out</string>
     <string name="phone_number">Phone number</string>
@@ -131,7 +131,7 @@
     <string name="edit"> Edit </string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="unknown"> Unknown </string>
-    <string name="master_without_slaves">Master without slaves</string>
+    <string name="master_without_slaves">Master without doors</string>
     <string name="change_name">Change name</string>
     <string name="set_pin">Set pin</string>
     <string name="different_keys">Different keys</string>
@@ -139,7 +139,7 @@
     <string name="get_an_0key_exclamation">Get an 0key!</string>
     <string name="resend_verification_email">Send email again</string>
     <string name="not_verified">Not verified</string>
-    <string name="slave_paired">Slave paired</string>
+    <string name="slave_paired">Door paired</string>
     <string name="all_doors">All doors</string>
     <string name="forgot_your_password_click_here">Forgot your password? Click here</string>
     <string name="send_email">Send email</string>
@@ -148,7 +148,7 @@
     <string name="we_will_send_you_email_reset">We will send you an email to reset your password.</string>
     <string name="key_too_short">Key too short</string>
     <string name="manage_virtual_keys">Manage virtual keys</string>
-    <string name="link_0key_webpage">https://0key.typeform.com/to/OQWtnx</string>
+    <string name="link_0key_webpage">http://0key.solutions</string>
     <string name="change_security_pin">Change security pin</string>
     <string name="this_will_reset_your_security_pin">Are you sure? This will reset your security pin and you will have to set it again.</string>
     <string name="reset">Reset</string>
@@ -164,5 +164,8 @@
     <string name="check_internet_connection">Check your internet connection</string>
     <string name="virtual_key_information">Virtual key information</string>
     <string name="reestablishing_connection">Please wait. We are reestablishing the connection.</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

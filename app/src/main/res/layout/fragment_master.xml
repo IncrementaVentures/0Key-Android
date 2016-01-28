@@ -10,16 +10,19 @@
         android:scaleType ="centerCrop"
         />
 
+    <include layout="@layout/default_toolbar"
+        android:id="@+id/toolbar" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar"
         android:padding="16dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:layout_alignParentTop="true"
             android:id="@+id/selected_master_bar"
             android:layout_centerHorizontal="true">
 
@@ -30,7 +33,7 @@
                 android:textColor="@android:color/darker_gray"
                 android:id="@+id/master_name_container"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true" />
+                android:layout_alignParentStart="true" />
 
             <ImageButton
                 android:layout_width="60dp"

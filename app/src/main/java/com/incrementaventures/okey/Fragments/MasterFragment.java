@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +37,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MasterFragment extends Fragment implements Master.OnNetworkResponseListener {
+public class MasterFragment extends Fragment implements
+        Master.OnNetworkResponseListener,
+        ToolbarFragment {
     public static final String TAG = "master_fragment_tag";
 
     @Bind(R.id.right_arrow_master)
@@ -49,8 +53,7 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
 
     @Bind(R.id.slave_name_container)
     ViewPager mSlaveNameContainer;
-    private TextViewPagerAdapter mSlaveNameAdapter;
-
+    TextViewPagerAdapter mSlaveNameAdapter;
     @Bind(R.id.right_arrow_slave)
     ImageButton mRightArrowSlave;
     @Bind(R.id.left_arrow_slave)
@@ -63,9 +66,10 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     ImageView mShareImage;
     @Bind(R.id.share_virtual_key)
     LinearLayout mBottomLayout;
-
     @Bind(R.id.manage_virtual_keys)
     LinearLayout mShowPermissionsButton;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
 
     private ArrayList<Master> mMasters;
     private int mSelectedMasterIndex;
@@ -75,10 +79,16 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
     private int mSelectedSlaveIndex;
     private View mView;
 
+    @Override
+    public int getMenuResource() {
+        return R.menu.menu_main;
+    }
+
     public interface OnMasterFragmentListener {
         void shareKeySelected(Master master);
         void get0keySelected();
         void openWhenCloseSelected(Master master, Slave slave, String permissionKey);
+        void showMenuFragment();
     }
 
     View.OnClickListener mShareKeyListener = new View.OnClickListener() {
@@ -103,13 +113,31 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         if (mView == null) {
             mView = inflater.inflate(R.layout.fragment_master, container, false);
             ButterKnife.bind(this, mView);
+            setUpToolbar();
         } else {
             ButterKnife.bind(this, mView);
+            setUpToolbar();
             return mView;
         }
         Picasso.with(getContext()).load(R.drawable.app_icon_placeholder).into(mOpenButton);
         setData();
         return mView;
+    }
+
+    private void setUpToolbar() {
+        mToolbar.setNavigationIcon(R.drawable.ic_action_menu);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMasterFragmentListener.showMenuFragment();
+            }
+        });
+        mToolbar.setTitle("");
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar()
+                    .setDisplayShowHomeEnabled(true);
+        }
     }
 
     private void setData() {
@@ -571,5 +599,9 @@ public class MasterFragment extends Fragment implements Master.OnNetworkResponse
         public Fragment getInstanceItem(int position) {
             return mFragments.get(position);
         }
+    }
+
+    public ArrayList<Master> getMasters() {
+        return mMasters;
     }
 }

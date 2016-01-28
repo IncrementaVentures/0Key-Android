@@ -18,7 +18,7 @@ public class Slave implements ParseObject, Nameable {
     public static final String USER_ID = "user_id";
     public static final String NAME = "name";
     public static final String TYPE = "type";
-    public static final String DEFAULT_NAME = "Slave";
+    public static final String DEFAULT_NAME = "Door";
     public static final int ALL_SLAVES = 0;
 
     private com.parse.ParseObject mParseSlave;
@@ -39,6 +39,7 @@ public class Slave implements ParseObject, Nameable {
         mParseSlaveName.put(MASTER_ID, masterId);
         mParseSlaveName.put(SLAVE_ID, id);
         mParseSlaveName.put(USER_ID, userId);
+        mParseSlaveName.pinInBackground();
     }
 
     public Slave(com.parse.ParseObject parseSlave) {

@@ -14,15 +14,14 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
@@ -31,12 +30,14 @@ import com.incrementaventures.okey.Bluetooth.BluetoothClient;
 import com.incrementaventures.okey.Fragments.ConfigurationFragment;
 import com.incrementaventures.okey.Fragments.MasterFragment;
 import com.incrementaventures.okey.Fragments.InsertPinFragment;
+import com.incrementaventures.okey.Fragments.MastersFragment;
 import com.incrementaventures.okey.Fragments.MenuFragment;
 import com.incrementaventures.okey.Fragments.ModifyPermissionFragment;
 import com.incrementaventures.okey.Fragments.NameHolderFragment;
 import com.incrementaventures.okey.Fragments.NewDoorFragment;
 import com.incrementaventures.okey.Fragments.PermissionsFragment;
 import com.incrementaventures.okey.Fragments.PreferencesFragment;
+import com.incrementaventures.okey.Fragments.ToolbarFragment;
 import com.incrementaventures.okey.Models.Master;
 import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.Models.Slave;
@@ -47,6 +48,7 @@ import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -65,13 +67,11 @@ public class MainActivity extends AppCompatActivity implements
         PermissionsFragment.OnPermissionAdapterListener,
         NewDoorFragment.OnPairRequestedListener,
         NameHolderFragment.OnTextHolderFragmentClick,
-        ParseErrorHandler.OnParseErrorListener {
+        ParseErrorHandler.OnParseErrorListener,
+        MastersFragment.OnMastersFragmentListener {
 
     public static final int REQUEST_ENABLE_BT = 1;
 
-
-    @Bind(R.id.toolbar)
-    Toolbar mToolbar;
     @Bind(R.id.main_view)
     View mRootView;
 
@@ -99,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, mMasterFragment, MasterFragment.TAG)
                 .commit();
-        setUpToolbar();
     }
 
     @Override
@@ -121,41 +120,10 @@ public class MainActivity extends AppCompatActivity implements
         ParseErrorHandler.initialize(this);
     }
 
-
-    View.OnClickListener mShowMenuFragmentListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            showMenuFragment();
-        }
-    };
-
-    View.OnClickListener mBackListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onBackPressed();
-        }
-    };
-
-    private void showMenuFragment() {
+    public void showMenuFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, new MenuFragment(), MenuFragment.TAG)
                 .addToBackStack(MenuFragment.TAG).commit();
-    }
-
-    private void setUpToolbar() {
-        mToolbar.setNavigationIcon(R.drawable.ic_action_menu);
-        mToolbar.setNavigationOnClickListener(mShowMenuFragmentListener);
-        mToolbar.setTitle("");
-        setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-    }
-
-    private void showToolbar() {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().show();
-        }
     }
 
     public void checkNewPermissions() {
@@ -166,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().popBackStack();
         Snackbar.make(mRootView, R.string.updating_data, Snackbar.LENGTH_LONG).show();
         checkNewPermissions();
-        showToolbar();
     }
 
     private void checkPreferences() {
@@ -185,30 +152,8 @@ public class MainActivity extends AppCompatActivity implements
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             finish();
         } else {
-            try {
-                super.onBackPressed();
-                MasterFragment masterFragment = (MasterFragment)
-                        getSupportFragmentManager().findFragmentByTag(MasterFragment.TAG);
-                PermissionsFragment permissionsFragment = (PermissionsFragment)
-                        getSupportFragmentManager().findFragmentByTag(PermissionsFragment.TAG);
-                if ((masterFragment != null && masterFragment.isVisible())) {
-                    setUpToolbar();
-                    showToolbar();
-                    mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.VISIBLE);
-                    mToolbar.setTitle("");
-                    hideAddPermissionAndRefreshButtons();
-                } else if (permissionsFragment != null && permissionsFragment.isVisible()) {
-                    showToolbar();
-                    mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
-                    mToolbar.setNavigationOnClickListener(mBackListener);
-                    mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
-                    if (mCurrentUser.getAdminPermission(mMasterFragment.getSelectedMaster()) != null) {
-                        showAddPermissionAndRefreshButtons();
-                    } else {
-                        showRefreshButton();
-                    }
-                }
-            } catch (IllegalStateException e) { }
+            super.onBackPressed();
+            invalidateOptionsMenu();
         }
     }
 
@@ -217,11 +162,11 @@ public class MainActivity extends AppCompatActivity implements
         showRefreshButton();
     }
 
-    private void showAddPermissionButton() {
+    public void showAddPermissionButton() {
         mOptionsMenu.findItem(R.id.action_add_permission).setVisible(true);
     }
 
-    private void showRefreshButton() {
+    public void showRefreshButton() {
         mOptionsMenu.findItem(R.id.action_refresh_data).setVisible(true);
     }
 
@@ -230,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements
         hideRefreshButton();
     }
 
-    private void hideAddPermissionButton() {
+    public void hideAddPermissionButton() {
         mOptionsMenu.findItem(R.id.action_add_permission).setVisible(false);
     }
 
@@ -241,9 +186,36 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        int menuResource = getMenu();
+        if (menuResource == -1) {
+            return false;
+        }
+        getMenuInflater().inflate(menuResource, menu);
         mOptionsMenu = menu;
-        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    private int getMenu() {
+        Fragment visibleFragment = getVisibleFragment();
+        try {
+            if (visibleFragment != null) {
+                return ((ToolbarFragment) visibleFragment).getMenuResource();
+            } else {
+                return R.menu.menu_main;
+            }
+        } catch (ClassCastException e) {
+            return -1;
+        }
+    }
+
+    private Fragment getVisibleFragment(){
+        FragmentManager fragmentManager = MainActivity.this.getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        for(Fragment fragment : fragments){
+            if(fragment != null && fragment.isVisible())
+                return fragment;
+        }
+        return null;
     }
 
     @Override
@@ -260,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements
                     .addToBackStack(MenuFragment.TAG).commit();
             return true;
         } else if (id == R.id.action_add_permission) {
-            onAddNewPermissionClicked(null);
+            addNewPermissionClicked();
         } else if (id == R.id.action_refresh_data) {
             Snackbar.make(mRootView, R.string.syncing_data, Snackbar.LENGTH_LONG).show();
             checkNewPermissions();
@@ -399,7 +371,6 @@ public class MainActivity extends AppCompatActivity implements
                 mMasterFragment.onMasterReceived(master);
             }
         });
-
     }
 
     @Override
@@ -627,7 +598,7 @@ public class MainActivity extends AppCompatActivity implements
         Snackbar.make(mRootView, R.string.searching, Snackbar.LENGTH_LONG).show();
     }
 
-    private void showMasterFragment() {
+    public void showMasterFragment() {
         getSupportFragmentManager().popBackStack();
         MasterFragment masterFragment = (MasterFragment)
                 getSupportFragmentManager().findFragmentByTag(MasterFragment.TAG);
@@ -635,7 +606,6 @@ public class MainActivity extends AppCompatActivity implements
             getSupportFragmentManager().popBackStack(MasterFragment.TAG,
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
-        showToolbar();
     }
 
     public void onGoHomeClicked(View view) {
@@ -661,24 +631,38 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onShowAllPermissionsClicked(View view) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        mPermissionsFragment = new PermissionsFragment();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, mPermissionsFragment, PermissionsFragment.TAG)
-                .addToBackStack(PermissionsFragment.TAG)
-                .commit();
-        Master selectedMaster = mMasterFragment.getSelectedMaster();
-        if (selectedMaster != null && mCurrentUser.getAdminPermission(mMasterFragment.getSelectedMaster()) != null) {
-            showAddPermissionAndRefreshButtons();
-        } else {
-            showRefreshButton();
+        if (mMasterFragment.getMasters().size() > 1) {
+            onShowMasters();
+        } else if (mMasterFragment.getMasters().size() == 1) {
+            onShowMasterPermissions(mMasterFragment.getMasters().get(0));
         }
-        showToolbar();
-        mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
-        mToolbar.setNavigationOnClickListener(mBackListener);
     }
 
+    private void onShowMasters() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        MastersFragment mastersFragment = new MastersFragment();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, mastersFragment, MastersFragment.TAG)
+                .addToBackStack(MastersFragment.TAG)
+                .commit();
+        // mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
+        // mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
+        // mToolbar.setNavigationOnClickListener(mBackListener);
+    }
+
+    private void onShowMasterPermissions(Master master) {
+        Bundle args = new Bundle();
+        args.putString(Master.ID, master.getId());
+        PermissionsFragment fragment = new PermissionsFragment();
+        fragment.setArguments(args);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, fragment, PermissionsFragment.TAG)
+                .addToBackStack(PermissionsFragment.TAG)
+                .commit();
+       // mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
+       // mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
+       // mToolbar.setNavigationOnClickListener(mBackListener);
+    }
 
     public void onShowPermissionsClicked(View view) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -690,17 +674,13 @@ public class MainActivity extends AppCompatActivity implements
                 .replace(R.id.container, mPermissionsFragment, PermissionsFragment.TAG)
                 .addToBackStack(PermissionsFragment.TAG)
                 .commit();
-        if (mCurrentUser.getAdminPermission(mMasterFragment.getSelectedMaster()) != null) {
-            showAddPermissionAndRefreshButtons();
-        } else {
-            showRefreshButton();
-        }
-        mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
-        mToolbar.setNavigationOnClickListener(mBackListener);
+
+        // mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
+        // mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
+        // mToolbar.setNavigationOnClickListener(mBackListener);
     }
 
-    public void onAddNewPermissionClicked(View view) {
+    public void addNewPermissionClicked() {
         if (mMasterFragment.getSelectedMaster() == null) {
             Snackbar.make(mRootView, R.string.no_masters_yet, Snackbar.LENGTH_LONG).show();
             return;
@@ -869,5 +849,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void timeout() {
         Snackbar.make(mRootView, R.string.check_internet_connection, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onShowPermissions(Master master) {
+        onShowMasterPermissions(master);
     }
 }

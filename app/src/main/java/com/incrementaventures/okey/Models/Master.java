@@ -130,34 +130,10 @@ public class Master implements com.incrementaventures.okey.Models.ParseObject, N
         return masterName;
     }
 
-    /*
-    public static void fetchMasters(final OnNetworkResponseListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ParseQuery<ParseObject> query = new ParseQuery<>(Master.MASTER_CLASS_NAME);
-                query.orderByDescending(CREATED_AT);
-                ArrayList<Master> masters = new ArrayList<>();
-                try {
-                    List<ParseObject> list  = query.find();
-                    Master master;
-                    for (ParseObject object : list){
-                        master = getMaster(object.getString(OBJECT_ID));
-                        if (master == null) {
-                            master = Master.create(object);
-                            masters.add(master);
-                        }
-                        master.save();
-                        master.fetchSlaves(listener);
-                        master.fetchPermissions(User.getLoggedUser());
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                listener.onMastersReceived(masters);
-            }
-        }).start();
-    } */
+    @Override
+    public String toString() {
+        return getName();
+    }
 
     public String getObjectId(){
         return mParseMaster.getObjectId();

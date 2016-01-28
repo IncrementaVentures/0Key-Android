@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.incrementaventures.okey.Models.User;
@@ -22,7 +25,6 @@ import com.incrementaventures.okey.Models.Permission;
 import com.incrementaventures.okey.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,25 +32,42 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PermissionsFragment extends Fragment {
+public class PermissionsFragment extends Fragment implements ToolbarFragment {
     public static final String PERMISSIONS_DATA_EXTRA = "permissions_data_extra";
     public static final String TAG = "permissions_fragment_tag";
 
     @Bind(R.id.permissions_list_view)
     ListView mPermissionsView;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
 
     private ArrayList<Permission> mPermissions;
     private PermissionAdapter mPermissionsAdapter;
     private Master mMaster;
     private OnPermissionAdapterListener mListener;
+    private Menu mOptionsMenu;
 
     public interface OnPermissionAdapterListener {
         void onModifyPermissionAdapterClicked(Permission permission);
         void onDeletePermissionAdapterClicked(Permission permission);
+        void onBackPressed();
+        void addNewPermissionClicked();
+        void checkNewPermissions();
+        void showAddPermissionButton();
+        void showRefreshButton();
     }
 
     public PermissionsFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public int getMenuResource() {
+        if (User.getLoggedUser().getAdminPermission(mMaster) != null) {
+            return R.menu.menu_permissions_admin;
+        } else {
+            return R.menu.menu_permissions_no_admin;
+        }
     }
 
     @Override
@@ -58,6 +77,7 @@ public class PermissionsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_permissions, container, false);
         ButterKnife.bind(this, view);
         setPermissions();
+        setToolbar();
         if (getContext() == null) return view;
         mPermissionsAdapter = new PermissionAdapter(getContext(), R.layout.permission_list_item,
             mPermissions, mListener);
@@ -70,6 +90,61 @@ public class PermissionsFragment extends Fragment {
         });
         return view;
     }
+
+    private void setToolbar() {
+        if (getActivity() == null) return;
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
+        mToolbar.setTitle(mMaster.getName());
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_36dp);
+        mToolbar.findViewById(R.id.logo_toolbar).setVisibility(ImageView.GONE);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onBackPressed();
+            }
+        });
+        //if (User.getLoggedUser().getAdminPermission(mMaster) != null) {
+        //    showAddPermissionButton();
+        //}
+        /// showRefreshPermissionsButton();
+    }
+
+    private void showAddPermissionButton() {
+        mListener.showAddPermissionButton();
+        //mOptionsMenu.findItem(R.id.action_add_permission).setVisible(true);
+    }
+
+    private void showRefreshPermissionsButton() {
+        mListener.showRefreshButton();
+        //mOptionsMenu.findItem(R.id.action_refresh_data).setVisible(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            //mListener.onBackPressed();
+            //return true;
+        } else if (id == R.id.action_add_permission) {
+            //mListener.addNewPermissionClicked();
+        } else if (id == R.id.action_refresh_data) {
+            //if (getView() != null) {
+            //    Snackbar.make(getView(), R.string.syncing_data, Snackbar.LENGTH_LONG).show();
+            //}
+            //mListener.checkNewPermissions();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     private void setPermissions() {
         if (getActivity() == null ||((AppCompatActivity)getActivity()).getSupportActionBar() == null)
@@ -94,8 +169,6 @@ public class PermissionsFragment extends Fragment {
         }
         mPermissions = Permission.orderByUserName(mPermissions);
     }
-
-
 
     @Override
     public void onStart() {
