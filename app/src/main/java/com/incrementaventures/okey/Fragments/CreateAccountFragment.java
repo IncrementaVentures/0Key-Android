@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,8 +87,10 @@ public class CreateAccountFragment extends Fragment implements User.OnParseUserL
                 String password = mPassword.getText().toString();
                 String email = mEmail.getText().toString();
                 String phone = mPhone.getText().toString();
-                String birthday = Permission.getDefaultDateString(mBirthday.getText().toString())
-                        + "T00:01";
+                String birthday = Permission.getDefaultDateString(mBirthday.getText().toString());
+                if (!TextUtils.isEmpty(birthday)) {
+                    birthday = birthday + "T00:01";
+                }
                 int selectedId = mRadioGroupSex.getCheckedRadioButtonId();
                 String sex;
                 switch (selectedId) {
