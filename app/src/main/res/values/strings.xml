@@ -168,6 +168,8 @@
     <string name="birthday_optional">Birthday (optional) </string>
     <string name="gender_optional">Gender (optional)</string>
     <string name="full_name_optional">Full name (optional)</string>
+    <string name="name_not_provided">Name not provided</string>
+    <string name="birthday_not_provided">Birthday not provided</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

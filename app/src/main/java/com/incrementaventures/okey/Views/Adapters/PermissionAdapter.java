@@ -39,11 +39,11 @@ public class PermissionAdapter extends ArrayAdapter<Permission> {
                 @Override
                 public void onUserGetted(User user) {
                     user.saveLocal();
-                    userNameView.setText(user.getName());
+                    userNameView.setText(user.getName().equals("") ? user.getEmail() : user.getName());
                 }
             });
         } else {
-            userNameView.setText(user.getName());
+            userNameView.setText(user.getName().equals("") ? user.getEmail() : user.getName());
         }
     }
 

@@ -73,10 +73,10 @@ public class PreferencesFragment extends Fragment {
         View view  = inflater.inflate(R.layout.fragment_preferences, container, false);
         ButterKnife.bind(this, view);
         mUser = User.getLoggedUser();
-        mUserName.setText(mUser.getName());
+        mUserName.setText(mUser.getName().equals("") ? getString(R.string.name_not_provided) : mUser.getName());
         mUserEmail.setText(mUser.getEmail());
         String birthday = Permission.getFormattedDate(mUser.getBirthday());
-        mUserBirthday.setText(birthday);
+        mUserBirthday.setText(birthday.equals("") ? getString(R.string.birthday_not_provided) : birthday);
         mOkButton.setOnClickListener(mRefreshSettingsListener);
         if (mUser.isMale()) {
             mUserMale.setSelected(true);

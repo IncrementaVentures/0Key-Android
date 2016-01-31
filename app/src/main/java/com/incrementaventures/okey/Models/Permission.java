@@ -1,6 +1,7 @@
 package com.incrementaventures.okey.Models;
 
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.text.format.Time;
 
 import com.incrementaventures.okey.Bluetooth.BluetoothProtocol;
@@ -376,6 +377,9 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     }
 
     public static String getFormattedDate(String stringDate) {
+        if (TextUtils.isEmpty(stringDate)) {
+            return "";
+        }
         try {
             Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm",
                     Locale.getDefault()).parse(stringDate);
@@ -387,12 +391,15 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
     }
 
     public static String getDefaultDateString(String formattedDate) {
+        if (TextUtils.isEmpty(formattedDate)) {
+            return "";
+        }
         try {
             Date date = new SimpleDateFormat("MMM dd, yyyy",
                     Locale.getDefault()).parse(formattedDate);
             return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
         } catch (java.text.ParseException e) {
-            return formattedDate;
+                return formattedDate;
         }
     }
 
@@ -548,7 +555,11 @@ public class Permission implements com.incrementaventures.okey.Models.ParseObjec
                 if (rightUser == null) {
                     return 1;
                 }
-                return leftUser.getName().compareTo(rightUser.getName());
+                String compareValueLeft = leftUser.getName().equals("")
+                        ? leftUser.getEmail() : leftUser.getName();
+                String compareValueRight = rightUser.getName().equals("")
+                        ? rightUser.getEmail() : rightUser.getName();
+                return compareValueLeft.compareTo(compareValueRight);
             }
         });
         return new ArrayList<>(Arrays.asList(array));

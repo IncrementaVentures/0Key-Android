@@ -36,6 +36,7 @@ public class MenuFragment extends Fragment {
     @Bind(R.id.settings)
     TextView mSettings;
 
+    private User mUser;
 
     public interface OnMenuButtonClicked {
         void onMenuClick();
@@ -52,7 +53,8 @@ public class MenuFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
         ButterKnife.bind(this, view);
-        mUserName.setText(User.getLoggedUser().getName());
+        mUser = User.getLoggedUser();
+        mUserName.setText(mUser.getName().equals("") ? getString(R.string.name_not_provided) : mUser.getName());
         mUserEmail.setText(User.getLoggedUser().getEmail());
         return view;
     }
